@@ -7,7 +7,8 @@ import asyncio
 import urllib.request
 import urllib.parse
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict, Any, Tuple
+import numpy as np
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,11 +17,13 @@ from PIL import Image, ExifTags, ImageChops, ImageEnhance
 import io
 import html
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 
 if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding="utf-8", errors="backslashreplace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="backslashreplace")
+    if hasattr(sys.stdout, "reconfigure"):
+        getattr(sys.stdout, "reconfigure")(encoding="utf-8", errors="backslashreplace")
+    if hasattr(sys.stderr, "reconfigure"):
+        getattr(sys.stderr, "reconfigure")(encoding="utf-8", errors="backslashreplace")
 
 
 # Add geo-sleuth scripts path for tiles.py
@@ -56,9 +59,11 @@ from web.modules import (
     calculate_solar_position, estimate_camera_bearing_from_shadow,
     haversine_distance, initial_bearing, destination_point,
     wgs84_to_gcj02, gcj02_to_wgs84, gcj02_to_bd09, bd09_to_gcj02, bd09_to_wgs84,
+    wgs84_to_bd09,
     parse_exif_timestamp, interpolate_from_timeline,
     KAZAKHSTAN_REGIONS, KAZAKHSTAN_LANDMARKS_GAZETTEER, KZ_KNOWLEDGE_CATEGORIES,
     generate_kz_first_answer, evaluate_ubinam_confidence_ladder,
+    mine_kazakh_signboards, validate_kazakh_iin_bin,
     calculate_kz_distance_matrix, inject_gps_exif,
     locate_exact_spot, refine_dense_grid_gpu, refine_dense_grid,
     extract_multiscale_image_embedding, enrich_geoclip_gallery,
@@ -116,7 +121,13 @@ def generate_ela(image_path: Path, output_path: Path, quality: int = 90, scale: 
         with Image.open(buffer) as compressed:
             diff = ImageChops.difference(original, compressed)
             extrema = diff.getextrema()
-            max_diff = max([ex[1] for ex in extrema])
+            max_diff = 0
+            if isinstance(extrema, (list, tuple)):
+                for ex in extrema:
+                    if isinstance(ex, (list, tuple)) and len(ex) > 1:
+                        max_diff = max(max_diff, int(ex[1]))
+                    elif isinstance(ex, (int, float)):
+                        max_diff = max(max_diff, int(ex))
             if max_diff == 0:
                 max_diff = 1
             scale_factor = 255.0 / max_diff if max_diff < 50 else scale
@@ -178,8 +189,8 @@ async def extract_ocr_texts(image_path: Path) -> dict:
 
     return result
 
-def extract_exif(image_path: Path):
-    meta = {"has_gps": False, "lat": None, "lon": None, "date": None, "model": None}
+def extract_exif(image_path: Path) -> Dict[str, Any]:
+    meta: Dict[str, Any] = {"has_gps": False, "lat": None, "lon": None, "date": None, "model": None}
     try:
         with Image.open(image_path) as img:
             exif = img.getexif()
@@ -220,7 +231,7 @@ def extract_exif(image_path: Path):
         print(f"Error parsing EXIF: {e}")
     return meta
 
-def reverse_geocode(lat: float, lon: float):
+def reverse_geocode(lat: float, lon: float) -> Tuple[str, str, str, str]:
     try:
         url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json"
         req = urllib.request.Request(url, headers={"User-Agent": "GeoSleuth/2.0"})
@@ -325,7 +336,7 @@ def analyze_visual_palette(image_path: Path) -> dict:
         from PIL import Image
         with Image.open(image_path) as im:
             im_small = im.convert("RGB").resize((120, 120))
-            pixels = list(im_small.getdata())
+            pixels = np.asarray(im_small, dtype=np.int32).reshape(-1, 3).tolist()
             total = len(pixels)
             if total == 0:
                 return palette_info
@@ -480,7 +491,7 @@ def ai_analyze_photo_clues(image_path: Path, ocr_data: dict, filename: str) -> d
         "palette": palette
     }
 
-LANDMARK_GAZETTEER = [
+LANDMARK_GAZETTEER: List[Dict[str, Any]] = [
     {
         "keywords": [
             "международный финансовый центр", "мфца", "aifc", "astana international financial centre",
@@ -1033,9 +1044,11 @@ DEMOGRAPHIC_WORDS = {
 def match_landmark_gazetteer(texts: list[str]) -> Optional[dict]:
     combined = " ".join(texts).lower()
     for item in LANDMARK_GAZETTEER:
-        for kw in item["keywords"]:
-            if re.search(r'\b' + re.escape(kw) + r'\b', combined, re.IGNORECASE) or kw in combined:
-                return item
+        keywords = item.get("keywords")
+        if isinstance(keywords, list):
+            for kw in keywords:
+                if isinstance(kw, str) and (re.search(r'\b' + re.escape(kw) + r'\b', combined, re.IGNORECASE) or kw in combined):
+                    return item
     return None
 
 GENERIC_CLASSIFIERS = {
@@ -1057,7 +1070,7 @@ def clean_and_filter_candidates(candidates: list[str]) -> list[str]:
     for c in candidates:
         if not c:
             continue
-        c_str = str(c).strip()
+        c_str = c.strip()
         low = c_str.lower()
         if len(c_str) < 3 or low in seen:
             continue
@@ -1070,7 +1083,7 @@ def clean_and_filter_candidates(candidates: list[str]) -> list[str]:
     return cleaned
 
 def extract_yandex_vision_intel(ydata: dict) -> dict:
-    intel = {
+    intel: Dict[str, Any] = {
         "entity_card": None,
         "entity_candidates": [],
         "map_addresses": [],
@@ -1205,7 +1218,7 @@ def extract_high_value_poi_queries(text: str) -> list[str]:
             
     return clean_and_filter_candidates(cands)
 
-def search_photon(query: str, prefer_kazakhstan: bool = True, city_lat: Optional[float] = None, city_lon: Optional[float] = None):
+def search_photon(query: str, prefer_kazakhstan: bool = True, city_lat: Optional[float] = None, city_lon: Optional[float] = None) -> Optional[Dict[str, Any]]:
     try:
         q = query.strip()
         url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&limit=5"
@@ -1250,7 +1263,7 @@ def search_photon(query: str, prefer_kazakhstan: bool = True, city_lat: Optional
         pass
     return None
 
-def search_nominatim(query: str, prefer_kazakhstan: bool = True):
+def search_nominatim(query: str, prefer_kazakhstan: bool = True) -> Optional[Dict[str, Any]]:
     # 1. Try Photon first (instant, high-quality OSM POIs, no 429 rate limit)
     p_hit = search_photon(query, prefer_kazakhstan)
     if p_hit:
@@ -1440,14 +1453,16 @@ async def _run_5pass_pipeline_internal(
         "--out-dir", str(rev_out),
         "--engines", "yandex"
     ]
+    proc1 = None
     try:
         proc1 = await asyncio.create_subprocess_exec(*yandex_cmd1, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         await asyncio.wait_for(proc1.communicate(), timeout=45.0)
     except asyncio.TimeoutError:
-        try:
-            proc1.kill()
-        except Exception:
-            pass
+        if proc1:
+            try:
+                proc1.kill()
+            except Exception:
+                pass
         job["logs"].append("⚠️ [Запуск 1] Yandex Vision таймаут (45с), переход к следующему этапу...")
     except Exception as e:
         print(f"Pass 1 Yandex error: {e}")
@@ -1530,14 +1545,16 @@ async def _run_5pass_pipeline_internal(
         "--out-dir", str(crop_out),
         "--engines", "yandex"
     ]
+    proc2 = None
     try:
         proc2 = await asyncio.create_subprocess_exec(*yandex_cmd2, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         await asyncio.wait_for(proc2.communicate(), timeout=45.0)
     except asyncio.TimeoutError:
-        try:
-            proc2.kill()
-        except Exception:
-            pass
+        if proc2:
+            try:
+                proc2.kill()
+            except Exception:
+                pass
         job["logs"].append("⚠️ [Запуск 2] Фокальный Yandex таймаут (45с), переход к следующему этапу...")
     except Exception as e:
         print(f"Pass 2 Yandex error: {e}")
@@ -1601,14 +1618,16 @@ async def _run_5pass_pipeline_internal(
         str(saved_path),
         "--out-dir", str(rev_out)
     ]
+    proc3 = None
     try:
         proc3 = await asyncio.create_subprocess_exec(*google_cmd1, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         await asyncio.wait_for(proc3.communicate(), timeout=105.0)
     except asyncio.TimeoutError:
-        try:
-            proc3.kill()
-        except Exception:
-            pass
+        if proc3:
+            try:
+                proc3.kill()
+            except Exception:
+                pass
         job["logs"].append("⚠️ [Запуск 3] Google Lens таймаут (105с), приоритет остаётся за Яндекс...")
     except Exception as e:
         print(f"Pass 3 Google Lens error: {e}")
@@ -1689,8 +1708,8 @@ async def _run_5pass_pipeline_internal(
         job["logs"].append(f"🔤 [OSINT Алфавит]: Язык: {sc['language']} ({sc['country']}) [буквы: {', '.join(sc['chars_detected'])}]")
 
     # 3. Temporal EXIF Timeline Interpolation (FindMyPhoto)
-    if exif.get("date"):
-        target_dt = parse_exif_timestamp(exif["date"])
+    if exif.get("date") and isinstance(exif.get("date"), str):
+        target_dt = parse_exif_timestamp(str(exif["date"]))
         if target_dt:
             known_anchors = []
             for c_item in load_cases():
@@ -1718,8 +1737,9 @@ async def _run_5pass_pipeline_internal(
         # Check Nominatim using the recognized OCR keywords!
         for kw in ocr_keywords[:5]:
             nom_hit = search_nominatim(kw)
-            if nom_hit:
-                job["logs"].append(f"🌐 [OSINT OCR Топоним]: Найдено географическое соответствие для «{kw}»: {nom_hit['display_name'][:80]}!")
+            if nom_hit and isinstance(nom_hit, dict):
+                disp_str = str(nom_hit.get("display_name", ""))
+                job["logs"].append(f"🌐 [OSINT OCR Топоним]: Найдено географическое соответствие для «{kw}»: {disp_str[:80]}!")
                 if kw not in pass_candidates[4]:
                     pass_candidates[4].insert(0, kw)
                 break
@@ -1754,9 +1774,9 @@ async def _run_5pass_pipeline_internal(
         for cl in gazetteer_match.get("clues", []):
             if cl not in found_clues:
                 found_clues.append(cl)
-    elif exif["has_gps"]:
-        matched_lat = exif["lat"]
-        matched_lon = exif["lon"]
+    elif exif.get("has_gps") and exif.get("lat") is not None and exif.get("lon") is not None:
+        matched_lat: float = float(exif["lat"])
+        matched_lon: float = float(exif["lon"])
         country, region, place_name, disp_name = reverse_geocode(matched_lat, matched_lon)
         matched_target = {
             "title": f"Место съёмки ({place_name})",
@@ -1793,17 +1813,19 @@ async def _run_5pass_pipeline_internal(
         for cand in clean_pool:
             hit = search_nominatim(cand)
             if hit:
-                country, region, place_name, disp = reverse_geocode(hit["lat"], hit["lon"])
+                h_lat: float = float(hit["lat"])
+                h_lon: float = float(hit["lon"])
+                country, region, place_name, disp = reverse_geocode(h_lat, h_lon)
                 matched_target = {
                     "title": cand.capitalize(),
                     "country": country,
                     "region": region,
                     "target_name": hit.get("name") or cand,
-                    "lat": hit["lat"],
-                    "lon": hit["lon"],
+                    "lat": h_lat,
+                    "lon": h_lon,
                     "camera_name": "Точка съёмки (расчёт)",
-                    "camera_lat": hit["lat"] - 0.0003,
-                    "camera_lon": hit["lon"] - 0.0003,
+                    "camera_lat": h_lat - 0.0003,
+                    "camera_lon": h_lon - 0.0003,
                     "bearing_deg": 45,
                     "distance_m": 45,
                     "desc": f"Локация верифицирована по ансамблевому консенсусу ориентира «{cand}». Адрес: {disp}."
@@ -1887,6 +1909,9 @@ async def _run_5pass_pipeline_internal(
                 }
             confidence = "UNVERIFIED"
 
+    tgt_base_lat: float = float(matched_target["lat"]) if (matched_target and "lat" in matched_target) else 51.169392
+    tgt_base_lon: float = float(matched_target["lon"]) if (matched_target and "lon" in matched_target) else 71.449074
+
     # Step 5b: Satellite Orthophoto Acquisition
     if tiles and matched_target and "UNVERIFIED" not in confidence:
         sat_filename = f"sat_{job_id}_18.jpg"
@@ -1894,7 +1919,7 @@ async def _run_5pass_pipeline_internal(
         cache_dir = ROOT_DIR / ".geo-cache" / "tiles"
         try:
             tiles.fetch(
-                center=(matched_target["lat"], matched_target["lon"]),
+                center=(tgt_base_lat, tgt_base_lon),
                 zoom=18,
                 radius=2,
                 out=sat_path,
@@ -1907,7 +1932,7 @@ async def _run_5pass_pipeline_internal(
                     "url": f"/static/uploads/{sat_filename}",
                     "title": "Спутниковый ортофотоплан (Google Zoom 18)",
                     "type": "Спутниковая верификация",
-                    "desc": f"Свежая мозаика спутниковых тайлов высокого разрешения для точки ({matched_target['lat']:.6f}, {matched_target['lon']:.6f})."
+                    "desc": f"Свежая мозаика спутниковых тайлов высокого разрешения для точки ({tgt_base_lat:.6f}, {tgt_base_lon:.6f})."
                 })
                 job["logs"].append("✔ Спутниковые тайлы высокого разрешения получены и добавлены в досье!")
         except Exception as e:
@@ -1925,8 +1950,8 @@ async def _run_5pass_pipeline_internal(
         exact_details = locate_exact_spot(
             geoclip_m,
             str(saved_path),
-            matched_target["lat"],
-            matched_target["lon"],
+            tgt_base_lat,
+            tgt_base_lon,
             region_mode=region_mode
         )
     except Exception as ex:
@@ -1971,14 +1996,16 @@ async def _run_5pass_pipeline_internal(
 
     # Build or update case object
     case_id = target_case_id if target_case_id else f"case-{job_id}"
-    tgt_lat = matched_target["lat"]
-    tgt_lon = matched_target["lon"]
+    tgt_lat: float = float(matched_target["lat"]) if (matched_target and "lat" in matched_target) else 51.169392
+    tgt_lon: float = float(matched_target["lon"]) if (matched_target and "lon" in matched_target) else 71.449074
+    cam_lat: float = float(matched_target.get("camera_lat")) if (matched_target and matched_target.get("camera_lat") is not None) else (tgt_lat - 0.0003)
+    cam_lon: float = float(matched_target.get("camera_lon")) if (matched_target and matched_target.get("camera_lon") is not None) else (tgt_lon - 0.0003)
     twogis_url = f"https://2gis.kz/geo/{tgt_lon:.6f},{tgt_lat:.6f}"
     yandex_url = f"https://yandex.kz/maps/?ll={tgt_lon:.6f}%2C{tgt_lat:.6f}&z=16&pt={tgt_lon:.6f},{tgt_lat:.6f}"
     google_url = f"https://www.google.com/maps/search/?api=1&query={tgt_lat:.6f},{tgt_lon:.6f}"
 
     calculated_error_radius = exact_details.get("radius_m") if (exact_details and exact_details.get("radius_m")) else (
-        5 if (exif["has_gps"] or "Landmark" in confidence) else (100000 if "UNVERIFIED" in confidence else 25)
+        5 if (exif.get("has_gps") or "Landmark" in confidence) else (100000 if "UNVERIFIED" in confidence else 25)
     )
 
     detected_country = exact_details.get("country") if exact_details else None
@@ -1988,7 +2015,7 @@ async def _run_5pass_pipeline_internal(
     final_country = detected_country or matched_target.get("country") or ("Казахстан" if region_mode == "kz" else "Весь мир")
     final_region = detected_city or matched_target.get("region") or "Не определено"
 
-    new_case = {
+    new_case: Dict[str, Any] = {
         "id": case_id,
         "title": matched_target["title"],
         "country": final_country,
@@ -2000,8 +2027,8 @@ async def _run_5pass_pipeline_internal(
         "target_lat": tgt_lat,
         "target_lon": tgt_lon,
         "camera_name": matched_target.get("camera_name", "Точка съёмки"),
-        "camera_lat": matched_target.get("camera_lat", tgt_lat - 0.0003),
-        "camera_lon": matched_target.get("camera_lon", tgt_lon - 0.0003),
+        "camera_lat": cam_lat,
+        "camera_lon": cam_lon,
         "bearing_deg": matched_target.get("bearing_deg", 45),
         "distance_m": matched_target.get("distance_m", 45),
         "error_radius_m": calculated_error_radius,
@@ -2078,8 +2105,9 @@ async def _run_5pass_pipeline_internal(
                 c["exact_details"] = new_case.get("exact_details")
                 c["street_view_matches"] = new_case.get("street_view_matches", [])
                 c["diagnostics"] = new_case.get("diagnostics", {})
-                existing_urls = {ev["url"] for ev in c.get("evidence_photos", [])}
-                fresh_ev = [ev for ev in new_case["evidence_photos"] if ev["url"] not in existing_urls]
+                existing_urls = {ev.get("url") for ev in c.get("evidence_photos", []) if isinstance(ev, dict) and ev.get("url")}
+                nc_ev = new_case.get("evidence_photos", [])
+                fresh_ev = [ev for ev in nc_ev if isinstance(ev, dict) and ev.get("url") not in existing_urls]
                 c["evidence_photos"] = fresh_ev + c.get("evidence_photos", [])
                 updated = True
                 new_case = c
@@ -2126,7 +2154,8 @@ async def start_scan_job(
     region_mode: Optional[str] = Form("global")
 ):
     job_id = uuid.uuid4().hex[:8]
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "upload.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     filename = f"{job_id}{ext}"
     saved_path = UPLOAD_DIR / filename
 
@@ -2142,7 +2171,7 @@ async def start_scan_job(
         "case": None
     }
 
-    background_tasks.add_task(run_5pass_pipeline, job_id, saved_path, file.filename, None, None, region_mode or "global")
+    background_tasks.add_task(run_5pass_pipeline, job_id, saved_path, orig_name, None, None, region_mode or "global")
     return {"job_id": job_id}
 
 @app.post("/api/cases/{case_id}/rescan")
@@ -2198,7 +2227,8 @@ async def upload_photo(
     region_mode: Optional[str] = Form("global")
 ):
     case_id = f"case-{uuid.uuid4().hex[:8]}"
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "photo.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     filename = f"{case_id}{ext}"
     saved_path = UPLOAD_DIR / filename
 
@@ -2215,7 +2245,7 @@ async def upload_photo(
         target_lat = camera_lat
         target_lon = camera_lon
 
-    final_title = title or file.filename
+    final_title = title or orig_name
     final_target = target_name or final_title
     final_desc = description or "Загруженное изображение для геолокационного анализа."
 
@@ -2259,7 +2289,8 @@ async def add_evidence(
     desc: str = Form(""),
     file: UploadFile = File(...)
 ):
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "evidence.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     filename = f"evid-{uuid.uuid4().hex[:8]}{ext}"
     saved_path = UPLOAD_DIR / filename
 
@@ -2382,8 +2413,8 @@ def calibrate_case(case_id: str, payload: CalibrateRequest):
     return {"status": "ok", "case": target_case}
 
 @app.get("/api/elevation")
-def get_elevation(lat1: float, lon1: float, lat2: Optional[float] = None, lon2: Optional[float] = None):
-    results = {"elev1": 150, "elev2": 150, "delta": 0}
+def get_elevation(lat1: float, lon1: float, lat2: Optional[float] = None, lon2: Optional[float] = None) -> Dict[str, float]:
+    results: Dict[str, float] = {"elev1": 150.0, "elev2": 150.0, "delta": 0.0}
     locs = f"{lat1},{lon1}"
     if lat2 is not None and lon2 is not None:
         locs += f"|{lat2},{lon2}"
@@ -2583,7 +2614,8 @@ async def run_case_ocr(case_id: str):
 @app.post("/api/ocr")
 async def run_ocr_upload(file: UploadFile = File(...)):
     unique_id = uuid.uuid4().hex[:8]
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "ocr.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     temp_path = UPLOAD_DIR / f"ocr_{unique_id}{ext}"
     content = await file.read()
     with open(temp_path, "wb") as f:
@@ -2592,7 +2624,7 @@ async def run_ocr_upload(file: UploadFile = File(...)):
     ocr_res = await extract_ocr_texts(temp_path)
     return {
         "status": "ok",
-        "filename": file.filename,
+        "filename": orig_name,
         "lines": ocr_res.get("lines", []),
         "keywords": ocr_res.get("keywords", []),
         "text_raw": ocr_res.get("text_raw", "")
@@ -2605,7 +2637,7 @@ def get_health():
     gpu_name = None
     try:
         import torch
-        cuda_ok = bool(torch.cuda.is_available())
+        cuda_ok = torch.cuda.is_available()
         if cuda_ok:
             gpu_name = torch.cuda.get_device_name(0)
     except Exception:
@@ -2619,7 +2651,7 @@ def get_health():
         "cuda_available": cuda_ok,
         "gpu_device": gpu_name,
         "geoclip_loaded": model.is_loaded() if hasattr(model, "is_loaded") else False,
-        "server_time": datetime.utcnow().isoformat() + "Z"
+        "server_time": datetime.now(timezone.utc).isoformat()
     }
 
 @app.get("/api/system-status")
@@ -2631,7 +2663,7 @@ def api_system_status():
     vram_total_gb = 0.0
     try:
         import torch
-        cuda_ok = bool(torch.cuda.is_available())
+        cuda_ok = torch.cuda.is_available()
         if cuda_ok:
             gpu_name = torch.cuda.get_device_name(0)
             vram_total_gb = round(torch.cuda.get_device_properties(0).total_memory / (1024**3), 2)
@@ -2658,7 +2690,8 @@ async def api_predict(
     region_mode: Optional[str] = Form("global")
 ):
     """Прямой инференс GeoCLIP + каскада exact_locator для быстрой проверки точности."""
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "predict.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     job_id = uuid.uuid4().hex[:8]
     temp_path = UPLOAD_DIR / f"predict_{job_id}{ext}"
     content = await file.read()
@@ -2758,7 +2791,7 @@ async def api_case_exact_refine(case_id: str, region_mode: Optional[str] = Form(
 
 def audit_and_sanitize_image(image_path: Path, output_path: Path) -> dict:
     from PIL import ImageOps
-    audit = {
+    audit: Dict[str, Any] = {
         "has_gps": False,
         "gps": None,
         "camera_make": None,
@@ -2816,9 +2849,10 @@ def audit_and_sanitize_image(image_path: Path, output_path: Path) -> dict:
                     audit["gps"] = {"lat": round(lat, 6), "lon": round(lon, 6)}
                     audit["tags_found"].append("GPSInfo")
 
-        if audit["has_gps"]:
+        if audit["has_gps"] and isinstance(audit.get("gps"), dict):
+            gps_val = audit["gps"]
             audit["risk_level"] = "CRITICAL"
-            audit["risk_explanation"] = f"Обнаружены точные аппаратные координаты GPS ({audit['gps']['lat']}, {audit['gps']['lon']}). Любой человек определит точное местоположение за 10 секунд!"
+            audit["risk_explanation"] = f"Обнаружены точные аппаратные координаты GPS ({gps_val['lat']}, {gps_val['lon']}). Любой человек определит точное местоположение за 10 секунд!"
         elif audit["camera_model"] or audit["datetime"]:
             audit["risk_level"] = "HIGH"
             audit["risk_explanation"] = f"Обнаружена модель камеры ({audit['camera_model'] or 'камера'}) и точное время съёмки ({audit['datetime'] or 'время'}). Позволяет профилировать автора снимка."
@@ -2850,7 +2884,7 @@ async def sanitize_endpoint(
         with open(temp_input, "wb") as f:
             f.write(content)
         input_path = temp_input
-        source_name = file.filename
+        source_name = file.filename or "upload.jpg"
     else:
         cases = load_cases()
         c = next((x for x in cases if x["id"] == case_id), None)
@@ -2886,7 +2920,8 @@ async def start_batch_scan(
     created_jobs = []
     for file in files:
         job_id = uuid.uuid4().hex[:8]
-        ext = Path(file.filename).suffix or ".jpg"
+        f_name = file.filename or "batch.jpg"
+        ext = Path(f_name).suffix or ".jpg"
         filename = f"{job_id}{ext}"
         saved_path = UPLOAD_DIR / filename
         
@@ -2896,14 +2931,14 @@ async def start_batch_scan(
             
         scan_jobs[job_id] = {
             "id": job_id,
-            "filename": file.filename,
+            "filename": f_name,
             "status": "pending",
             "progress": 5,
-            "logs": [f"🚀 В очереди пакетного анализа: {file.filename}"],
+            "logs": [f"🚀 В очереди пакетного анализа: {f_name}"],
             "case": None
         }
-        background_tasks.add_task(run_scan_pipeline, job_id, saved_path, file.filename)
-        created_jobs.append({"job_id": job_id, "filename": file.filename})
+        background_tasks.add_task(run_scan_pipeline, job_id, saved_path, f_name)
+        created_jobs.append({"job_id": job_id, "filename": f_name})
         
     return {"status": "ok", "jobs": created_jobs}
 
@@ -2937,18 +2972,19 @@ async def inspect_case_ai(case_id: str):
 @app.post("/api/ai-inspect")
 async def inspect_upload_ai(file: UploadFile = File(...)):
     unique_id = uuid.uuid4().hex[:8]
-    ext = Path(file.filename).suffix or ".jpg"
+    orig_name = file.filename or "inspect.jpg"
+    ext = Path(orig_name).suffix or ".jpg"
     temp_path = UPLOAD_DIR / f"ai_inspect_{unique_id}{ext}"
     content = await file.read()
     with open(temp_path, "wb") as f:
         f.write(content)
         
     ocr_data = await extract_ocr_texts(temp_path)
-    analysis = ai_analyze_photo_clues(temp_path, ocr_data, file.filename)
+    analysis = ai_analyze_photo_clues(temp_path, ocr_data, orig_name)
     
     return {
         "status": "ok",
-        "filename": file.filename,
+        "filename": orig_name,
         "analysis": analysis
     }
 

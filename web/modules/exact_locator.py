@@ -122,13 +122,8 @@ def preprocess_clean_internet_image(image_input: Any) -> Image.Image:
 def compute_image_dhash(img: Image.Image, hash_size: int = 8) -> str:
     """Вычисляет 64-битный разностный хэш (dHash) для мгновенного сопоставления дубликатов."""
     resized = img.convert("L").resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)
-    pixels = list(resized.getdata())
-    diff = []
-    for row in range(hash_size):
-        for col in range(hash_size):
-            pixel_left = pixels[row * (hash_size + 1) + col]
-            pixel_right = pixels[row * (hash_size + 1) + col + 1]
-            diff.append(pixel_left > pixel_right)
+    arr = np.asarray(resized, dtype=np.int32)
+    diff = (arr[:, :-1] > arr[:, 1:]).flatten().tolist()
     decimal_val = 0
     hex_str = []
     for index, value in enumerate(diff):
@@ -317,7 +312,7 @@ class LocalVisualMemory:
                 "embedding": emb_list,
                 "lat": float(lat),
                 "lon": float(lon),
-                "name": str(name or ""),
+                "name": name if name else "",
                 "country": country,
                 "city": city,
                 "timestamp": round(time.time(), 2)
@@ -1239,10 +1234,10 @@ def verify_and_geocode_landmark(
     c) OSM Nominatim API (https://nominatim.openstreetmap.org/search) — точный картографический поиск.
     Если геокодер нашел объект, заменяет сырые числа LLM на точные координаты с radius_m: 20.
     """
-    if not name or str(name).strip().lower() in ("null", "none", "unknown", ""):
+    if not name or name.strip().lower() in ("null", "none", "unknown", ""):
         return None
 
-    clean_name = re.sub(r'[\(\)\[\]«»"\'\?!\*]', ' ', str(name)).strip()
+    clean_name = re.sub(r'[\(\)\[\]«»"\'\?!\*]', ' ', name).strip()
     words = clean_name.split()
     if not words or (len(words) == 1 and len(words[0]) < 3):
         return None
@@ -1251,8 +1246,8 @@ def verify_and_geocode_landmark(
     if low_single in ("building", "street", "road", "city", "house", "hotel", "cafe", "restaurant", "mall", "park", "здание", "улица", "город", "отель", "кафе"):
         return None
 
-    c_name = str(city).strip() if city and str(city).lower() not in ("null", "none", "unknown") else ""
-    co_name = str(country).strip() if country and str(country).lower() not in ("null", "none", "unknown") else ""
+    c_name = city.strip() if city and city.lower() not in ("null", "none", "unknown") else ""
+    co_name = country.strip() if country and country.lower() not in ("null", "none", "unknown") else ""
 
     queries = []
     if c_name and co_name:

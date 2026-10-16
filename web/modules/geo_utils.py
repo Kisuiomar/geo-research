@@ -103,3 +103,8 @@ def bd09_to_wgs84(lat: float, lon: float) -> Tuple[float, float]:
     """Converts Baidu BD-09 directly to WGS-84."""
     g_lat, g_lon = bd09_to_gcj02(lat, lon)
     return gcj02_to_wgs84(g_lat, g_lon)
+
+def wgs84_to_bd09(lat: float, lon: float) -> Tuple[float, float]:
+    """Converts standard WGS-84 coordinates to Baidu BD-09."""
+    g_lat, g_lon = wgs84_to_gcj02(lat, lon)
+    return gcj02_to_bd09(g_lat, g_lon)

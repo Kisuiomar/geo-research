@@ -16,7 +16,8 @@ from web.modules.evidence_sheet import compose_evidence_sheet
 from web.modules.sun_shadow import calculate_solar_position, estimate_camera_bearing_from_shadow
 from web.modules.geo_utils import (
     haversine_distance, initial_bearing, destination_point,
-    wgs84_to_gcj02, gcj02_to_wgs84, gcj02_to_bd09, bd09_to_gcj02, bd09_to_wgs84
+    wgs84_to_gcj02, gcj02_to_wgs84, gcj02_to_bd09, bd09_to_gcj02, bd09_to_wgs84,
+    wgs84_to_bd09
 )
 from web.modules.temporal_cluster import parse_exif_timestamp, interpolate_from_timeline
 from web.modules.kz_engine import (
