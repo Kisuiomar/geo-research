@@ -1,0 +1,102 @@
+{
+  "engine": "google_lens",
+  "image": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\8d5baf3f.jpg",
+  "screenshot": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\rev_8d5baf3f\\8d5baf3f_google.png",
+  "ai_overview": "На фотографии изображена Долина замков в Чарынском каньоне (Алматинская область, Казахстан).",
+  "candidates": [
+    "Долина Чарынском",
+    "Долина Казахстан",
+    "Долина",
+    "Чарынском",
+    "Алматинская",
+    "Казахстан",
+    "Главная страница Google",
+    "Все результаты",
+    "Точное соответствие",
+    "tezeks.com",
+    "Индивидуальный тур: Чарынский каньон — Черный каньон — озеро ...",
+    "oq.gov.kz Чарынский каньон"
+  ],
+  "links": [
+    {
+      "title": "Главная страница Google",
+      "url": "https://www.google.com/webhp?hl=ru&sa=X&ved=2ahUKEwiJrtCth7mXAxX7KhAIHZAZLkAQPHoECAYQBA"
+    },
+    {
+      "title": "Все результаты",
+      "url": "https://www.google.com/search?vsrid=CK6BqbyWtpWAjAEQAhgBIiQ3Yzg2OWFjNC0wNjkwLTRlNDctYjI3Yy1mZjI3MTYxYTZmMzkyggEiAnJkKAlCdAoubGZlLWR1bW15OjBkMTM2OWMxLThmYmQtNDI0Ny1hNGU4LTAyNmQ1Y2U3MzY3MxJCCkAvYm5zL3JkL2JvcmcvcmQvYm5zL2xlbnMtZnJvbnRlbmQtYXBpL3Byb2QubGVucy1mcm9udGVuZC1hcGkvMTUwWgQKAnJkOO_Rxq2HuZcD&vsint=CAIqDAoCCAcSAggKGAEgATojChYNAAAAPxUAAAA_HQAAgD8lAACAPzABEOADGMACJQAAgD8&udm=26&lns_mode=un&source=lns.web.gsbubb&vsdim=480,320&gsessionid=RIqEWIUvod-gFXrd69WiDg5P-OGkB_4pb5_1BmauyBTv9yU42hla7Q&lsessionid=QIov1qu9aADZ9VXXh1-BPSazie6i_NdRPun98nr3QQ7Mb6R9jWpxzg&lns_surface=26&authuser=0&lns_vfs=e&qsubts=1791965410375&biw=1400&bih=1000&hl=ru-KZ#"
+    },
+    {
+      "title": "Точное соответствие",
+      "url": "https://www.google.com/search?sca_esv=b95610bb4650b83a&udm=26&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQnuHHEa5rGZMFdD62zvI3HJ64Px1NA:1791965409850&source=lnt&tbs=li:1&sa=X&ved=2ahUKEwiJrtCth7mXAxX7KhAIHZAZLkAQpwV6BAgLEBU"
+    },
+    {
+      "title": "tezeks.com",
+      "url": "https://www.google.com/goto?url=CAEScAHrOzAVh1HssmclqEfnR97Cnbg5fqLySrex_KUtLUZv7Cg4QknVW6cWp1J_VsK6RrHDSV0H2BamJf8LRnS-4upR8G8EN5UXhGl9XMyq-2g9a41oDwE9eKrEsbNjsxZWNj-fdWIHpdSa7cAKvTlx0G4"
+    },
+    {
+      "title": "Индивидуальный тур: Чарынский каньон — Черный каньон — озеро ...",
+      "url": "https://www.google.com/goto?url=CAESqgEB6zswFbxPCZDQ9j5PxbxNCR0zRoOzTuqLpj-upHVNDi3sh3jfGZ0xYU-Ga9sYXfVGEon5I5lYSQV5Lb8ky9h9EwnfL-DLokHz8KCOMuQS5iUjcAwOG5TQLhvPnZIVoLJ5q_KJalhuk5ixfbkS5bdv3u888Q-ZbmPK9RD8bp6RdF3mzmO3tDpUWtl0guDw-JIFF4XCLwVQ1w-BLtpMbXTqphyLZa-iXz6w1Q"
+    },
+    {
+      "title": "oq.gov.kz Чарынский каньон",
+      "url": "https://www.google.com/goto?url=CAESZAHrOzAViiq3tmyMcagDwqS-Vu8ZDoY79Jxg5eIF1cHx-A_YgDwhmUhb_-vmuWzHkO3fakX_0hR-ePxWCB-45S5U3Zas5rwh5w7-oEo_jirmqLkL6U6qZCkBgkBFHyFRg3cwcUM"
+    },
+    {
+      "title": "explorekazakhstan.net Чарынский каньон",
+      "url": "https://www.google.com/goto?url=CAESaQHrOzAVhUnB1V8yh7VoT4L7Pas9XI68YygXLczbbgCsJb55l3tGOQG0ENuGM894UUgi6E1cRVnOAlqWHq-IeiorSDvTxz77Wau4aFxA6dkcNyENMll1jnBXW3s9SbX2YN0mNuctNZr-Lg"
+    },
+    {
+      "title": "tezeks.com Чарынский каньон от Tezeks",
+      "url": "https://www.google.com/goto?url=CAEScAHrOzAVh1HssmclqEfnR97Cnbg5fqLySrex_KUtLUZv7Cg4QknVW6cWp1J_VsK6RrHDSV0H2BamJf8LRnS-4upR8G8EN5UXhGl9XMyq-2g9a41oDwE9eKrEsbNjsxZWNj-fdWIHpdSa7cAKvTlx0G4"
+    },
+    {
+      "title": "My Guide Kazakhstan Алматы: Чарынский каньон - однодневная поездка в Долину ...",
+      "url": "https://www.google.com/goto?url=CAESmgEB6zswFYCXDXC3sX6_q0Xi0dQpjCxu8zLl8opw8owW5kraWkbXV30g9Oxw2EQIqUs-I7XNo_BtJvmcrOJzBc995cX8fO7ADOv6UXEMKuZ-88w8GO90Kb4A2qDKbLRPvX0hNibPowke4fdW4GZLAmV0U5X_2Pqn1-6BBKVpVYaodw9Lkfx5JRpP_wSFNm3VTeTRarvWTWxui5Kd"
+    },
+    {
+      "title": "Global-Guide.org",
+      "url": "https://www.google.com/goto?url=CAESoAEB6zswFSN7GRJhnAMpLq5BHmcruo1p-PLky7_spVBjBX_zWFStQAQce3mBm-Aj1giFnrP-OEdyLC_aPuUzeQNJiJBVjE2PwrzDzFpfpIvwkL9AmIsgPYtJi7QQ4ug2iI3LTmCB2JQoblZrU0BdPIqpuxSSkXlTo0D4UHj_6_CNYnGjqDaoOTDI17dC06iQxaoM8iFrpR48m_WYdiJAqbXw"
+    },
+    {
+      "title": "TengriNews",
+      "url": "https://www.google.com/goto?url=CAESmQEB6zswFT49h8Ejl5jp1Yvdm0wuwhZ6kiHY3w12k40cPiV0oSfSR3Lg1Roe-lFxfhqBnB8gW92xiSNgj7SjUJubo0t2cwDas-hlEe8k05wPp7KN8RnyNGlEhQfwshdUrAUgJX8UkwsI5hpVCM01HzPWFcaWUdMdZJpAK5cTeNVWKnpK7YB9LPWldQtV0E62gRcsHeRyagm9iDI"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "Индивидуальный тур: Чарынский каньон — Черный каньон — озеро ... 5,0(15)",
+      "url": "https://www.google.com/goto?url=CAESqgEB6zswFc3fTMCBc4kB1rBUpQ5c_j-OYRlVuKqtKZFuYedFIt0P3HNjsD4Z-mHdo1sFu9qwAGnqTbiaGBVD39d-LrYkPKOn5JqaSW1gYdekEtaCrcsNcHgPerswF80xgHgqMnXlyr5kAx_BBHk2Icgrt6SsvsKpdvmjjplP6WzDkd6d6J7iIl-ZraXun6B0Bi0CU9x4bJJSVwGGzh7-npbnwZm5210tmr8Q7w"
+    },
+    {
+      "title": "Charyn Canyon National Park",
+      "url": "https://www.google.com/search?sca_esv=b95610bb4650b83a&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQnuHHEa5rGZMFdD62zvI3HJ64Px1NA:1791965409850&q=Charyn+Canyon+National+Park&kgmid=/g/122p7yx3&sa=X&ved=2ahUKEwiJrtCth7mXAxX7KhAIHZAZLkAQ9_gLKAB6BQiXAhAB"
+    },
+    {
+      "title": "Charyn Canyon",
+      "url": "https://www.google.com/search?sca_esv=b95610bb4650b83a&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQnuHHEa5rGZMFdD62zvI3HJ64Px1NA:1791965409850&q=Charyn+Canyon&kgmid=/m/05_904&sa=X&ved=2ahUKEwiJrtCth7mXAxX7KhAIHZAZLkAQ9_gLKAF6BQiXAhAD"
+    },
+    {
+      "title": "oq.gov.kz Чарынский каньон",
+      "url": "https://www.google.com/goto?url=CAESZAHrOzAVwiNFAeQPVOLFrtvC2o-QNIe1d9eG_VzdZPhaYOB0dDoCOkJ3AqB3A-GfR5VQH_WVkPnZUcqCAJgWM8DMc3f02YVPDVY02SvGeB-kUAj15jNQBIkqWGneN01rJOYSwgU"
+    },
+    {
+      "title": "explorekazakhstan.net Чарынский каньон",
+      "url": "https://www.google.com/goto?url=CAESaQHrOzAVHcKxz06GVxgTYUe98AzFEMyP5rsvivIqAIOedsf5ckiU5DCCtfkPZTY5dKloeaoCxQqi2HNk1cq8dXQxazOafRbSZYLCZW5rl2OWKaSBMqu0bc_bdoQcD-dEcc-Ee9-NJS9tzA"
+    },
+    {
+      "title": "TekeliNews Прекрасный и чарующий Чарын",
+      "url": "https://www.google.com/goto?url=CAESYgHrOzAVZqPIPVepU5-XdjMGnuAz01ZkE3KmSCPnVILK9hU-bHx9_Iy0WEY4FMhx8Cez3aL9aEJOx2j7x60foMWycvoYITjPCuwCN2SEGwsRRELvXigl7WAgKJAH3YOOKBOI"
+    }
+  ]
+}

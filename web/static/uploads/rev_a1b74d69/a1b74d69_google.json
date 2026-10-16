@@ -1,0 +1,102 @@
+{
+  "engine": "google_lens",
+  "image": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\a1b74d69.jpg",
+  "screenshot": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\rev_a1b74d69\\a1b74d69_google.png",
+  "ai_overview": "На изображении запечатлен знаменитый монумент «Байтерек» (каз. Бәйтерек), расположенный в столице Казахстана — Астане.",
+  "candidates": [
+    "Байтерек",
+    "столице Казахстан",
+    "Байтерек Казахстана",
+    "Байтерек Астане",
+    "Казахстана",
+    "Астане",
+    "Главная страница Google",
+    "Все результаты",
+    "Точное соответствие",
+    "Википедия",
+    "Википедия Байтерек (монумент) — Википедия",
+    "Байтерек 🫣 По преданиям казахского народа, на берегу ..."
+  ],
+  "links": [
+    {
+      "title": "Главная страница Google",
+      "url": "https://www.google.com/webhp?hl=ru&sa=X&ved=2ahUKEwjCqvStmb6XAxXeAxAIHSLhOn0QPHoECAYQBA"
+    },
+    {
+      "title": "Все результаты",
+      "url": "https://www.google.com/search?vsrid=CMSV2e-B_KrgTxACGAEiJGQ4ZmRmZjI0LTI3YjctNGM3Yi04YjllLTNhNDhhNDhhODhmMDKCASICcmQoKkJ0Ci5sZmUtZHVtbXk6YjkyN2I4MmMtNDE3My00MTBiLTg0NWQtZTJhYWFjYzdmMDE3EkIKQC9ibnMvcmQvYm9yZy9yZC9ibnMvbGVucy1mcm9udGVuZC1hcGkvcHJvZC5sZW5zLWZyb250ZW5kLWFwaS8xNzFaBAoCcmQ4vIvsrZm-lwM&vsint=CAIqDAoCCAcSAggKGAEgATojChYNAAAAPxUAAAA_HQAAgD8lAACAPzABEJgDGNUFJQAAgD8&udm=26&lns_mode=un&source=lns.web.gsbubb&vsdim=408,725&gsessionid=GCu0T1rxK3Rjfz0yIhGozNWCYPNGaTgXL2KOyiWPzxxYIYo_QnBbRg&lsessionid=PvMkxIhRUmmTESNaDkINS2ysIr9jbwbm68GUDPEpPaDSVWXwfReifQ&lns_surface=26&authuser=0&lns_vfs=e&qsubts=1792142041485&biw=1400&bih=1000&hl=ru-KZ#"
+    },
+    {
+      "title": "Точное соответствие",
+      "url": "https://www.google.com/search?sca_esv=c45cc90a65ac929a&udm=26&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQns4XaS3JyVMWhoT33CYJpyV15RXAw:1792142040969&source=lnt&tbs=li:1&sa=X&ved=2ahUKEwjCqvStmb6XAxXeAxAIHSLhOn0QpwV6BAgLEBU"
+    },
+    {
+      "title": "Википедия",
+      "url": "https://www.google.com/goto?url=CAESvQEB6zswFdu-NYmuqSgEjTpxhy6w8thEAkwmLY1H6l-MBI6ln6DEKhzX3Esj6UrolrBDZt6IcYVjUeda70N6MqelyxJq91a-v5raNdZXoJt7TbDiuR4_xwKLqNddWNPIEd1L2b7K1ef5ZuJqt_s8RUYoj4dTEhNyfP6XrlAmReCUclIToWRfz0Q1Gd9zbOvRhkKTbfC_yEd5xPGdqw8giK5l0oJTbaZSE1uYr-ri9Vh11feqDvoMIrNDS12uN7o"
+    },
+    {
+      "title": "Википедия Байтерек (монумент) — Википедия",
+      "url": "https://www.google.com/goto?url=CAESvQEB6zswFdu-NYmuqSgEjTpxhy6w8thEAkwmLY1H6l-MBI6ln6DEKhzX3Esj6UrolrBDZt6IcYVjUeda70N6MqelyxJq91a-v5raNdZXoJt7TbDiuR4_xwKLqNddWNPIEd1L2b7K1ef5ZuJqt_s8RUYoj4dTEhNyfP6XrlAmReCUclIToWRfz0Q1Gd9zbOvRhkKTbfC_yEd5xPGdqw8giK5l0oJTbaZSE1uYr-ri9Vh11feqDvoMIrNDS12uN7o"
+    },
+    {
+      "title": "Байтерек 🫣 По преданиям казахского народа, на берегу ...",
+      "url": "https://www.google.com/goto?url=CAESYwHrOzAV0xR1ZFNDmPDZx5FJURIRdgD63PhkqVN7S-UziPOXYbNEkMrP4JhhEXjadqRfE7k-jqa_JwhEYuqlq_3MNlcgo4EPGP7YUGGVl-LLm0pm_2gisDLutOoKsffcKRvfhw"
+    },
+    {
+      "title": "Shutterstock Стоковая фотография 2666455307: Астана (Нур-Султан ...",
+      "url": "https://www.google.com/goto?url=CAESoQEB6zswFXJ1JVkzytM8CVLrfcgKqLQ_8sjet3Z4vTOaX-XQAbqM07oTtuybwP6ZZ0vSv-Vex9Vgfok6yc_aGnnU7vLUq4A6LwRe9vDxYWibBhCTdxGbOoHz1tYopwrXL4u3GNhJo6cV46dFhdOZi2NmMLRU7nR8NcjcyGsINdochQRij9LyZWu_GDWnwVgKZfr0VUkAvNPWjAM7Z7pPNtTDBg"
+    },
+    {
+      "title": "Advantour Тур по городу Астана (полдня) - 1 день",
+      "url": "https://www.google.com/goto?url=CAESggEB6zswFd14Pksv96wTqRAe4VQCoUnkhmFMGcHx91b0-7PCaECNu3zwhChHqamlNQL8luwHse0vcSf6VxFuXBD00Jn98MJMmBzgQGuy4L7II86uM8ti7Ik9_AHYf84iCZPXsvRzdBVLY3YPPrgiWKsQUxjB7VmAgePzttrGD0G_0evs"
+    },
+    {
+      "title": "dknews.kz Астана – символ независимого Казахстана",
+      "url": "https://www.google.com/goto?url=CAEShQEB6zswFU0xprkeT-XRe9MgUr9Q4ZCoS9ktd6hcdYymImmPF3b7qaBPAUQAbAbMf7jIOrWQ5_373kEAL3kWBa9EGD9UEPq12AuwViMQA1THWPjYZOBSqoMAUJLjwHavkIiq8j2f8zHZ5uiIKSmu8T3L5CUe8z1dC-RMkzs8TsA7IfxG_vNl"
+    },
+    {
+      "title": "Википедия",
+      "url": "https://www.google.com/goto?url=CAESvQEB6zswFdu-NYmuqSgEjTpxhy6w8thEAkwmLY1H6l-MBI6ln6DEKhzX3Esj6UrolrBDZt6IcYVjUeda70N6MqelyxJq91a-v5raNdZXoJt7TbDiuR4_xwKLqNddWNPIEd1L2b7K1ef5ZuJqt_s8RUYoj4dTEhNyfP6XrlAmReCUclIToWRfz0Q1Gd9zbOvRhkKTbfC_yEd5xPGdqw8giK5l0oJTbaZSE1uYr-ri9Vh11feqDvoMIrNDS12uN7o"
+    },
+    {
+      "title": "Википедия",
+      "url": "https://www.google.com/goto?url=CAESvQEB6zswFdu-NYmuqSgEjTpxhy6w8thEAkwmLY1H6l-MBI6ln6DEKhzX3Esj6UrolrBDZt6IcYVjUeda70N6MqelyxJq91a-v5raNdZXoJt7TbDiuR4_xwKLqNddWNPIEd1L2b7K1ef5ZuJqt_s8RUYoj4dTEhNyfP6XrlAmReCUclIToWRfz0Q1Gd9zbOvRhkKTbfC_yEd5xPGdqw8giK5l0oJTbaZSE1uYr-ri9Vh11feqDvoMIrNDS12uN7o"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "Политикой конфиденциальности",
+      "url": "https://policies.google.com/privacy?hl=ru-KZ"
+    },
+    {
+      "title": "ru.pinterest.com Башня Арасака",
+      "url": "https://www.google.com/goto?url=CAESsQEB6zswFWlxJbr6zv5EqR4pZkbQavAsUePvF1y9YyBSm0C03zjJ1_fEXQr4zDsCmAHr5QTj8sLTVYToNFFy_uJNotkgdK9nfh2JyYp51HxIig-LXtR7i77HJeikz7TZE8cLmAxKwe9IFGVfF1goOetl6a5fvLSp2IXeaQl3nd3AAPD9xL8Hfaw9kfr_98JBkauT2i6uJ1WZPHBh4mmLpnskP_Z5T5yKWDwJ8Q-2y7BX7gc"
+    },
+    {
+      "title": "Baiterek",
+      "url": "https://www.google.com/search?sca_esv=c45cc90a65ac929a&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQns4XaS3JyVMWhoT33CYJpyV15RXAw:1792142040969&q=Baiterek&kgmid=/m/0h6txj&sa=X&ved=2ahUKEwjCqvStmb6XAxXeAxAIHSLhOn0Q9_gLKAB6BQiNAhAB"
+    },
+    {
+      "title": "Байтерек 🫣 По преданиям казахского народа, на берегу ...",
+      "url": "https://www.google.com/goto?url=CAESYwHrOzAVdgBw996f61WsLhuHKGr9gEGwBhgFUUix6CH4D4TxR3H1Of6VwFifmhqLIHhLnV3XN_rDb5icvI8tfvniya_4jFmNXsRbj8b74OEKB2Ga-u49fim3hKV9ziZDGpk5IQ"
+    },
+    {
+      "title": "Википедия Байтерек (монумент) — Википедия",
+      "url": "https://www.google.com/goto?url=CAESvQEB6zswFXIyAm6Bw5zQr51um_uOoO5PFVb4aZjbkssQTqjuxFARr7sOTRDcuS1KgbkOzweQBuYRb7BmA8_rIh_XbjG-a4MEMpAt7DpJvPULTYTmoKbg34Wj6S5lu2zvTW6NtI3oqQ1T0AopXYvqDIsGEuKb7sQtspXarc57ggBGEylPKRK3yE2V29QNk6kQT5D-cLN9KkR-giQv_bmhMJRc_ctEgx7N50MS6COcrQ7Ki5WaiTTwrKy98UOsEHg"
+    },
+    {
+      "title": "Регистрация оффшорных компаний за рубежом. Работаем по всему ... Открыть компанию в Казахстане - помощь россиянам",
+      "url": "https://www.google.com/goto?url=CAEScAHrOzAVltIxLWjfIcMNz9Dr2BJtaaXXuXlJzSdUIhhtDDs1C8CspAsWy2a7Qq9GWmD9yEEN0zsnX9bDIcNuBXL-LDn8yvmhOy58VeMBoCxbHwTZMNQ7ISaaP98JHuGBPFgN6uuG1RHvQPZAicKQrOE"
+    },
+    {
+      "title": "Бәйтерек / Байтерек / Baiterek 😇 #астана #astana #kazakhstan",
+      "url": "https://www.google.com/goto?url=CAESZgHrOzAVD8oriBvReaPNjwUE8QBocPwybEOLcYqZtPxyNeKiDUdRT5oTwuEcxRa42CNAFaIeoFR2AztyOjafSnFQTsDSN0nq6FQZryzTGAytuOaAbBvFdtzsYHEmk934GkSgf9rqNA"
+    }
+  ]
+}

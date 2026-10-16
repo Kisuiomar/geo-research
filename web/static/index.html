@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoSleuth Intelligence Hub — Геолокация и Спутниковый OSINT</title>
+  <meta name="description" content="Платформа фотогеолокации, картографического анализа и спутниковых улик">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/style.css?v=opsec_sv">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Header -->
+  <header class="app-header" id="appHeader">
+    <div class="header-left">
+      <div class="brand" id="brandLogo" style="cursor: pointer;">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">GEOSLEUTH</span>
+          <span class="brand-subtitle">INTEL HUB</span>
+        </div>
+      </div>
+      
+      <!-- Primary View Navigation -->
+      <nav class="main-nav">
+        <button class="nav-tab active" id="tabHome">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Главная</span>
+        </button>
+        <button class="nav-tab" id="tabMap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+          <span>Интерактивная карта</span>
+        </button>
+        <button class="nav-tab" id="tabRadar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10"></path>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+          <span>📡 Радар SpyBrain</span>
+        </button>
+        <button class="nav-tab" id="tabKnowledge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+          <span>🇰🇿 База знаний РК</span>
+        </button>
+      </nav>
+
+      <div class="live-status">
+        <span class="pulse-dot"></span>
+        <span class="status-label">OSINT ONLINE</span>
+      </div>
+    </div>
+
+    <!-- Case Quick Switcher (visible on Map View) -->
+    <div class="header-center" id="headerCaseSwitcher" style="display: none;">
+      <div class="cases-nav" id="casesNav">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="btn btn-warning-glow" id="btnHeaderRescan" title="Если результат неверный: заново запустить 5 независимых запусков поиска">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>🔄 5 запусков поиска</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnToggleRoute" style="display: none;" title="Показать сквозной маршрут всех расследований">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="6" cy="19" r="3"></circle>
+          <path d="M9 19h8.5a4.5 4.5 0 0 0 0-9H5"></path>
+          <circle cx="18" cy="5" r="3"></circle>
+        </svg>
+        <span>📍 Маршрут</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnToggleLayers" style="display: none;" title="Переключить подложку карты">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span id="layerName">Спутник</span>
+      </button>
+
+      <button class="btn btn-secondary btn-wayback" id="btnOpenWaybackModal" title="Спутниковый архив Esri Wayback (2014–2026): 197 исторических снимков">
+        <span>🛰️ Wayback 2014–2026</span>
+      </button>
+
+      <button class="btn btn-secondary btn-inspector" id="btnOpenInspectorModal" title="OSINT Инспектор: геокодер телефонов, автокоды регионов РК, правила движения">
+        <span>🔍 OSINT Инструменты</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnOpenOsintGuide" title="Справочник OSINT-мета признаков (дороги, столбы, знаки)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span>📚 Шпаргалка</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnOpenOpsecModal" title="OPSEC Санитайзер: проверка утечек и очистка EXIF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>🛡️ Очистка EXIF</span>
+      </button>
+
+      <button class="btn btn-icon btn-secondary" id="btnToggleSound" title="Звуки радара (Вкл/Выкл)">
+        <span>🔊</span>
+      </button>
+
+      <button class="btn btn-icon btn-secondary" id="btnOpenShortcuts" title="Горячие клавиши (?)">
+        <span>⌨️</span>
+      </button>
+
+      <button class="btn btn-primary" id="btnOpenUploadModal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span>Загрузить фото</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       VIEW 1: HOME PAGE (LANDING PORTAL)
+       ========================================================================= -->
+  <section class="view-container home-view active" id="homeView">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-glow-blob top-left"></div>
+      <div class="hero-glow-blob bottom-right"></div>
+      
+      <div class="hero-badge">
+        <span class="badge-icon">🛰️</span>
+        <span>ПЛАТФОРМА ТОЧНОЙ ФОТОГЕОЛОКАЦИИ 2.0</span>
+      </div>
+
+      <h1 class="hero-title">
+        Найдите, где сделано фото,<br>
+        <span class="gradient-text">с точностью до здания и скалы</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Автоматический анализ улик, спутниковая триангуляция сверхвысокого разрешения,
+        вычисление азимута съёмки и подтверждение реальными снимками.
+      </p>
+
+      <!-- Instant Dropzone Card in Hero -->
+      <div class="hero-upload-card">
+        <div class="hero-dropzone" id="heroDropzone">
+          <input type="file" id="heroFileInput" accept="image/*" class="dropzone-input">
+          <div class="hero-dropzone-inner">
+            <div class="hero-upload-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <div class="hero-upload-text">
+              <h3>Перетащите сюда любую фотографию</h3>
+              <p>или <span class="action-link">выберите файл на компьютере</span> для мгновенного анализа</p>
+            </div>
+            <div class="hero-badges-row">
+              <span class="mini-feature">⚡ Авто-чтение GPS (EXIF)</span>
+              <span class="mini-feature">🛡️ Работа без метаданных</span>
+              <span class="mini-feature">🛰️ Спутник Google & Esri</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Direct Hero Action Buttons for 5-Pass Search & Re-Scan -->
+        <div class="hero-actions-ensemble">
+          <button class="btn btn-warning-glow btn-lg btn-hero-5pass" id="btnHeroRescan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span>🔄 Неверный ответ? Заново сделать поиск (5 запусков)</span>
+          </button>
+        </div>
+
+        <!-- Quick Launch Bar below Dropzone -->
+        <div class="hero-quick-bar">
+          <span class="quick-label">Быстрый переход к расследованиям:</span>
+          <div class="quick-case-pills" id="heroQuickPills">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-ribbon">
+        <div class="stat-item">
+          <div class="stat-number">±5 м</div>
+          <div class="stat-label">Точность координат</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Спутниковая верификация</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">0-EXIF</div>
+          <div class="stat-label">Работа с фото из Telegram</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">360°</div>
+          <div class="stat-label">Вектор азимута и дистанция</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Solved Cases Showcase Section -->
+    <section class="section showcase-section">
+      <div class="section-header">
+        <div class="section-tag">БАЗА РАССЛЕДОВАНИЙ</div>
+        <h2 class="section-title">Верифицированные локации</h2>
+        <p class="section-subtitle">
+          Каждое место подтверждено спутниковыми снимками, векторным анализом и детальными уликами.
+        </p>
+      </div>
+
+      <!-- Live Search & Filter Bar -->
+      <div class="showcase-search-toolbar">
+        <div class="search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="showcaseSearchInput" placeholder="Поиск по названию, стране, ориентиру..." class="form-input search-filter-input">
+        </div>
+        <div class="filter-pills-row" id="filterPillsRow">
+          <button class="filter-pill active" data-filter="all">Все локации</button>
+          <button class="filter-pill" data-filter="Казахстан">🇰🇿 Казахстан</button>
+          <button class="filter-pill" data-filter="Вьетнам">🇻🇳 Вьетнам</button>
+          <button class="filter-pill" data-filter="verified">🛡️ Верифицированные</button>
+        </div>
+      </div>
+
+      <div class="cases-showcase-grid" id="showcaseGrid">
+        <!-- Rendered by JS from cases.json -->
+      </div>
+    </section>
+
+    <!-- Methodology & Capabilities Section -->
+    <section class="section tech-section">
+      <div class="section-header">
+        <div class="section-tag">ТЕХНОЛОГИЧЕСКИЙ СТЕК</div>
+        <h2 class="section-title">Как работает GeoSleuth Intel</h2>
+        <p class="section-subtitle">
+          Пайплайн из 4 этапов от исходного пикселя до подтверждённой точки на спутниковом ортофотоплане.
+        </p>
+      </div>
+
+      <div class="tech-cards-grid">
+        <div class="tech-card">
+          <div class="tech-step-num">01</div>
+          <div class="tech-card-icon">🔍</div>
+          <h3>Первичный сбор улик (Intake)</h3>
+          <p>
+            Парсинг скрытых метаданных EXIF, оптическое распознавание текста (RapidOCR) на дорожных знаках,
+            вывесках и алтарях, определение климатической зоны, типов деревьев и архитектуры.
+          </p>
+        </div>
+
+        <div class="tech-card">
+          <div class="tech-step-num">02</div>
+          <div class="tech-card-icon">📐</div>
+          <h3>Геометрия и векторный анализ</h3>
+          <p>
+            Расчёт азимута съёмки по положению теней и солнцу (sun.py), угол наклона камеры (pitch),
+            сопоставление силуэта горных хребтов (skyline fit) с цифровой моделью рельефа DEM.
+          </p>
+        </div>
+
+        <div class="tech-card">
+          <div class="tech-step-num">03</div>
+          <div class="tech-card-icon">🛰️</div>
+          <h3>Спутниковое подтверждение</h3>
+          <p>
+            Автоматическая нарезка и сборка спутниковых тайлов высокого разрешения Google Satellite и Esri
+            с точностью масштаба до 0.35 м на пиксель (zoom 18-19).
+          </p>
+        </div>
+
+        <div class="tech-card">
+          <div class="tech-step-num">04</div>
+          <div class="tech-card-icon">🎯</div>
+          <h3>Доказательная база (Tier-A)</h3>
+          <p>
+            Никаких догадок: каждое утверждение подкреплено файлом снимка, координатами камеры,
+            координатами цели, линией прямой видимости и радиусом погрешности.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive CTA Bar -->
+    <section class="home-cta-section">
+      <div class="cta-inner">
+        <h2>Хотите проверить свою фотографию?</h2>
+        <p>Загрузите снимок прямо сейчас или откройте карту для интерактивного исследования уже найденных мест.</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-lg" id="btnCtaUpload">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span>Загрузить снимок</span>
+          </button>
+          <button class="btn btn-secondary btn-lg" id="btnCtaOpenMap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+            <span>Открыть интерактивную карту</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">🧭 GEOSLEUTH INTEL</span>
+          <span class="footer-desc">Локальная станция фотогеолокации и картографического анализа</span>
+        </div>
+        <div class="footer-tech">
+          <span>Leaflet.js</span> • <span>FastAPI</span> • <span>OpenStreetMap</span> • <span>Google Satellite</span> • <span>CLIP & DINOv2</span>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- =========================================================================
+       VIEW 2: INTERACTIVE MAP & INVESTIGATION WORKBENCH
+       ========================================================================= -->
+  <main class="view-container map-view" id="mapView" style="display: none;">
+    <!-- Map Container -->
+    <div class="map-viewport">
+      <div id="map" class="map-canvas"></div>
+
+      <!-- Map HUD Overlay -->
+      <div class="map-hud-top">
+        <div class="hud-pill" id="hudCoords">
+          <span class="hud-label">GPS ЦЕЛИ</span>
+          <span class="hud-value mono" id="hudCoordsVal">--</span>
+        </div>
+        <div class="hud-pill" id="hudDistance">
+          <span class="hud-label">ДИСТАНЦИЯ</span>
+          <span class="hud-value mono" id="hudDistVal">--</span>
+        </div>
+        <div class="hud-pill" id="hudBearing">
+          <span class="hud-label">АЗИМУТ ОБЗОРА</span>
+          <span class="hud-value mono" id="hudBearingVal">--</span>
+        </div>
+      </div>
+
+      <div class="map-hud-bottom">
+        <div class="hud-legend">
+          <div class="legend-item">
+            <span class="legend-icon camera-dot"></span>
+            <span>Точка съёмки (Камера)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-icon sight-vector"></span>
+            <span>Линия прямой видимости</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-icon target-pin"></span>
+            <span>Опознанный объект</span>
+          </div>
+        </div>
+
+        <div class="map-controls-floating">
+          <button class="hud-btn" id="btnResetView" title="Сфокусировать на текущем кейсе">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+          <button class="hud-btn" id="btnToggleSightLine" title="Показать/скрыть вектор обзора">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+          <button class="hud-btn hud-btn-rescan" id="btnFloatingRescan" title="Неправильный ответ? Заново сделать поиск (5 запусков)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span class="hud-btn-rescan-text">🔄 5 запусков</span>
+          </button>
+          <button class="hud-btn" id="btnToggle5PassGrid" title="Отобразить метки всех 5 независимых проходов на карте">
+            <span style="font-size:11px;font-weight:700;">📡 5 Запусков</span>
+          </button>
+          <button class="hud-btn" id="btnToggleCoordFormat" title="Переключить формат координат">
+            <span id="coordFormatLabel" style="font-size:11px;font-weight:700;">DD</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details & Evidence Sidebar -->
+    <aside class="sidebar-panel" id="sidebarPanel">
+      <div class="sidebar-header">
+        <div class="case-meta-top">
+          <span class="country-badge" id="caseCountry">--</span>
+          <span class="confidence-badge" id="caseConfidence">--</span>
+        </div>
+        <h2 class="case-title" id="caseTitle">Загрузка данных...</h2>
+        <div class="case-location-row" id="caseRegion">--</div>
+
+        <!-- Re-Scan Prompt Bar for Incorrect Answers -->
+        <div class="rescan-prompt-bar" id="rescanPromptBar">
+          <div class="rescan-prompt-text">
+            <span>⚠️ Результат не совпадает?</span>
+            <small>Запустите ансамбль из 5 проходов с подсказкой</small>
+          </div>
+          <button class="btn btn-xs btn-outline-warning" id="btnTriggerRescanQuick" title="Повторить поиск (5 независимых запусков)">
+            <span>🔄 5 запусков</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-scrollable">
+        <!-- PROMINENT RE-SCAN ACTION CARD FOR INCORRECT ANSWERS -->
+        <section class="card rescan-banner-card" id="rescanBannerCard">
+          <div class="rescan-banner-content">
+            <div class="rescan-banner-badge">⚠️ ПРОВЕРКА ТОЧНОСТИ</div>
+            <h3 class="rescan-banner-title">Ответ не правильный?</h3>
+            <p class="rescan-banner-desc">Запустите заново 5 независимых этапов нейросетей (Яндекс Vision AI, Focal Crop, Google Lens кросс-чек, Deep OCR & Синтез консенсуса).</p>
+            <button class="btn btn-warning-glow btn-block btn-rescan-prominent" id="btnRescanProminent">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>🔄 ЗАНОВО СДЕЛАТЬ ПОИСК (5 ЗАПУСКОВ)</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Main Target Photo Card -->
+        <section class="card target-photo-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>ЦЕЛЕВОЕ ФОТО</span>
+            </div>
+            <button class="btn-icon" id="btnViewMainPhoto" title="Открыть в полном размере">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="photo-container" id="mainPhotoWrapper">
+            <img src="" alt="Целевая фотография" id="mainPhotoImg" class="main-photo-preview">
+            <div class="photo-overlay-badge" id="photoOverlayBadge">Объект верифицирован</div>
+          </div>
+          <div class="photo-actions-row">
+            <!-- 1. Yandex Maps (Primary Authoritative Engine) -->
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-yandex" id="btnOpenInYandexMaps" title="Открыть точку в Яндекс.Картах (Панорамы улиц и спутник)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="10" r="3"></circle>
+                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+              </svg>
+              <span>🟡 Яндекс.Карты</span>
+            </a>
+            <!-- 2. Yandex Visual Search (Primary Image Matching) -->
+            <button class="btn btn-sm btn-yandex-subtle" id="btnOpenInYandexVisual" title="Открыть Яндекс.Поиск по фото (Обратный поиск)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>🟡 Яндекс Поиск по фото</span>
+            </button>
+            <!-- 3. 2GIS (Kazakhstan / CIS Navigation) -->
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnOpenIn2Gis" title="Открыть в 2ГИС (Казахстан и СНГ)">
+              <span>🟢 2ГИС</span>
+            </a>
+            <!-- 4. Google Maps (Secondary) -->
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnOpenInGoogleMaps" title="Открыть точку на Google Maps">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>🗺️ Google Maps</span>
+            </a>
+            <!-- 5. Google Lens (Auxiliary Fallback) -->
+            <button class="btn btn-sm btn-secondary" id="btnOpenInGoogleLens" title="Google Lens (Вспомогательный резерв)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="4"></circle>
+                <line x1="21.17" y1="8" x2="12" y2="8"></line>
+                <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+                <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+              </svg>
+              <span>🔍 Google Lens (резерв)</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnOpenStreetView" title="Пошаговая верификация ракурса (Street View)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+              </svg>
+              <span>🚶 Street View</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnCheckPhotoOpsec" title="OPSEC: Проверить утечки EXIF в этом фото">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>🛡️ OPSEC</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnOpenSplitSlider" title="Сравнение фото со спутником (шторка)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="3" x2="12" y2="21"></line>
+                <polyline points="8 8 4 12 8 16"></polyline>
+                <polyline points="16 8 20 12 16 16"></polyline>
+              </svg>
+              <span>🎚️ Слайдер</span>
+            </button>
+            <button class="btn btn-sm btn-secondary btn-evidence-dossier" id="btnOpenEvidenceSheet" title="Сгенерировать и просмотреть судебное досье улик (Evidence Sheet 300 DPI)">
+              <span>📑 Досье улик (Evidence)</span>
+            </button>
+            <button class="btn btn-sm btn-secondary btn-wayback" id="btnCaseWayback" title="Открыть спутниковый таймлайн Wayback (2014–2026) для этой локации">
+              <span>🛰️ Wayback</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnExportDossier" title="Экспорт досье">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>📄 Экспорт</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnPrintPdf" title="Печать официального отчёта">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span>🖨️ PDF</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnExportKml" title="Экспорт в Google Earth 3D (.KML)">
+              <span>🌍 KML</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnExportGeoJson" title="Экспорт в GIS (.geojson)">
+              <span>🗺️ GeoJSON</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnOpenElaModal" title="Криминалистический ELA-анализ артефактов сжатия и ретуши">
+              <span>🔬 ELA</span>
+            </button>
+            <button class="btn btn-sm btn-accent-ai" id="btnOpenAiScout" title="ИИ-Разведчик улик: анализ биома, языка (РК), автокодов и выработка стратегии">
+              <span class="ai-btn-pulse">🤖</span>
+              <span>ИИ-Улики</span>
+            </button>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-2gis" id="btnOpenIn2Gis" title="Открыть объект в 2ГИС Казахстан">
+              <span>📍 2ГИС РК</span>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnOpenInYandexMaps" title="Открыть в Яндекс.Картах">
+              <span>🟡 Яндекс</span>
+            </a>
+            <button class="btn btn-sm btn-secondary" id="btnOpenOcrModal" title="Оптическое распознавание текста (OCR) на фото и гео-поиск">
+              <span>🔤 OCR Текст</span>
+            </button>
+            <button class="btn btn-sm btn-rescan" id="btnRescanCase" title="Ответ неверный? Повторить поиск через ансамбль из 5 запусков">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>🔄 5 запусков поиска</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Coordinates & Geometry Card -->
+        <section class="card geometry-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <span>ТЕЛЕМЕТРИЯ И ГЕОМЕТРИЯ</span>
+            </div>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="telem-box">
+              <div class="telem-label">ОБЪЕКТ / ЦЕЛЬ</div>
+              <div class="telem-name" id="targetName">--</div>
+              <div class="telem-coords mono" id="targetCoords">--</div>
+              <button class="btn-copy" data-target="targetCoords" title="Копировать">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="telem-box">
+              <div class="telem-label">ПОЗИЦИЯ КАМЕРЫ</div>
+              <div class="telem-name" id="cameraName">--</div>
+              <div class="telem-coords mono" id="cameraCoords">--</div>
+              <button class="btn-copy" data-target="cameraCoords" title="Копировать">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Elevation Ribbon -->
+          <div class="elevation-ribbon" id="elevationRibbon">
+            <div class="elev-item">
+              <span class="elev-label">ВЫСОТА КАМЕРЫ</span>
+              <span class="elev-val mono" id="elevCameraVal">-- м</span>
+            </div>
+            <div class="elev-divider"></div>
+            <div class="elev-item">
+              <span class="elev-label">ВЫСОТА ЦЕЛИ</span>
+              <span class="elev-val mono" id="elevTargetVal">-- м</span>
+            </div>
+            <div class="elev-divider"></div>
+            <div class="elev-item">
+              <span class="elev-label">ПЕРЕПАД (Δh)</span>
+              <span class="elev-val mono" id="elevDeltaVal">-- м</span>
+            </div>
+          </div>
+
+          <div class="vector-indicators">
+            <div class="compass-widget">
+              <div class="compass-dial" id="compassDial">
+                <div class="compass-needle" id="compassNeedle"></div>
+                <span class="compass-cardinal n">N</span>
+                <span class="compass-cardinal e">E</span>
+                <span class="compass-cardinal s">S</span>
+                <span class="compass-cardinal w">W</span>
+              </div>
+              <div class="compass-readout">
+                <span class="readout-val mono" id="bearingDegText">0°</span>
+                <span class="readout-label">АЗИМУТ</span>
+              </div>
+            </div>
+
+            <div class="dist-widget">
+              <div class="dist-row">
+                <span class="dist-label">Дистанция:</span>
+                <span class="dist-val mono" id="distMetersText">-- м</span>
+              </div>
+              <div class="dist-row">
+                <span class="dist-label">Погрешность:</span>
+                <span class="dist-val mono" id="errorRadiusText">±-- м</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drag Calibration Bar -->
+          <div class="calibration-bar" id="calibrationBar">
+            <div class="calib-hint">
+              <span>💡 Маркеры можно двигать мышкой!</span>
+            </div>
+            <button class="btn btn-sm btn-outline-warning" id="btnToggleMicroCalib" style="width: 100%; margin-bottom: 6px;" title="Включить свободное перетаскивание камеры и цели">
+              <span>🎯 Включить режим точной доводки (Drag Pins)</span>
+            </button>
+            <button class="btn btn-sm btn-primary" id="btnSaveCalibration" disabled style="width: 100%;">
+              <span>💾 Сохранить координаты в базу</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- SunCalc Solar & Shadow Analysis Card -->
+        <section class="card suncalc-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <span>ПОЛОЖЕНИЕ СОЛНЦА И ТЕНИ (SUNCALC)</span>
+            </div>
+            <button class="btn btn-sm btn-outline" id="btnToggleSunRay" title="Отобразить угол солнечных лучей на карте">
+              <span>☀️ Луч солнца</span>
+            </button>
+          </div>
+
+          <div class="suncalc-controls">
+            <div class="suncalc-input-row">
+              <label for="sunDateTimeInput">Время съёмки:</label>
+              <input type="datetime-local" id="sunDateTimeInput" class="form-input form-input-sm">
+            </div>
+            <div class="suncalc-slider-row">
+              <span class="slider-label">06:00</span>
+              <input type="range" id="sunTimeSlider" min="360" max="1260" step="15" value="720" class="sun-range-slider" title="Быстрый ползунок времени суток">
+              <span class="slider-label">21:00</span>
+            </div>
+          </div>
+
+          <div class="suncalc-metrics">
+            <div class="sun-metric-box">
+              <span class="metric-label">АЗИМУТ СОЛНЦА</span>
+              <span class="metric-val mono" id="sunAzimuthVal">--°</span>
+            </div>
+            <div class="sun-metric-box">
+              <span class="metric-label">ВЫСОТА (УГОЛ)</span>
+              <span class="metric-val mono" id="sunAltitudeVal">--°</span>
+            </div>
+            <div class="sun-metric-box">
+              <span class="metric-label">ДЛИНА ТЕНИ</span>
+              <span class="metric-val mono" id="sunShadowMultiplier">--×</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- AI Visual Clue Scout & Kazakhstan Anchor Analyzer Card -->
+        <section class="card ai-scout-card" id="aiScoutCard">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="ai-pulse-icon">🤖</span>
+              <span>ИИ-РАЗВЕДЧИК & АНАЛИЗАТОР КАЗАХСТАНА</span>
+            </div>
+            <button class="btn btn-xs btn-outline-ai" id="btnOpenAiScoutModal" title="Развернуть полный отчет ИИ-разведчика">
+              <span>Подробнее ↗</span>
+            </button>
+          </div>
+          <div class="ai-scout-body">
+            <div class="ai-scene-row">
+              <span class="ai-scene-badge" id="aiSceneBadge">🌲 Биом: Анализируется...</span>
+              <span class="ai-kz-badge" id="aiKzBadge" style="display:none;">🇰🇿 Приоритет Казахстан</span>
+            </div>
+            <div class="ai-strategy-box" id="aiStrategyBox">
+              <div class="ai-strategy-header">🧭 Стратегия поиска ИИ:</div>
+              <div class="ai-strategy-text" id="aiStrategyText">Многофакторный анализ сцены...</div>
+            </div>
+            <div class="ai-anchors-wrap">
+              <div class="ai-anchors-header">📌 Выявленные опорные точки (Якоря):</div>
+              <div class="ai-anchors-list" id="aiAnchorsList">
+                <!-- Anchor chips rendered by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ubinam 5-Tier Confidence Ladder & Error Radius Card -->
+        <section class="card ubinam-ladder-card" id="ubinamLadderCard">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span style="font-size: 1rem;">🪜</span>
+              <span>ЛЕСТНИЦА ДОВЕРИЯ UBINAM (5 УРОВНЕЙ)</span>
+            </div>
+            <span class="ubinam-radius-pill mono" id="ubinamErrorRadiusPill">±25 м</span>
+          </div>
+          <div class="ubinam-ladder-body">
+            <div class="ubinam-steps" id="ubinamStepsList">
+              <!-- Tier 1..5 rendered by JS -->
+            </div>
+            <div class="ubinam-missing-box" id="ubinamMissingBox" style="display: none;">
+              <div class="ubinam-missing-header">⚠️ Чего не хватает для перехода на следующий уровень:</div>
+              <ul class="ubinam-missing-list" id="ubinamMissingList"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- FindMyPhoto Geotag & Kazakhstan Distance Matrix Card -->
+        <section class="card findmyphoto-card" id="findmyphotoCard">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span style="font-size: 1rem;">📷</span>
+              <span>FINDMYPHOTO • GEOTAG & ДИСТАНЦИИ РК</span>
+            </div>
+            <button class="btn btn-xs btn-primary" id="btnGeotagExif">
+              <span>📌 Вшить GPS в EXIF</span>
+            </button>
+          </div>
+          <div class="findmyphoto-body">
+            <div class="fmp-nearest-hub" id="fmpNearestHub">
+              <span class="fmp-hub-label">Ближайший областной центр:</span>
+              <span class="fmp-hub-val mono" id="fmpNearestCityVal">--</span>
+            </div>
+            <div class="fmp-matrix-table-wrap">
+              <table class="fmp-distance-table" id="fmpDistanceTable">
+                <thead>
+                  <tr>
+                    <th>Ориентир / Центр</th>
+                    <th>Регион</th>
+                    <th>Дистанция</th>
+                  </tr>
+                </thead>
+                <tbody id="fmpDistanceTableBody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+            <div id="fmpGeotagSuccessNotice" class="fmp-download-notice" style="display: none;">
+              <span>✅ Координаты вшиты в EXIF!</span>
+              <a href="#" class="action-link" id="linkDownloadGeotagged" download>📥 Скачать геопривязанное фото (.jpg)</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Kazakh Signboard & Title Mining Card (Geo-Guesser) -->
+        <section class="card kz-signboard-card" id="kzSignboardCard">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span style="font-size: 1rem;">🏷️</span>
+              <span>МАЙНИНГ КАЗАХСКИХ ВЫВЕСОК & 2GIS</span>
+            </div>
+          </div>
+          <div class="kz-signboard-body">
+            <div id="kzSignboardLists">
+              <!-- Mined streets and businesses injected by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- OSINT Signals & Forensic Rules Card -->
+        <section class="card signals-card" id="osintSignalsCard">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span style="font-size: 1rem;">🔬</span>
+              <span>ФОРЕНЗИЧЕСКИЕ OSINT-СИГНАЛЫ</span>
+            </div>
+            <button class="btn btn-xs btn-outline" id="btnQuickOpenInspector" title="Открыть полный OSINT Инспектор">
+              <span>Инструменты ↗</span>
+            </button>
+          </div>
+          <div class="signals-grid">
+            <div class="signal-box">
+              <span class="signal-label">Сторона движения</span>
+              <div class="signal-value" id="sigDrivingSide">
+                <span class="signal-badge badge-rht" id="sigDrivingBadge">RHT Правое</span>
+              </div>
+            </div>
+            <div class="signal-box">
+              <span class="signal-label">Автокод региона</span>
+              <div class="signal-value mono" id="sigPlateRegion">--</div>
+            </div>
+            <div class="signal-box">
+              <span class="signal-label">Телефонный префикс</span>
+              <div class="signal-value mono" id="sigPhonePrefix">--</div>
+            </div>
+            <div class="signal-box">
+              <span class="signal-label">Спутник Wayback</span>
+              <div class="signal-value" id="sigWaybackSummary">
+                <button class="btn btn-xs btn-wayback" id="btnSideOpenWayback">197 релизов</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- OSINT Clues & Analysis -->
+        <section class="card clues-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>ОБОСНОВАНИЕ И УЛИКИ</span>
+            </div>
+          </div>
+          <p class="case-description" id="caseDescription">--</p>
+          <div class="sidebar-ocr-box" id="sidebarOcrBox" style="display: none;">
+            <div class="sidebar-ocr-header">
+              <span class="ocr-icon">🔤</span>
+              <span class="ocr-title">Распознанный текст на фото (Deep OCR):</span>
+            </div>
+            <div class="sidebar-ocr-chips" id="sidebarOcrChips"></div>
+          </div>
+          <div class="clues-list" id="cluesList">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- Evidence Gallery Card -->
+        <section class="card evidence-gallery-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                <line x1="7" y1="2" x2="7" y2="22"></line>
+                <line x1="17" y1="2" x2="17" y2="22"></line>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <line x1="2" y1="7" x2="7" y2="7"></line>
+                <line x1="2" y1="17" x2="7" y2="17"></line>
+                <line x1="17" y1="17" x2="22" y2="17"></line>
+                <line x1="17" y1="7" x2="22" y2="7"></line>
+              </svg>
+              <span>СПУТНИКОВЫЕ И ДОПОЛНИТЕЛЬНЫЕ ФОТО</span>
+            </div>
+            <span class="evidence-count-badge" id="evidenceCount">0</span>
+          </div>
+
+          <div class="evidence-actions-bar">
+            <button class="btn btn-sm btn-outline" id="btnRequestSatImagery">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="4"></circle>
+                <line x1="21.17" y1="8" x2="12" y2="8"></line>
+                <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+                <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+              </svg>
+              <span>🛰️ Спутниковый снимок точки</span>
+            </button>
+            <button class="btn btn-sm btn-outline" id="btnAddEvidencePhoto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>➕ Прикрепить фото</span>
+            </button>
+          </div>
+
+          <div class="evidence-grid" id="evidenceGrid">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 3: SPYBRAIN TACTICAL RADAR & ENTITY INTELLIGENCE HUB
+       ========================================================================= -->
+  <section class="view-container radar-view" id="radarView" style="display: none;">
+    <div class="radar-page-container">
+      <div class="radar-page-header">
+        <div class="radar-title-badge">
+          <span class="pulse-dot"></span>
+          <span>SPYBRAIN TACTICAL OSINT RADAR • КАЗАХСТАН</span>
+        </div>
+        <h1 class="radar-main-title">Тактический радар и разведка сущностей РК</h1>
+        <p class="radar-main-subtitle">Сплошное сканирование 20 регионов Республики Казахстан, пеленгация радиосигналов и телефонных сетей, валидация ИИН/БИН и майнинг вывесок.</p>
+      </div>
+
+      <div class="radar-main-layout">
+        <!-- Left: Tactical Radar Screen -->
+        <div class="radar-screen-card">
+          <div class="radar-screen-header">
+            <div class="radar-mode-tag">ЦЕЛЬ: РЕСПУБЛИКА КАЗАХСТАН [40.5°N–55.5°N, 46.5°E–87.5°E]</div>
+            <div class="radar-azimuth-display">АЗИМУТ: <span id="radarCurrentAzimuth" class="mono">042°</span></div>
+          </div>
+          
+          <div class="radar-display-wrap">
+            <div class="radar-sweep-canvas-box">
+              <canvas id="radarCanvas" width="460" height="460" class="radar-canvas"></canvas>
+              <div class="radar-crosshair"></div>
+              <div class="radar-center-blip"></div>
+              <div class="radar-range-ring ring-1" data-label="50 км"></div>
+              <div class="radar-range-ring ring-2" data-label="150 км"></div>
+              <div class="radar-range-ring ring-3" data-label="300 км"></div>
+              <div class="radar-range-ring ring-4" data-label="600 км"></div>
+              <div class="radar-range-ring ring-5" data-label="1200 км"></div>
+              <div class="radar-compass-label north">С (N) 0°</div>
+              <div class="radar-compass-label east">В (E) 90°</div>
+              <div class="radar-compass-label south">Ю (S) 180°</div>
+              <div class="radar-compass-label west">З (W) 270°</div>
+              <div id="radarTargetBlips" class="radar-blips-layer"></div>
+            </div>
+          </div>
+
+          <div class="radar-screen-footer">
+            <div class="telemetry-item">
+              <span class="telemetry-label">АКТИВНЫЕ ЦЕЛИ РК:</span>
+              <span class="telemetry-val mono" id="radarTargetCount">24 объекта</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">ЧАСОВОЙ ПОЯС:</span>
+              <span class="telemetry-val mono">UTC+5 (Unified KZ)</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">СТАТУС ПЕЛЕНГАЦИИ:</span>
+              <span class="telemetry-val mono text-success">АКТИВЕН</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Multi-Tool Intelligence Station -->
+        <div class="radar-tools-card">
+          <!-- Tool 1: IIN / BIN Validator -->
+          <div class="radar-tool-box">
+            <div class="radar-tool-header">
+              <span class="tool-icon">🪪</span>
+              <div>
+                <h4>Валидатор и Декодер ИИН / БИН Казахстана</h4>
+                <p>Проверка контрольной суммы по 11-значному алгоритму, извлечение даты рождения/регистрации и пола</p>
+              </div>
+            </div>
+            <div class="radar-tool-input-row">
+              <input type="text" id="radarIinInput" placeholder="Введите 12-значный ИИН или БИН (например: 920514301254)..." class="form-input mono" maxlength="12">
+              <button class="btn btn-primary" id="btnValidateIin">Проверить</button>
+            </div>
+            <div class="radar-tool-result" id="radarIinResult" style="display: none;"></div>
+          </div>
+
+          <!-- Tool 2: KZ Phone Operator & City Lookup -->
+          <div class="radar-tool-box">
+            <div class="radar-tool-header">
+              <span class="tool-icon">📞</span>
+              <div>
+                <h4>Определитель телефонов и операторов РК</h4>
+                <p>Все мобильные операторы (Kcell/Activ, Beeline, Tele2, Altel, Izi) и 20 кодов городов</p>
+              </div>
+            </div>
+            <div class="radar-tool-input-row">
+              <input type="text" id="radarPhoneInput" placeholder="+7 701 ... или +7 (7172) ... или 8 727 ..." class="form-input mono">
+              <button class="btn btn-primary" id="btnLookupPhoneRadar">Анализ</button>
+            </div>
+            <div class="radar-tool-result" id="radarPhoneResult" style="display: none;"></div>
+          </div>
+
+          <!-- Tool 3: Kazakh Signboard & Title Miner -->
+          <div class="radar-tool-box">
+            <div class="radar-tool-header">
+              <span class="tool-icon">🏷️</span>
+              <div>
+                <h4>Майнинг вывесок и учреждений РК (Geo-Guesser)</h4>
+                <p>Выделение названий улиц (көшесі/пр.), заведений (дүкен, дәріхана), ведомств (әкімдігі) и 1-клик поиск в 2GIS</p>
+              </div>
+            </div>
+            <div class="radar-tool-input-row" style="flex-direction: column; align-items: stretch;">
+              <textarea id="radarSignboardInput" rows="2" placeholder="Вставьте OCR текст с фотографии, вывески или чека..." class="form-input"></textarea>
+              <button class="btn btn-primary" id="btnMineSignboardsRadar" style="margin-top: 8px;">Выделить объекты и сгенерировать 2GIS ссылки</button>
+            </div>
+            <div class="radar-tool-result" id="radarSignboardResult" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       VIEW 4: KAZAKHSTAN GEOLOCATION KNOWLEDGE BASE & 262-RULE EXPLORER
+       ========================================================================= -->
+  <section class="view-container knowledge-view" id="knowledgeView" style="display: none;">
+    <div class="knowledge-page-container">
+      <div class="knowledge-page-header">
+        <div class="radar-title-badge">
+          <span>🇰🇿 SEARCHING-SKILL • 262 ПРАВИЛА ГЕОЛОКАЦИИ ПО КАЗАХСТАНУ</span>
+        </div>
+        <h1 class="radar-main-title">Полная база знаний для распознавания регионов РК</h1>
+        <p class="radar-main-subtitle">Справочник уникальных региональных примет: от 20 автокодов и окраски опор ЛЭП до фирменных расцветок автобусов, профилей трасс и горных биомов.</p>
+      </div>
+
+      <!-- Quick Category Filter Pills -->
+      <div class="knowledge-filter-bar">
+        <div class="knowledge-category-pills" id="knowledgeCategoryPills">
+          <button class="k-pill active" data-cat="all">⚡ Все 262 правила</button>
+          <button class="k-pill" data-cat="plates">🚗 Автономера 01–20</button>
+          <button class="k-pill" data-cat="poles">⚡ Опоры ЛЭП и столбы</button>
+          <button class="k-pill" data-cat="buses">🚌 Городской транспорт</button>
+          <button class="k-pill" data-cat="highways">🛣️ Трассы и магистрали</button>
+          <button class="k-pill" data-cat="nature">🌲 Биомы и природа</button>
+          <button class="k-pill" data-cat="architecture">🏛️ Архитектура и газ</button>
+        </div>
+        <div class="knowledge-search-wrap">
+          <input type="text" id="knowledgeSearchInput" placeholder="Быстрый поиск по приметам (например: 'бирюзовый', 'Уральск', 'сосны')..." class="form-input">
+        </div>
+      </div>
+
+      <!-- Interactive 20-Region Plate Grid -->
+      <div class="knowledge-plates-section" id="knowledgePlatesSection">
+        <div class="section-tag">20 РЕГИОНАЛЬНЫХ АВТОКОДОВ РЕСПУБЛИКИ КАЗАХСТАН (СТАНДАРТ 2012+)</div>
+        <div class="kz-plates-grid" id="kzPlatesGrid">
+          <!-- Rendered by JS: 20 realistic plates with flag, code, region, and cues -->
+        </div>
+      </div>
+
+      <!-- Rules Cards Grid -->
+      <div class="knowledge-rules-section">
+        <div class="section-tag" id="knowledgeRulesTag">ПОДРОБНЫЕ ПРАВИЛА И ОРИЕНТИРЫ</div>
+        <div class="rules-cards-grid" id="knowledgeRulesGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upload Modal -->
+  <div class="modal-backdrop" id="uploadModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <h2>Загрузить фото для геолокации</h2>
+        </div>
+        <button class="btn-close-modal" id="btnCloseUploadModal">&times;</button>
+      </div>
+
+      <form id="uploadForm" class="upload-form">
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" name="file" accept="image/*" class="dropzone-input" required>
+          <div class="dropzone-content" id="dropzoneContent">
+            <div class="dropzone-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <p class="dropzone-title">Перетащите изображение сюда или <span class="highlight">выберите файл</span></p>
+            <p class="dropzone-hint">Поддерживаются JPEG, PNG, WEBP. Система автоматически извлечет EXIF-GPS при наличии.</p>
+          </div>
+          <div class="dropzone-preview" id="dropzonePreview" style="display: none;">
+            <img src="" id="uploadPreviewImg" alt="Превью загрузки">
+            <div class="preview-meta" id="uploadPreviewMeta"></div>
+          </div>
+        </div>
+
+        <!-- Primary Action: Automated 5-Pass Geolocation Search -->
+        <div class="auto-scan-box">
+          <div class="auto-scan-info">
+            <span class="auto-scan-badge">🤖 АНСАМБЛЬ ИЗ 5 ЗАПУСКОВ (ПРИОРИТЕТ ЯНДЕКС)</span>
+            <h3>Поиск локации (5 независимых запусков нейросети)</h3>
+            <p>Система выполнит 5 отдельных запусков с приоритетом Яндекс: 1) Яндекс Vision AI (полный кадр), 2) Яндекс Focal Crop 70%, 3) Google Lens (резервный кросс-чек), 4) Deep Semantic OCR & Автокоды РК, 5) Финальный консенсус со спутником Яндекс/Google.</p>
+          </div>
+          <button type="button" class="btn btn-warning-glow btn-lg full-width btn-pulse-scan" id="btnStartAutoScan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            <span>🚀 СДЕЛАТЬ ОТВЕТ (5 ЗАПУСКОВ ПОИСКА)</span>
+          </button>
+        </div>
+
+        <!-- Secondary: Manual coordinate inputs toggle -->
+        <div class="manual-toggle-row">
+          <button type="button" class="btn-text-toggle" id="btnToggleManualInputs">
+            <span>⚙️ Указать координаты вручную или на карте</span>
+            <span class="toggle-arrow" id="toggleArrow">▼</span>
+          </button>
+        </div>
+
+        <div class="manual-inputs-container" id="manualInputsContainer" style="display: none;">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="inputTitle">Название кейса / объекта</label>
+              <input type="text" id="inputTitle" name="title" placeholder="например: Гора Бештау / Неизвестное здание" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="inputCountry">Страна</label>
+              <input type="text" id="inputCountry" name="country" placeholder="например: Казахстан" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="inputRegion">Регион / Город</label>
+              <input type="text" id="inputRegion" name="region" placeholder="например: Алматы" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="inputCameraLat">Широта (Latitude)</label>
+              <input type="number" step="any" id="inputCameraLat" name="camera_lat" placeholder="53.086724" class="form-input mono">
+            </div>
+
+            <div class="form-group">
+              <label for="inputCameraLon">Долгота (Longitude)</label>
+              <input type="number" step="any" id="inputCameraLon" name="camera_lon" placeholder="70.250745" class="form-input mono">
+            </div>
+
+            <div class="form-group">
+              <label for="inputBearing">Азимут взгляда (°)</label>
+              <input type="number" step="any" id="inputBearing" name="bearing_deg" placeholder="45" class="form-input mono">
+            </div>
+
+            <div class="form-group">
+              <label for="inputDistance">Дистанция до объекта (м)</label>
+              <input type="number" step="any" id="inputDistance" name="distance_m" placeholder="100" class="form-input mono">
+            </div>
+
+            <div class="form-group full-width">
+              <label for="inputDesc">Описание и улики</label>
+              <textarea id="inputDesc" name="description" rows="2" placeholder="Заметки по фото, архитектуре, надписям..." class="form-input"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top: 12px;">
+            <button type="button" class="btn btn-secondary" id="btnPickOnMap">
+              📍 Кликнуть на карте
+            </button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitUpload">
+              <span>Сохранить вручную</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Live OSINT Geolocation Scanner Modal -->
+  <div class="modal-backdrop" id="scanModal" style="display: none;">
+    <div class="modal-card modal-scan">
+      <div class="scan-header">
+        <div class="scan-radar-icon">
+          <div class="radar-ping"></div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+        </div>
+        <div class="scan-title-wrap">
+          <h2>OSINT Спутниковый Поиск</h2>
+          <p id="scanSubStatus">Инициализация нейросетевых анализаторов...</p>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="scan-progress-bar-wrap">
+        <div class="scan-progress-bar" id="scanProgressBar" style="width: 10%;"></div>
+      </div>
+
+      <!-- Live Terminal Output -->
+      <div class="scan-terminal" id="scanTerminal">
+        <div class="terminal-line"><span class="term-dim">[SYSTEM]</span> Запуск конвейера фотогеолокации GeoSleuth...</div>
+      </div>
+
+      <div class="scan-footer-tip">
+        <span>Поиск занимает 10-25 секунд (запросы к Yandex Vision AI, ОСИНТ-правилам, Google Lens и спутниковым серверам)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Evidence Modal -->
+  <div class="modal-backdrop" id="evidenceModal" style="display: none;">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h2>Прикрепить дополнительное фото</h2>
+        <button class="btn-close-modal" id="btnCloseEvidenceModal">&times;</button>
+      </div>
+      <form id="evidenceForm" class="upload-form">
+        <div class="form-group full-width">
+          <label>Файл улик / спутникового снимка</label>
+          <input type="file" id="evidenceFileInput" name="file" accept="image/*" class="form-input" required>
+        </div>
+        <div class="form-group full-width">
+          <label>Заголовок фото</label>
+          <input type="text" id="evidenceTitleInput" name="title" placeholder="например: Спутниковый зум хребта" class="form-input" required>
+        </div>
+        <div class="form-group full-width">
+          <label>Пояснение / Описание</label>
+          <textarea id="evidenceDescInput" name="desc" rows="2" placeholder="Что подтверждает эта фотография..." class="form-input"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary full-width" id="btnSubmitEvidence">
+            Прикрепить к текущему кейсу
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Split Comparison Slider Modal -->
+  <div class="modal-backdrop" id="splitSliderModal" style="display: none;">
+    <div class="modal-card modal-slider">
+      <div class="modal-header">
+        <div class="split-slider-titles">
+          <h2>Сравнение: Фотография ⟷ Спутниковый снимок</h2>
+          <p>Перетаскивайте ползунок по центру для сопоставления контуров и ориентиров</p>
+        </div>
+        <button class="btn-close-modal" id="btnCloseSplitSlider">&times;</button>
+      </div>
+      <div class="split-slider-viewport" id="splitSliderViewport">
+        <!-- Base: Satellite Image -->
+        <img src="" id="splitSliderSatImg" class="split-img split-img-base" alt="Спутниковый снимок">
+        <!-- Overlay: Target Photo -->
+        <div class="split-clip-container" id="splitClipContainer">
+          <img src="" id="splitSliderPhotoImg" class="split-img split-img-overlay" alt="Целевое фото">
+        </div>
+        <!-- Divider Handle -->
+        <div class="split-divider-handle" id="splitDividerHandle">
+          <div class="split-handle-line"></div>
+          <div class="split-handle-knob">
+            <span>◀ ▶</span>
+          </div>
+        </div>
+        <!-- Badges -->
+        <div class="split-badge split-badge-left">📷 ИСХОДНОЕ ФОТО</div>
+        <div class="split-badge split-badge-right">🛰️ СПУТНИК GOOGLE</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Rescan / Ensemble 5-Pass Modal -->
+  <div class="modal-backdrop" id="rescanModal" style="display: none;">
+    <div class="modal-card modal-rescan">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">🔄</div>
+          <div>
+            <h2>Повторный поиск локации (5 запусков)</h2>
+            <p>Многопроходный ансамбль OSINT + Vision AI с выводом конечного результата</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseRescanModal">&times;</button>
+      </div>
+
+      <form id="rescanForm" class="rescan-form">
+        <!-- Target Photo Preview Card -->
+        <div class="rescan-preview-box">
+          <div class="rescan-img-wrap">
+            <img src="" id="rescanPhotoThumb" alt="Целевое фото">
+          </div>
+          <div class="rescan-case-info">
+            <div class="rescan-info-badge" id="rescanCurrentStatus">АКТИВНЫЙ КЕЙС</div>
+            <h3 id="rescanCaseTitle">--</h3>
+            <p id="rescanCurrentCoords" class="mono text-muted">--</p>
+            <div class="rescan-alert-note">
+              <span>💡 Если прошлый ответ неверный, укажите ключевые слова (страну, регион, название озера или горы) для направленной калибровки ансамбля.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional Hint Field -->
+        <div class="form-group full-width">
+          <label for="rescanHintInput">
+            <strong>Дополнительная подсказка / ориентир (необязательно)</strong>
+            <span class="hint-label-desc">Например: «Боровое Казахстан», «Нячанг Вьетнам», «Астана мечеть», «Далат»</span>
+          </label>
+          <div class="hint-input-wrapper">
+            <input type="text" id="rescanHintInput" name="hint" placeholder="Введите известное название, регион или деталь..." class="form-input hint-input">
+            <div class="quick-hint-tags" id="quickHintTags">
+              <button type="button" class="tag-pill" data-hint="Казахстан Бурабай Боровое">🇰🇿 Бурабай / Боровое</button>
+              <button type="button" class="tag-pill" data-hint="Казахстан Астана">🇰🇿 Астана</button>
+              <button type="button" class="tag-pill" data-hint="Вьетнам Нячанг">🇻🇳 Нячанг</button>
+              <button type="button" class="tag-pill" data-hint="Вьетнам Далат Пагода">🇻🇳 Далат</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- The 5 Passes Info Box -->
+        <div class="ensemble-passes-info">
+          <div class="passes-title">⚙️ ПРОГРАММА АНСАМБЛЯ ИЗ 5 ЗАПУСКОВ:</div>
+          <div class="passes-grid">
+            <div class="pass-pill" style="border-color: rgba(255, 204, 0, 0.4); background: rgba(255, 204, 0, 0.08);">
+              <span class="pass-num" style="background: #ffcc00; color: #000;">1</span>
+              <div class="pass-text">
+                <strong>Яндекс Vision AI (Главный)</strong>
+                <span>Анализ полного кадра и POI</span>
+              </div>
+            </div>
+            <div class="pass-pill" style="border-color: rgba(255, 204, 0, 0.3); background: rgba(255, 204, 0, 0.05);">
+              <span class="pass-num" style="background: #eab308; color: #000;">2</span>
+              <div class="pass-text">
+                <strong>Яндекс Focal Crop 70%</strong>
+                <span>Фокус на ключевом объекте</span>
+              </div>
+            </div>
+            <div class="pass-pill">
+              <span class="pass-num">3</span>
+              <div class="pass-text">
+                <strong>Google Lens AI (Резерв)</strong>
+                <span>Вспомогательный кросс-чек</span>
+              </div>
+            </div>
+            <div class="pass-pill">
+              <span class="pass-num">4</span>
+              <div class="pass-text">
+                <strong>Deep OCR & OSINT Правила</strong>
+                <span>Автокоды 01–20 РК, телефоны, надписи</span>
+              </div>
+            </div>
+            <div class="pass-pill pass-pill-final">
+              <span class="pass-num">5</span>
+              <div class="pass-text">
+                <strong>Синтез консенсуса (Яндекс)</strong>
+                <span>Конечный результат и спутник</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions rescan-actions">
+          <button type="button" class="btn btn-secondary" id="btnCancelRescan">Отмена</button>
+          <button type="submit" class="btn btn-primary btn-glow" id="btnSubmitRescan">
+            <span>🚀 Начать 5 запусков и синтезировать результат</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Fullscreen Lightbox Modal -->
+  <div class="lightbox-backdrop" id="lightboxModal" style="display: none;">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="btnCloseLightbox">&times;</button>
+      <div class="lightbox-image-wrap">
+        <img src="" id="lightboxImg" alt="Просмотр фотографии">
+      </div>
+      <div class="lightbox-caption">
+        <h3 id="lightboxTitle">Заголовок</h3>
+        <p id="lightboxDesc">Описание</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELA Forensic Analysis Modal -->
+  <div class="modal-backdrop" id="elaModal" style="display: none;">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">🔬</div>
+          <div>
+            <h2>Криминалистический анализ сжатия (ELA - Error Level Analysis)</h2>
+            <p>Детекция фотомонтажа, ретуши и инородных объектов по дисперсии матрицы JPEG</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseElaModal">&times;</button>
+      </div>
+      <div class="ela-body">
+        <div class="ela-compare-grid">
+          <div class="ela-panel">
+            <div class="ela-panel-label">Оригинал снимка</div>
+            <img src="" id="elaOriginalImg" alt="Оригинал" class="ela-img">
+          </div>
+          <div class="ela-panel">
+            <div class="ela-panel-label">ELA Сигнатура (Карта артефактов)</div>
+            <img src="" id="elaResultImg" alt="ELA карта" class="ela-img">
+          </div>
+        </div>
+        <div class="ela-explainer-box">
+          <h4>💡 Как читать результат:</h4>
+          <ul>
+            <li><b>Однородный тёмный шум:</b> подтверждает аутентичность кадра — снимок сжат целиком без локальных правок.</li>
+            <li><b>Яркие белые контуры / пятна:</b> свидетельствуют о вставке чужеродного фрагмента, фотошопе или резком пересохранении части пикселей.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OSINT Meta-Guide Modal -->
+  <div class="modal-backdrop" id="osintGuideModal" style="display: none;">
+    <div class="modal-card modal-lg modal-guide">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">📚</div>
+          <div>
+            <h2>OSINT Справочник гео-признаков (Geoguessr Meta-Guide)</h2>
+            <p>Методология выявления страны и региона по косвенным уликам окружения</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseOsintGuide">&times;</button>
+      </div>
+      <div class="guide-scrollable">
+        <div class="guide-grid">
+          <div class="guide-card">
+            <div class="guide-card-icon">🚗</div>
+            <h3>Номера автомобилей (License Plates)</h3>
+            <ul>
+              <li><b>Евросоюз (ЕС):</b> Длинные 520×110 мм, синяя полоса ЕС слева. В Италии и Франции — синяя полоса и справа.</li>
+              <li><b>США / Канада:</b> Квадратные 12×6 дюймов (300×150 мм), название штата сверху/снизу, яркие эмблемы.</li>
+              <li><b>Казахстан:</b> Белые прямоугольные, флаг РК и «KZ» слева, двухзначный код региона справа (01 Астана, 02 Алматы, 03 Акмола, 13 Туркестан).</li>
+              <li><b>Россия:</b> 1 буква + 3 цифры + 2 буквы, код региона справа (77, 99, 177, 78) + надпись «RUS» и флаг.</li>
+              <li><b>Япония:</b> Белые с зеленым шрифтом (стандарт), желтые с черным шрифтом (кей-кары, объём до 660cc).</li>
+              <li><b>Вьетнам:</b> Белые частные с кодом провинции (29–33 Ханой, 50–59 Хошимин, 49 Далат), желтые у коммерческих такси.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-icon">🚌</div>
+            <h3>Общественный транспорт и инфраструктура</h3>
+            <ul>
+              <li><b>Такси:</b> Ярко-желтые (Нью-Йорк, Стамбул), черные кэбы (Лондон), зелено-желтые (Бангкок), белые с шашечками (СНГ).</li>
+              <li><b>Троллейбусы и трамваи:</b> Контактные воздушные провода типичны для СНГ, Вост. Европы и Швейцарии (в США почти отсутствуют).</li>
+              <li><b>Остановочные комплексы:</b> Архитектурные формы павильонов и навигационные пилоны строго стандартизированы муниципалитетами.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-icon">🛣️</div>
+            <h3>Дороги и разметка</h3>
+            <ul>
+              <li><b>Жёлтая сплошная по центру:</b> США, Канада, Южная Корея, Япония, Тайвань.</li>
+              <li><b>Белые прерывистые / сплошные:</b> Европа, Россия, Казахстан, Турция.</li>
+              <li><b>Левостороннее движение:</b> Великобритания, Япония, Австралия, Таиланд, Индия, ЮАР.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-icon">💡</div>
+            <h3>Столбы и инфраструктура</h3>
+            <ul>
+              <li><b>Бетонные с лестничными прорезями:</b> Польша, Румыния, Франция.</li>
+              <li><b>Деревянные с круглыми изоляторами:</b> США, Норвегия, сельские зоны СНГ.</li>
+              <li><b>Полосатые красно-белые столбики (Bollards):</b> Австрия, Словения, Турция.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-icon">🌲</div>
+            <h3>Флора и биомы</h3>
+            <ul>
+              <li><b>Берёзы и хвойная тайга:</b> Россия, Сев. Казахстан, Финляндия, Швеция.</li>
+              <li><b>Эвкалипты:</b> Австралия, Португалия, ЮАР.</li>
+              <li><b>Кокосовые пальмы и влажные джунгли:</b> Вьетнам, Таиланд, Индонезия, Бразилия.</li>
+              <li><b>Степные сопки и гранитные останцы:</b> Бурабай, Каркаралы, Баянаул (Казахстан).</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-icon">🔤</div>
+            <h3>Языковые маркеры и шрифты</h3>
+            <ul>
+              <li><b>Казахская кириллица (ә, ғ, қ, ң, ө, ұ, ү, һ, і):</b> Казахстан.</li>
+              <li><b>Вьетнамская латиница с диакритикой (ă, â, đ, ê, ô, ơ, ư):</b> Вьетнам.</li>
+              <li><b>Двуязычные указатели (каз/рус):</b> Трассы и нацпарки Казахстана.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPSEC Sanitizer Modal -->
+  <div class="modal-backdrop" id="opsecModal" style="display: none;">
+    <div class="modal-card modal-lg modal-opsec">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">🛡️</div>
+          <div>
+            <h2>OPSEC Санитайзер (Защита от деанонимизации & Очистка EXIF)</h2>
+            <p>Проверка фото на утечки координат GPS, модели камеры, даты съёмки и удаление метаданных перед публикацией</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseOpsecModal">&times;</button>
+      </div>
+      <div class="opsec-body">
+        <div class="opsec-dropzone" id="opsecDropzone">
+          <input type="file" id="opsecFileInput" accept="image/*" style="display: none;">
+          <div class="opsec-drop-icon">🔍</div>
+          <div class="opsec-drop-text">Перетащите сюда фото для проверки или <span class="link-span" id="opsecBrowseLink">выберите файл</span></div>
+          <div class="opsec-drop-sub">Либо проверьте текущее фото активного расследования</div>
+          <button class="btn btn-secondary btn-sm" id="btnAuditCurrentCasePhoto" style="margin-top: 10px;">
+            <span>📸 Проверить фото текущего кейса</span>
+          </button>
+        </div>
+
+        <div class="opsec-audit-results" id="opsecAuditResults" style="display: none;">
+          <div class="opsec-risk-banner" id="opsecRiskBanner">
+            <div class="opsec-risk-badge" id="opsecRiskBadge">КРИТИЧЕСКИЙ РИСК</div>
+            <div class="opsec-risk-desc" id="opsecRiskDesc">Обнаружены аппаратные координаты GPS! Любой человек вычислит точное место за 10 секунд.</div>
+          </div>
+
+          <div class="opsec-details-grid">
+            <div class="opsec-detail-card">
+              <span class="detail-label">📍 Координаты GPS:</span>
+              <span class="detail-val" id="opsecGpsVal">Не обнаружены</span>
+            </div>
+            <div class="opsec-detail-card">
+              <span class="detail-label">📷 Устройство / Камера:</span>
+              <span class="detail-val" id="opsecCameraVal">Не указано</span>
+            </div>
+            <div class="opsec-detail-card">
+              <span class="detail-label">📅 Дата и секунда съёмки:</span>
+              <span class="detail-val" id="opsecDateVal">Отсутствует</span>
+            </div>
+            <div class="opsec-detail-card">
+              <span class="detail-label">💻 ПО / Редактор:</span>
+              <span class="detail-val" id="opsecSoftwareVal">Оригинал</span>
+            </div>
+          </div>
+
+          <div class="opsec-actions-row">
+            <a href="#" class="btn btn-warning-glow" id="btnDownloadSanitized" download="clean_safe_photo.jpg">
+              <span>🧹 Скачать безопасное фото без EXIF</span>
+            </a>
+            <span class="opsec-clean-status" id="opsecCleanStatus">✔ Все метаданные удалены, приватность защищена.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Street View & Steps Walkthrough Modal -->
+  <div class="modal-backdrop" id="streetViewModal" style="display: none;">
+    <div class="modal-card modal-lg modal-streetview">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">🚶‍♂️</div>
+          <div>
+            <h2>Пошаговая верификация ракурса (Street View Walkthrough)</h2>
+            <p>Сверка фото с круговыми панорамами и пошаговая прогулка по местности вокруг объекта</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseStreetViewModal">&times;</button>
+      </div>
+      <div class="sv-body">
+        <div class="sv-split-layout">
+          <div class="sv-photo-side">
+            <div class="sv-side-title">Оригинал расследования</div>
+            <div class="sv-photo-box">
+              <img src="" id="svTargetPhoto" alt="Целевое фото" class="sv-photo-img">
+              <div class="sv-bearing-indicator">
+                <span>Азимут: </span><b id="svPhotoBearing">0°</b>
+                <span> | Дистанция: </span><b id="svPhotoDistance">0 м</b>
+              </div>
+            </div>
+          </div>
+
+          <div class="sv-controls-side">
+            <div class="sv-side-title">Интерактивный симулятор наблюдателя</div>
+            <div class="sv-hud-box">
+              <div class="sv-hud-row"><span>Координаты:</span> <b id="svCurrentPos">0.000000, 0.000000</b></div>
+              <div class="sv-hud-row"><span>Текущий взгляд:</span> <b id="svCurrentHeading">0°</b></div>
+              <div class="sv-hud-row"><span>Смещение от камеры:</span> <b id="svStepOffset">0 м</b></div>
+            </div>
+
+            <div class="sv-step-controls">
+              <div class="sv-controls-title">Пошагать вокруг объекта:</div>
+              <div class="sv-btn-grid">
+                <button class="btn btn-secondary btn-sm" id="btnSvTurnLeft" title="Повернуть влево на 15°">◀ Влево (-15°)</button>
+                <button class="btn btn-secondary btn-sm" id="btnSvLookTarget" title="Смотреть прямо на цель">🎯 По азимуту цели</button>
+                <button class="btn btn-secondary btn-sm" id="btnSvTurnRight" title="Повернуть вправо на 15°">▶ Вправо (+15°)</button>
+                <button class="btn btn-primary btn-sm" id="btnSvStepForward" title="Шаг вперед на 10 метров">🚶 Шаг вперёд (+10 м)</button>
+                <button class="btn btn-secondary btn-sm" id="btnSvStepBack" title="Шаг назад на 10 метров">🚶 Шаг назад (-10 м)</button>
+                <button class="btn btn-secondary btn-sm" id="btnSvResetWalk" title="Сбросить в исходную позицию">🔄 Исходная точка</button>
+              </div>
+            </div>
+
+            <div class="sv-external-launch">
+              <div class="sv-controls-title">Открыть панорамы с текущего ракурса:</div>
+              <div class="sv-links-row">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-yandex" id="btnLaunchYandexPano" title="Яндекс.Панорамы улиц (наивысшая детализация по СНГ)">
+                  <span>🟡 Яндекс.Панорамы</span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnLaunchGooglePano" title="Google Street View 360°">
+                  <span>🌐 Google Street View</span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnLaunchMapillary">
+                  <span>🗺️ Mapillary</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="sv-apply-row">
+              <button class="btn btn-warning-glow btn-sm" id="btnSvApplyCoords">
+                <span>💾 Зафиксировать найденные координаты в расследовании</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deep Optical Character Recognition (OCR) Modal -->
+  <div class="modal-backdrop" id="ocrModal" style="display: none;">
+    <div class="modal-card modal-lg modal-ocr">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b;">🔤</div>
+          <div>
+            <h2>Оптическое распознавание текста (Deep OCR)</h2>
+            <p>Чтение вывесок, указателей, стендов и использование распознанных надписей для поиска</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseOcrModal">&times;</button>
+      </div>
+
+      <div class="ocr-body">
+        <div class="ocr-split-grid">
+          <!-- Left: Image Preview & Scan triggers -->
+          <div class="ocr-preview-column">
+            <div class="ocr-photo-wrap">
+              <img src="" id="ocrPhotoPreview" alt="Снимок для распознавания" class="ocr-photo-img">
+              <div class="ocr-scan-laser" id="ocrScanLaser" style="display: none;"></div>
+            </div>
+            <div class="ocr-preview-actions">
+              <button class="btn btn-primary btn-sm" id="btnRunOcrActiveCase">
+                <span>🔄 Распознать текст на этом фото</span>
+              </button>
+              <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
+                <span>📁 Выбрать другой файл</span>
+                <input type="file" id="ocrFileInput" accept="image/*" style="display: none;">
+              </label>
+            </div>
+          </div>
+
+          <!-- Right: Detected lines & keyword chips & actions -->
+          <div class="ocr-results-column">
+            <div class="ocr-status-bar" id="ocrStatusBar">
+              <span class="ocr-status-pulse"></span>
+              <span id="ocrStatusText">Готов к извлечению текста</span>
+            </div>
+
+            <div class="ocr-section-title">
+              <span>РАСПОЗНАННЫЕ СТРОКИ И ВЫВЕСКИ:</span>
+            </div>
+            <div class="ocr-lines-container" id="ocrLinesList">
+              <div class="ocr-empty-hint">Нажмите кнопку «Распознать текст» для сканирования надписей на фото.</div>
+            </div>
+
+            <div class="ocr-section-title">
+              <span>КЛЮЧЕВЫЕ СЛОВА ДЛЯ ГЕО-ПОИСКА (КЛИКАБЕЛЬНЫ):</span>
+            </div>
+            <div class="ocr-keywords-cloud" id="ocrKeywordsCloud">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="ocr-search-actions-box">
+              <div class="ocr-actions-desc">
+                💡 Кликните на любое распознанное слово выше, чтобы передать его в ансамбль из 5 запусков для нахождения точных координат.
+              </div>
+              <button class="btn btn-warning-glow" id="btnLaunchSearchWithOcr" style="width: 100%;">
+                <span>🚀 Запустить 5 запусков поиска с выбранным текстом</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Visual Clue Scout & Kazakhstan Deep Analyzer Modal -->
+  <div class="modal-backdrop" id="aiScoutModal" style="display: none;">
+    <div class="modal-card modal-lg modal-ai-scout">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.35); color: #06b6d4;">🤖</div>
+          <div>
+            <h2>ИИ-Разведчик Улик & Анализатор Казахстана</h2>
+            <p>Предварительный нейросетевой анализ кадра, выявление опорных точек, языка (РК) и выработка стратегии поиска</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseAiScoutModal">&times;</button>
+      </div>
+
+      <div class="ai-modal-body">
+        <div class="ai-modal-grid">
+          <!-- Left: Image scan preview -->
+          <div class="ai-modal-left">
+            <div class="ai-photo-wrap">
+              <img src="" id="aiPhotoPreview" alt="Снимок для анализа" class="ai-photo-img">
+              <div class="ai-scan-radar-overlay"></div>
+              <div class="ai-photo-scene-pill" id="aiPhotoScenePill">🌲 Биом определяется...</div>
+            </div>
+            <div class="ai-palette-diagnostics" id="aiPaletteDiagnostics">
+              <div class="ai-diag-title">Спектральный анализ биома:</div>
+              <div class="ai-diag-bars" id="aiDiagBars">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Anchors, Language & Strategy -->
+          <div class="ai-modal-right">
+            <!-- Kazakhstan Language & Plate Banner -->
+            <div class="ai-kz-intelligence-box" id="aiKzIntelBox">
+              <div class="kz-intel-header">
+                <span class="kz-flag">🇰🇿</span>
+                <span class="kz-intel-title">Модуль казахского языка и региональных номеров РК:</span>
+              </div>
+              <div class="kz-intel-details" id="kzIntelDetails">
+                <div class="kz-intel-item" id="kzIntelLettersRow">
+                  <span class="kz-label">Буквы казахского алфавита:</span>
+                  <span class="kz-val" id="kzLettersVal">Не обнаружены</span>
+                </div>
+                <div class="kz-intel-item" id="kzIntelTermsRow">
+                  <span class="kz-label">Географические термины РК:</span>
+                  <span class="kz-val" id="kzTermsVal">Не обнаружены</span>
+                </div>
+                <div class="kz-intel-item" id="kzIntelRegionsRow">
+                  <span class="kz-label">Автомобильный код региона:</span>
+                  <span class="kz-val" id="kzRegionsVal">Не обнаружен</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Identified Anchors -->
+            <div class="ai-section-title">
+              <span>ВЫЯВЛЕННЫЕ ОПОРНЫЕ ТОЧКИ (ЗА ЧТО МОЖНО ЗАЦЕПИТЬСЯ):</span>
+            </div>
+            <div class="ai-full-anchors-list" id="aiFullAnchorsList">
+              <!-- Rendered by JS -->
+            </div>
+
+            <!-- AI Search Strategy & Roadmap -->
+            <div class="ai-section-title" style="margin-top: 12px;">
+              <span>СТРАТЕГИЯ И ПЛАН ПОИСКА ИИ:</span>
+            </div>
+            <div class="ai-roadmap-box" id="aiRoadmapBox">
+              <p id="aiFullStrategyText">Анализ изображения...</p>
+            </div>
+
+            <!-- Recommended candidates & execute -->
+            <div class="ai-recs-box" id="aiRecsBox">
+              <div class="ai-recs-title">Рекомендованные географические ориентиры для поиска:</div>
+              <div class="ai-recs-chips" id="aiRecsChips">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <div class="ai-execute-row">
+              <button class="btn btn-warning-glow" id="btnApplyAiRecommendations" style="width: 100%;">
+                <span>🚀 Запустить 5 запусков поиска с учётом рекомендаций ИИ</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-backdrop" id="shortcutsModal" style="display: none;">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">⌨️</div>
+          <div>
+            <h2>Горячие клавиши (Hotkeys)</h2>
+            <p>Быстрая навигация для полевых расследований</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseShortcutsModal">&times;</button>
+      </div>
+      <div class="shortcuts-grid">
+        <div class="shortcut-row"><span class="kbd">M</span><span>Перейти на Интерактивную карту</span></div>
+        <div class="shortcut-row"><span class="kbd">H</span><span>Перейти на Главную страницу</span></div>
+        <div class="shortcut-row"><span class="kbd">U</span><span>Загрузить фотографию</span></div>
+        <div class="shortcut-row"><span class="kbd">R</span><span>Запустить 5 независимых поисков</span></div>
+        <div class="shortcut-row"><span class="kbd">T</span><span>Оптическое распознавание текста (OCR)</span></div>
+        <div class="shortcut-row"><span class="kbd">S</span><span>Открыть шторку сравнения фото и спутника</span></div>
+        <div class="shortcut-row"><span class="kbd">E</span><span>Открыть криминалистический ELA-анализ</span></div>
+        <div class="shortcut-row"><span class="kbd">O</span><span>Открыть OPSEC Санитайзер (Очистка EXIF)</span></div>
+        <div class="shortcut-row"><span class="kbd">W</span><span>Открыть Street View шаги по местности</span></div>
+        <div class="shortcut-row"><span class="kbd">K</span><span>Открыть OSINT-шпаргалку признаков</span></div>
+        <div class="shortcut-row"><span class="kbd">?</span><span>Открыть эту справку</span></div>
+        <div class="shortcut-row"><span class="kbd">Esc</span><span>Закрыть активное модальное окно</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Esri World Imagery Wayback Modal -->
+  <div class="modal-backdrop" id="waybackModal" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.35); color: #a78bfa;">🛰️</div>
+          <div>
+            <h2>Спутниковый архив Esri Wayback (2014–2026)</h2>
+            <p>197 исторических снимков земной поверхности с возможностью подключения в качестве слоя карты</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseWaybackModal">&times;</button>
+      </div>
+
+      <div class="wayback-body">
+        <!-- Quick Year Selector -->
+        <div class="wayback-timeline-bar" id="waybackYearTimeline">
+          <button class="wayback-year-pill" data-year="all">Все (197)</button>
+          <button class="wayback-year-pill" data-year="2026">2026</button>
+          <button class="wayback-year-pill" data-year="2025">2025</button>
+          <button class="wayback-year-pill active" data-year="2024">2024</button>
+          <button class="wayback-year-pill" data-year="2022">2022</button>
+          <button class="wayback-year-pill" data-year="2020">2020</button>
+          <button class="wayback-year-pill" data-year="2018">2018</button>
+          <button class="wayback-year-pill" data-year="2016">2016</button>
+          <button class="wayback-year-pill" data-year="2014">2014</button>
+        </div>
+
+        <!-- Release Picker & Layer Switch Controls -->
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 260px;">
+            <label style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; display: block;">Выбрать дату релиза:</label>
+            <select id="waybackReleaseSelect" class="form-input" style="padding: 8px 12px; font-size: 0.82rem;">
+              <option value="">Загрузка 197 релизов...</option>
+            </select>
+          </div>
+          <div style="margin-top: 18px;">
+            <button class="btn btn-warning-glow btn-sm" id="btnApplyWaybackToMap">
+              <span>🗺️ Включить как подложку карты</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dual Compare Grid -->
+        <div class="wayback-compare-grid">
+          <div class="wayback-tile-card">
+            <div class="wayback-tile-header">
+              <span>📷 ТЕКУЩИЙ СПУТНИК GOOGLE</span>
+              <span class="mono" id="waybackCurrentCoords">--</span>
+            </div>
+            <div class="wayback-tile-preview">
+              <img src="" id="waybackCurrentImg" alt="Текущий спутник">
+            </div>
+          </div>
+
+          <div class="wayback-tile-card">
+            <div class="wayback-tile-header">
+              <span id="waybackSelectedTitle">🛰️ ESRI WAYBACK ИСТОРИЧЕСКИЙ</span>
+              <span class="mono" id="waybackSelectedDate">--</span>
+            </div>
+            <div class="wayback-tile-preview">
+              <img src="" id="waybackHistoricalImg" alt="Исторический спутник">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forensic OSINT Multi-Inspector Modal -->
+  <div class="modal-backdrop" id="inspectorModal" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.35); color: #06b6d4;">🔍</div>
+          <div>
+            <h2>OSINT Экспертный Инспектор</h2>
+            <p>Геолокация телефонных номеров, автокодов РК, правил движения и солнечных теней</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseInspectorModal">&times;</button>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="inspector-tabs-nav" id="inspectorTabsNav">
+        <button class="inspector-tab-btn active" data-tab="phone">📱 Номера телефонов</button>
+        <button class="inspector-tab-btn" data-tab="rules">🚘 Автокоды & Алфавит РК</button>
+        <button class="inspector-tab-btn" data-tab="driving">🚗 Сторона движения</button>
+        <button class="inspector-tab-btn" data-tab="shadow">☀️ Солнце & Азимут</button>
+        <button class="inspector-tab-btn" data-tab="datum">🌐 Датумы WGS/GCJ/BD</button>
+      </div>
+
+      <!-- Tab 1: Phone Geocoder -->
+      <div class="inspector-tab-pane active" id="panePhone">
+        <div class="tool-grid">
+          <div class="tool-input-card">
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">Ввод номера телефона / вывески:</label>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <input type="text" id="toolPhoneInput" class="form-input mono" placeholder="+7 7172 123456 или 87015550199" value="+7 (7172) 12-34-56">
+              <button class="btn btn-primary" id="btnRunPhoneLookup">Найти</button>
+            </div>
+            <div style="margin-top: 10px;">
+              <span style="font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Быстрые примеры:</span>
+              <div class="tool-quick-chips">
+                <button class="tool-chip" data-phone="+7 7172 123456">🇰🇿 Астана Гор. (+7 7172)</button>
+                <button class="tool-chip" data-phone="+7 727 2555555">🇰🇿 Алматы Гор. (+7 727)</button>
+                <button class="tool-chip" data-phone="+7 701 5550199">🇰🇿 Kcell / Activ (+7 701)</button>
+                <button class="tool-chip" data-phone="+7 708 1234567">🇰🇿 Altel (+7 708)</button>
+                <button class="tool-chip" data-phone="+84 258 3822123">🇻🇳 Вьетнам Нячанг (+84 258)</button>
+                <button class="tool-chip" data-phone="+7 495 7777777">🇷🇺 Москва (+7 495)</button>
+              </div>
+            </div>
+          </div>
+          <div class="tool-result-card" id="toolPhoneResult">
+            <div class="result-status-header">
+              <span class="result-status-title">Результат OSINT-поиска</span>
+              <span class="signal-badge badge-rht" id="resPhoneStatus">ГОТОВ</span>
+            </div>
+            <div id="resPhoneDetails">
+              <div class="result-field-row"><span class="result-field-label">Страна:</span><span class="result-field-value" id="resPhoneCountry">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Регион / Город:</span><span class="result-field-value" id="resPhoneLocation">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Оператор / Тип:</span><span class="result-field-value" id="resPhoneCarrier">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Координаты:</span><span class="result-field-value mono" id="resPhoneCoords">--</span></div>
+            </div>
+            <div style="margin-top: 12px; display: none;" id="resPhoneActionWrap">
+              <button class="btn btn-secondary btn-sm full-width" id="btnFlyToPhoneCoords">📍 Показать на карте</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Plates & Scripts -->
+      <div class="inspector-tab-pane" id="paneRules">
+        <div class="tool-grid">
+          <div class="tool-input-card">
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">Текст с фото, номер авто или вывеска:</label>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <input type="text" id="toolRulesInput" class="form-input" placeholder="например: 01 777 AAA или Көкшетау шатқалы" value="KZ 01 777 AAA">
+              <button class="btn btn-primary" id="btnRunRulesLookup">Анализ</button>
+            </div>
+            <div style="margin-top: 10px;">
+              <span style="font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Примеры автокодов и языка:</span>
+              <div class="tool-quick-chips">
+                <button class="tool-chip" data-rule="01 777 AAA">🇰🇿 01 Астана</button>
+                <button class="tool-chip" data-rule="02 123 BBA">🇰🇿 02 Алматы</button>
+                <button class="tool-chip" data-rule="03 456 AKM">🇰🇿 03 Акмола (Кокшетау)</button>
+                <button class="tool-chip" data-rule="13 888 KZ">🇰🇿 13 Туркестан</button>
+                <button class="tool-chip" data-rule="20 001 KZ">🇰🇿 20 Жетысу (Талдыкорган)</button>
+                <button class="tool-chip" data-rule="Бурабай мемлекеттік ұлттық табиғи паркі">🇰🇿 Буквы РК (ә, ғ, қ, ң, ө, ұ, ү, һ, і)</button>
+              </div>
+            </div>
+          </div>
+          <div class="tool-result-card" id="toolRulesResult">
+            <div class="result-status-header">
+              <span class="result-status-title">Распознанные сигнатуры</span>
+              <span class="signal-badge badge-rht" id="resRulesStatus">ОЖИДАНИЕ</span>
+            </div>
+            <div id="resRulesDetails">
+              <div class="result-field-row"><span class="result-field-label">Автокоды РК (01–20):</span><span class="result-field-value" id="resRulesPlates">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Буквы алфавита РК:</span><span class="result-field-value" id="resRulesLetters">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Окраска столбов:</span><span class="result-field-value" id="resRulesPoles">--</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Driving Side -->
+      <div class="inspector-tab-pane" id="paneDriving">
+        <div class="tool-grid">
+          <div class="tool-input-card">
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">Проверка страны (LHT vs RHT):</label>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <input type="text" id="toolDrivingInput" class="form-input" placeholder="например: Казахстан, Япония, Великобритания" value="Казахстан">
+              <button class="btn btn-primary" id="btnRunDrivingLookup">Проверить</button>
+            </div>
+            <div style="margin-top: 10px;">
+              <span style="font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Быстрый выбор:</span>
+              <div class="tool-quick-chips">
+                <button class="tool-chip" data-country="Казахстан">🇰🇿 Казахстан (RHT)</button>
+                <button class="tool-chip" data-country="Вьетнам">🇻🇳 Вьетнам (RHT)</button>
+                <button class="tool-chip" data-country="Япония">🇯🇵 Япония (LHT)</button>
+                <button class="tool-chip" data-country="Великобритания">🇬🇧 Великобритания (LHT)</button>
+                <button class="tool-chip" data-country="Таиланд">🇹🇭 Таиланд (LHT)</button>
+                <button class="tool-chip" data-country="Австралия">🇦🇺 Австралия (LHT)</button>
+              </div>
+            </div>
+          </div>
+          <div class="tool-result-card" id="toolDrivingResult">
+            <div class="result-status-header">
+              <span class="result-status-title">Правило движения</span>
+              <span class="signal-badge badge-rht" id="resDrivingBadge">RHT</span>
+            </div>
+            <div id="resDrivingDetails">
+              <div class="result-field-row"><span class="result-field-label">Страна:</span><span class="result-field-value" id="resDrivingCountry">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Тип движения:</span><span class="result-field-value" id="resDrivingDesc">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Исключение мира:</span><span class="result-field-value" id="resDrivingElimination">--</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Solar Shadow Calculator -->
+      <div class="inspector-tab-pane" id="paneShadow">
+        <div class="tool-grid">
+          <div class="tool-input-card">
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label>Дата и время (UTC):</label>
+                <input type="datetime-local" id="toolShadowDate" class="form-input form-input-sm" value="2026-06-15T12:00">
+              </div>
+              <div class="form-group">
+                <label>Широта (Lat):</label>
+                <input type="number" step="any" id="toolShadowLat" class="form-input mono form-input-sm" value="51.089614">
+              </div>
+              <div class="form-group">
+                <label>Долгота (Lon):</label>
+                <input type="number" step="any" id="toolShadowLon" class="form-input mono form-input-sm" value="71.406070">
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-primary full-width" id="btnRunShadowLookup">Рассчитать солнце и тени</button>
+            </div>
+          </div>
+          <div class="tool-result-card" id="toolShadowResult">
+            <div class="result-status-header">
+              <span class="result-status-title">Солнечная геометрия</span>
+              <span class="signal-badge badge-rht">SUNCALC</span>
+            </div>
+            <div id="resShadowDetails">
+              <div class="result-field-row"><span class="result-field-label">Азимут солнца:</span><span class="result-field-value mono" id="resShadowAzimuth">--°</span></div>
+              <div class="result-field-row"><span class="result-field-label">Высота солнца:</span><span class="result-field-value mono" id="resShadowElevation">--°</span></div>
+              <div class="result-field-row"><span class="result-field-label">Множитель тени (L/H):</span><span class="result-field-value mono" id="resShadowRatio">--×</span></div>
+              <div class="result-field-row"><span class="result-field-label">Азимут направления тени:</span><span class="result-field-value mono" id="resShadowHeading">--°</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Datum Converter -->
+      <div class="inspector-tab-pane" id="paneDatum">
+        <div class="tool-grid">
+          <div class="tool-input-card">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Исходный Lat:</label>
+                <input type="number" step="any" id="toolDatumLat" class="form-input mono form-input-sm" value="39.9042">
+              </div>
+              <div class="form-group">
+                <label>Исходный Lon:</label>
+                <input type="number" step="any" id="toolDatumLon" class="form-input mono form-input-sm" value="116.4074">
+              </div>
+              <div class="form-group full-width">
+                <label>Тип преобразования:</label>
+                <select id="toolDatumDirection" class="form-input form-input-sm">
+                  <option value="wgs_to_gcj">WGS-84 (GPS/Google) ➔ GCJ-02 (China Mars)</option>
+                  <option value="gcj_to_wgs">GCJ-02 (China Mars) ➔ WGS-84 (GPS/Google)</option>
+                  <option value="gcj_to_bd">GCJ-02 ➔ BD-09 (Baidu Maps)</option>
+                  <option value="bd_to_gcj">BD-09 (Baidu Maps) ➔ GCJ-02</option>
+                  <option value="wgs_to_bd">WGS-84 ➔ BD-09 (Baidu Maps)</option>
+                  <option value="bd_to_wgs">BD-09 (Baidu Maps) ➔ WGS-84</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-primary full-width" id="btnRunDatumConvert">Конвертировать датум</button>
+            </div>
+          </div>
+          <div class="tool-result-card" id="toolDatumResult">
+            <div class="result-status-header">
+              <span class="result-status-title">Сконвертированные координаты</span>
+              <span class="signal-badge badge-rht">GEO-DATUM</span>
+            </div>
+            <div id="resDatumDetails">
+              <div class="result-field-row"><span class="result-field-label">Скорректированный Lat:</span><span class="result-field-value mono" id="resDatumTargetLat">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Скорректированный Lon:</span><span class="result-field-value mono" id="resDatumTargetLon">--</span></div>
+              <div class="result-field-row"><span class="result-field-label">Смещение геодезии:</span><span class="result-field-value" id="resDatumOffset">--</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evidence Dossier Sheet Preview Modal -->
+  <div class="modal-backdrop" id="evidenceSheetModal" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;">📑</div>
+          <div>
+            <h2 id="evidenceSheetTitle">Форензическое Досье Улик (300 DPI)</h2>
+            <p>Композитный доказательный лист расследования для официальных отчётов</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseEvidenceSheetModal">&times;</button>
+      </div>
+
+      <div class="evidence-sheet-viewport">
+        <img src="" id="evidenceSheetImg" alt="Досье улик" class="evidence-sheet-img">
+      </div>
+
+      <div class="form-actions" style="margin-top: 14px; justify-content: space-between;">
+        <span style="font-size: 0.78rem; color: var(--text-dim);" id="evidenceSheetMeta">Разрешение: 1600×1100 px • Стандарт криминалистического OSINT</span>
+        <div style="display: flex; gap: 8px;">
+          <a href="#" download="evidence_sheet.jpg" class="btn btn-warning-glow btn-sm" id="btnDownloadEvidenceSheetFile">
+            <span>📥 Скачать изображение (.jpg)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Application JS -->
+  <script src="/static/app.js?v=opsec_sv"></script>
+</body>
+</html>

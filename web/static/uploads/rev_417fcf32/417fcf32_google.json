@@ -1,0 +1,102 @@
+{
+  "engine": "google_lens",
+  "image": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\417fcf32.jpg",
+  "screenshot": "C:\\Users\\user\\.gemini\\antigravity-ide\\scratch\\geo-research\\web\\static\\uploads\\rev_417fcf32\\417fcf32_google.png",
+  "ai_overview": "На фотографии изображен вечерний вид на город Алматы в Казахстане (вид на высотные жилые комплексы и торгово-развлекательный центр «Алма-Ата»).",
+  "candidates": [
+    "Алма-Ата",
+    "город Алматы",
+    "Алматы Казахстане",
+    "Алматы Алма-",
+    "Алматы",
+    "Казахстане",
+    "Алма-",
+    "Главная страница Google",
+    "Все результаты",
+    "Точное соответствие",
+    "Путеводитель по достопримечательностям Шымкента Шымкент ночью: Гид по лучшим местам для ночной жизни ...",
+    "Организации внутри «Алма-Ата» — Яндекс Карты"
+  ],
+  "links": [
+    {
+      "title": "Главная страница Google",
+      "url": "https://www.google.com/webhp?hl=ru&sa=X&ved=2ahUKEwjS6Ofch7mXAxVyGRAIHTP_OLMQPHoECAYQBA"
+    },
+    {
+      "title": "Все результаты",
+      "url": "https://www.google.com/search?vsrid=CLiNmd3E1ffhHRACGAEiJGU5NThmZGQyLTkwZjEtNGNiZi05ZmJiLTg4MmNlYzFlMDVhMDKBASICcmQoNEJzCi5sZmUtZHVtbXk6ODBhMmI4NmItYWE1OC00YTIwLWI1ZjctOGI2NDE3YmQwMzgwEkEKPy9ibnMvcmQvYm9yZy9yZC9ibnMvbGVucy1mcm9udGVuZC1hcGkvcHJvZC5sZW5zLWZyb250ZW5kLWFwaS82NloECgJyZDjNrN7ch7mXAw&vsint=CAIqDAoCCAcSAggKGAEgATojChYNAAAAPxUAAAA_HQAAgD8lAACAPzABEKMEGO0CJQAAgD8&udm=26&lns_mode=un&source=lns.web.gsbubb&vsdim=547,365&gsessionid=wHRWQmyBr3PZpYQJn9HeYqwnLAxVlZk9CmIQkdiexlS86eorOnjrwQ&lsessionid=BvG1qnliwimnILHSNHaBU2tVs-TMBJvtI3seXTi5HMqiBrvEa3_REg&lns_surface=26&authuser=0&lns_vfs=e&qsubts=1791965509408&biw=1400&bih=1000&hl=ru-KZ#"
+    },
+    {
+      "title": "Точное соответствие",
+      "url": "https://www.google.com/search?sca_esv=b95610bb4650b83a&udm=26&lns_surface=26&authuser=0&biw=1400&bih=1000&hl=ru-KZ&sxsrf=APpeQnvoBeRG3Fxv_0DT-oz94xvoOEWO1A:1791965508799&source=lnt&tbs=li:1&sa=X&ved=2ahUKEwjS6Ofch7mXAxVyGRAIHTP_OLMQpwV6BAgLEBU"
+    },
+    {
+      "title": "Путеводитель по достопримечательностям Шымкента Шымкент ночью: Гид по лучшим местам для ночной жизни ...",
+      "url": "https://www.google.com/goto?url=CAESnAEB6zswFcI2IRGuBjgb051xFE6LXqGTIRopt0v4kPNyd4akwK9fuNlCjCbtghxwRoK51oTHbS1AVDPjfVPxJGc9FhvMVE9y7Uw9M1QdT-gKCgQVUle0BO2dOfd8H8gfJAYY3Z2Q32P5NP-kUbN7OoFZiupQKdnBV7Jds0EIQaYITgo_jaVfDbJVnY9HnnzGnASQFhKzo9vUMjvSwrc"
+    },
+    {
+      "title": "Организации внутри «Алма-Ата» — Яндекс Карты",
+      "url": "https://www.google.com/goto?url=CAEScgHrOzAVZVR_Neenaxe8aEt7IgHs9R_ftGgEFZ-91pxCBbwACIBz3AxAyNv5RfEP-_DLeEASHs6lusVsI5LtU_rFKOZTCzsAIViNY1ygsMgJOkk-L6NzUC7aRAQ9G75cfRMkwQysVDH-Syi8H1sl8vfSJg"
+    },
+    {
+      "title": "Aikyn.kz Хочу в Алматы»: юная жительница Туркестанской области тайком ...",
+      "url": "https://www.google.com/goto?url=CAESoAEB6zswFWVi7BrjFG4TQNgL_a7uyRtcR1lmdI7yKpQiC1ixGpZ4WdtRkSC-i_IvvB0q7N5vO_tqtU8mt0gvIAqXqmZhotx9v5Dh-hvAZPvdLiDEn7n5-0cJElb2Kz0bKu01b2xJjvjAaO7e0btdU0JzZ-oO4yPw2bS73XtHXavdSIhsTnTniUYfnfx65iazAbf_wbkma8hiWzY-qF4gSFPU"
+    },
+    {
+      "title": "CDEK История компании СДЭК",
+      "url": "https://www.google.com/goto?url=CAESVgHrOzAVCXNU1JYppzZOTWz8zSYTR4953puVF3mlCYgViYywwL8Z8lrwNaNrVoNa3v1jyUFTBN3vL6c07UFfQzhoUUEZDAyKbM4kdBnO6Jnp_-AqACQb"
+    },
+    {
+      "title": "Недавно мне попался пост о том, сколько нужно копить не на ...",
+      "url": "https://www.google.com/goto?url=CAESYwHrOzAVsMsi3QEWOKVKKhSg52OVZkrNPJxyA2hKXuo9qFf7pk-_kx4RdwDqYScGWcriHeYMJePR6U3-2q7QrFkJoQkUmM_YfT9EJdfdm_WJZcH64akOidpIi_S221lSwjdTsA"
+    },
+    {
+      "title": "Threads Я в Алмате и хочу сказать Астана лучше😁",
+      "url": "https://www.google.com/goto?url=CAESsgIB6zswFUbCvRkFJtPHiTiiETNCyEqxl4fegchDYnJr1GN6PtPxWnQe9Z8kpYfxnW1rX1hizOupnoogTCV2_QX1A_NG3QYojvCOBZGcq_1FX8AaNiloSLvyWB21rduY4AylF8qmFrz7DLnqaB4pr82VyUgIEw1h9-yw497BoP2ga8KV4B0OY3e0aVa85q1IbJkIUHcRS6MW53h3GCeks9PqvRb0UWK2LKZ9MmpJt4ENLOxvNVcVObTvud_SOYvUuRyWKPOdfJzyhRnLhGGuihfYS93ZD5zbUfKRRONr6BgMRa3YfkymmUtFcEveIzuzfpJJZpgMZATUl-gzM01KVWsblk_ZIL3wnRW97KDt838H98kZOkp0ToRU41zfF4Qesu2ZZO0pkBH0zdgJ-vyUCPvFmB0"
+    },
+    {
+      "title": "Dreamstime Almaty city Kazakhstan stock illustration. Illustration of ...",
+      "url": "https://www.google.com/goto?url=CAESnQEB6zswFUfaILIGW2BIARfIkUSzzbumaEme_NiYxAh81t3eLtmcENxDoxX_z-nWggw8RTA12mdbPLNlsQxWFiR21H6FhYSLePR25E6xop8tWTcV7yA0otIRmDQxfZHdwYwB5w3wDmRdTCiHheYpFXpQM-YWyRNRRDhtrmK2NrpIaUn5R563mwh-4C22OnPy8nhQWos0b38MPPXH-vxG"
+    },
+    {
+      "title": "Photobank.kz Photobank.kz - Алма-Ата и горы",
+      "url": "https://www.google.com/goto?url=CAESWAHrOzAV2GOwHCIHNCWxJbhDKqgxOFEItW8vfOggDr7mow4FUYYVB0YPYTCiMbVf6REC41PT2w9UICaqgMusrKOa7tk2Q5JR-PJGSbJEKGyF6oNeby6FUbg"
+    },
+    {
+      "title": "Egemen Qazaqstan Алматының төрт жаңа ауданындағы барлық көшелерге жарық ...",
+      "url": "https://www.google.com/goto?url=CAESpwEB6zswFQR1yrpTQdFOIPZtnx8pFLLGUWdJ-13QDZWA4W_TNwDftYoLsE-DMbXl8FCE7uuiHw2GNXEJhTNwOVSop8usB0pJw1FwwpYoeoSKH2yRPrpUF1yM0IL2pUroCthFfZQZTdxrKBUIx5u-n-T0zHx51-SZ8jTXpx6XuwkWgEu22YAGuXzLTpB__gcKTUtgPjtmhjVutSEB0QKguiAvfTrqmgdCPA"
+    },
+    {
+      "title": "fyp #рекомендации #алматы #reels",
+      "url": "https://www.google.com/goto?url=CAESZgHrOzAVPk1_GDJYjL8FNxGEij-V276R_3fduJjY9nD6do8M6nhOfKXTIPxOaEpjDO87coScSuSBqCy7UvkVY6V2BkYAtZsdHgQp4XzOgpYZRvDiQNac1FCPYr8o5b0xC8PDcEsLKg"
+    },
+    {
+      "title": "Kursiv Media Казахстанцы стали чаще переезжать в Астану, чем в Алматы",
+      "url": "https://www.google.com/goto?url=CAESoAEB6zswFW2FMSozEALi9UiOiJDOsIiBSjOfIhU-ZqNteIkEZ1aNTJoaVbEGu6BFQhv2U2rfsi_1kqTmnJ2VbaygtpbvIO4dy8S1zfIHKJDTzaL9DVUQ12vLsZn2LTbt3I8kgC0Hg9f7grDcpYA0HVPpOCI4Jc5SUkv8xX9brONZuQaRbK825uybWCQzeT95dEf8S81gea2UrbvjU8m63IKx"
+    },
+    {
+      "title": "business.com.tm В бюджет Туркменистана поступила 470 миллионов манатов от ...",
+      "url": "https://www.google.com/goto?url=CAESswEB6zswFcZF05SLzEFUC0Ae0r9jLZ1wLNsqrQ3ua-UzglmLCQ9bcqhgkvFwM1rKKWtLWxDRscyOwaLtQaT0W5x7mkaBX0cNZfProsBldzqYn3tjCSuMnWLaGaMXyZb0Wx_HUDCzAbnUVFGX_XkFYs49VTo439fIvz8vDEnsbxD4k8cq9Y83ih9IaMzTtbP741pEgj29qmh-y7dVnXqA2sH5IHy3v-MkYWfmp_5MAndf-3Kn0A"
+    },
+    {
+      "title": "Treeple.kz Алматы: городской туризм и центр | Treeple.kz",
+      "url": "https://www.google.com/goto?url=CAEScAHrOzAVp8FPz0cn6BF1E-rrdhQbkoLTQP-beNKWqip0rPoY0-ODohVViIYAARbx72P_cLuJKClzzU2-AfnDaCLTNpYtzzf8KH9KhZ2pRX0t5niSxDuM7vx-Wxu_4pzGftWGx6mdqC4HXWL_dzuzx-A"
+    },
+    {
+      "title": "Центр развития города Алматы Опыт комплексного городского развития Алматы отмечен ...",
+      "url": "https://www.google.com/goto?url=CAESyAEB6zswFVN0qYVKLh5Iz9fyvHupNO4L4ggoTD2NQ-_36VBDhaekx2xOE26OZlQvWOuhkO2-Ptk3Q3EQOoUDlcUglRRbNrPN09iTLwuRKPAa_ihEUp8s8-vU5o9nUEnhFgqDC4HajBOypu1PROwg9mpiGPDvHH5BlritlweWbdbQRlr054i0ANRqGDoXxA0rW0eYeBnfjqYTH2u1kXUgkGTCqxvM1ery313XRY3H5z_c-itbEkLibWMXhuoaqNB5etTLK6Sl18H5WQ"
+    },
+    {
+      "title": "Baribar.kz В Алматы появятся «своя Венеция», океанариум и водный сад",
+      "url": "https://www.google.com/goto?url=CAESlAEB6zswFYcdHLc7hGXF1I5HVqqpEkuHVywiDN4Xpc8a6m4ensvQ3Qz0w5TgXpLs0z0VUY5iGyx4C7Ui5-MIomDj1t3yv8_trV96vjjqizinEHCIwQrkQhlCYunUfzuykUc8KsNvhLvGZEF2suuwQnWac5Rw3CX9jCoGABaTcfnwwiJMJ-zVPT4GfBS_Fsv5hQ-GzkJT"
+    },
+    {
+      "title": "TravelAsk Русские города в Казахстане - список, описание, фото",
+      "url": "https://www.google.com/goto?url=CAESdAHrOzAVQd6jM4OBso32z2yPpBokHo2U-HDF04DDjxSlkrdafPw92SWc3e19dEMiIwBRSsh6nCTCjYumCKipze0l2C7cLJiKrhqpunETJo0TQdDwDzwktPME4GyBxrAVZz0nSgPGhiNhnEi_b83o253ytnla"
+    },
+    {
+      "title": "Travel Agency in Turkmenistan, Tour operator DN Tours. Capital of Turkmenistan - Ashgabat - dntours-business.com",
+      "url": "https://www.google.com/goto?url=CAESdQHrOzAV3E3pbjDhs-BVab-QHdesxugWrEbybRjsE9XoqmuEKXRgKcLbBu1eDtdt43vgVvmBIk7eTpDOdzAs8o4lf_59vxSLDQ9qepzS0D398UVWos1efuHFkh6FNx0_DFdGZQFkUTZBEldFQpt4KafbwpC91g"
+    }
+  ]
+}

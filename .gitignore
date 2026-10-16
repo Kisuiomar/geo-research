@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# External cloned repositories (reference repos)
+cloned_repos/
+
+# Local cache directories
+.geo-cache/
+
+# Temporary run/test output folders
+auto_rev/
+test_rev/
+intake_test/
+test_google_out/
+
+# Node / Web temporary
+node_modules/
+dist/
+
+# Logs
+*.log

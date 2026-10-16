@@ -1,0 +1,3015 @@
+[
+  {
+    "id": "case-a1b74d69",
+    "title": "Главная республиканская мечеть Астаны",
+    "country": "Казахстан",
+    "region": "Астана, Есильский район",
+    "target_name": "Главная мечеть Астаны (пр. Мангилик Ел, 65)",
+    "target_lat": 51.072907,
+    "target_lon": 71.409673,
+    "camera_name": "Южная эспланада со стороны пр. Мангилик Ел",
+    "camera_lat": 51.0715,
+    "camera_lon": 71.408,
+    "bearing_deg": 35,
+    "distance_m": 190,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Крупнейшая мечеть в Центральной Азии (открыта в 2022 г.), вместимостью до 235 000 человек. Высота четырёх минаретов — 130 метров, центральный купол диаметром 62 метра облицован небесно-голубой мозаикой.",
+    "main_photo": "/static/uploads/a1b74d69.jpg",
+    "clues": [
+      "Файл: байтерек.jpg",
+      "Размер: 83 КБ",
+      "Гигантский лазурный главный купол высотой 83.5 м и диаметром 62 м",
+      "Четыре монументальных минарета высотой 130 метров с золотыми полумесяцами",
+      "Белоснежная мраморная облицовка фасадов и стрельчатые арки айванов",
+      "Адрес: проспект Мангилик Ел, 65, Астана (51.072907, 71.409673)"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_a1b74d69_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.072907, 71.409673)."
+      },
+      {
+        "url": "/static/uploads/rev_a1b74d69/a1b74d69_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_a1b74d69/a1b74d69_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_a1b74d69/a1b74d69_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-a1b74d69.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Казахстан (Текстовые маркеры)",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ә"
+      ],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Визуальные совпадения",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.082,
+        "green_score": 0.003,
+        "ochre_score": 0.0,
+        "white_score": 0.052,
+        "granite_score": 0.089,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.409673,51.072907",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.409673%2C51.072907&z=16&pt=71.409673,51.072907",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.072907,71.409673",
+    "evidence_sheet_url": "/static/uploads/evidence_case-a1b74d69.jpg"
+  },
+  {
+    "id": "case-ae0178d4",
+    "title": "Астана пейзаж казахстан",
+    "country": "Қазақстан",
+    "region": "Астана",
+    "target_name": "Республиканское государственное учреждение «Департамент бюро национальной статистики агенства по стратегическому планированию и реформам Республики Казахстан по городу Астане»",
+    "target_lat": 51.1716753,
+    "target_lon": 71.4153154,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 51.171375299999994,
+    "camera_lon": 71.4150154,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "OSINT VERIFIED (Ensemble Consensus: 4/5 проходов)",
+    "description": "Локация верифицирована по ансамблевому консенсусу ориентира «Астана Пейзаж Казахстан». Адрес: Республиканское государственное учреждение «Департамент бюро национальной статистики агенства по стратегическому планированию и реформам Республики Казахстан по городу Астане», 22, Желтоқсан көшесі, Агроқалашық, Сарыарқа ауданы, Астана, Z10M9K9, Қазақстан.",
+    "main_photo": "/static/uploads/ae0178d4.jpg",
+    "clues": [
+      "Файл: c7a52acae9a4b7030bd336765513680d.jpg",
+      "Размер: 141 КБ",
+      "Распознанный текст на фото (OCR): «titt ttt • апль•нский 688 888 0SH», «uill Ill 688 888 OSH»",
+      "Консенсусный ориентир: Астана Пейзаж Казахстан",
+      "Географическая привязка: Республиканское государственное учреждение «Департамент бюро национальной статистики агенства по стратегическому планированию и реформам Республики Казахстан по городу Астане», 22, Желтоқсан көшесі, Агроқалашық, Сарыарқа ауданы, Астана, Z10M9K9, Қазақстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_ae0178d4_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.171675, 71.415315)."
+      },
+      {
+        "url": "/static/uploads/rev_ae0178d4/ae0178d4_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_ae0178d4/ae0178d4_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_ae0178d4/ae0178d4_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-ae0178d4.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [
+      "titt ttt • апль•нский 688 888 0SH",
+      "uill Ill 688 888 OSH"
+    ],
+    "ocr_keywords": [
+      "titt ttt   апль нский 688 888 0SH",
+      "titt",
+      "ttt",
+      "апль",
+      "нский",
+      "uill Ill 688 888 OSH",
+      "uill",
+      "Ill",
+      "OSH"
+    ],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ү",
+        "ғ",
+        "і",
+        "қ"
+      ],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«titt ttt • апль•нский 688 888 0SH» [Казахский язык]",
+          "confidence": "HIGH"
+        },
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр",
+        "titt ttt   апль нский 688 888 0SH",
+        "titt",
+        "ttt"
+      ],
+      "palette": {
+        "cyan_score": 0.143,
+        "green_score": 0.014,
+        "ochre_score": 0.024,
+        "white_score": 0.027,
+        "granite_score": 0.165,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.415315,51.171675",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.415315%2C51.171675&z=16&pt=71.415315,51.171675",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.171675,71.415315",
+    "evidence_sheet_url": "/static/uploads/evidence_case-ae0178d4.jpg"
+  },
+  {
+    "id": "case-417fcf32",
+    "title": "Мавзолей Ходжа Ахмеда Ясави",
+    "country": "Казахстан",
+    "region": "Туркестанская обл., г. Туркестан",
+    "target_name": "Мавзолей Ходжа Ахмеда Ясави (ЮНЕСКО)",
+    "target_lat": 43.297444,
+    "target_lon": 68.270889,
+    "camera_name": "Главная эспланада перед порталом",
+    "camera_lat": 43.2965,
+    "camera_lon": 68.27,
+    "bearing_deg": 25,
+    "distance_m": 120,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Шедевр средневекового зодчества эпохи Тимура (XIV век). Огромный кирпичный портал высотой 44 метра и бирюзовый купол.",
+    "main_photo": "/static/uploads/417fcf32.jpg",
+    "clues": [
+      "Файл: images (1).jpg",
+      "Размер: 39 КБ",
+      "Грандиозный пештак (портал) с глазурованной майоликой",
+      "Бирюзовый ребристый купол Казандыка"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_417fcf32_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (43.297444, 68.270889)."
+      },
+      {
+        "url": "/static/uploads/rev_417fcf32/417fcf32_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_417fcf32/417fcf32_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_417fcf32/417fcf32_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-417fcf32.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "қ",
+        "ғ",
+        "і",
+        "ң",
+        "ө"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены высокогорные спортивные и туристические комплексы ущелья Медеу (г. Алматы).",
+      "recommended_candidates": [
+        "Медеу Алматы",
+        "Шымбулак",
+        "Кок-Тобе"
+      ],
+      "palette": {
+        "cyan_score": 0.09,
+        "green_score": 0.007,
+        "ochre_score": 0.103,
+        "white_score": 0.028,
+        "granite_score": 0.009,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/68.270889,43.297444",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=68.270889%2C43.297444&z=16&pt=68.270889,43.297444",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=43.297444,68.270889",
+    "evidence_sheet_url": "/static/uploads/evidence_case-417fcf32.jpg"
+  },
+  {
+    "id": "case-8d5baf3f",
+    "title": "Озеро Каинды (Қайыңды көлі)",
+    "country": "Казахстан",
+    "region": "Алматинская обл., Кегенский район, Саты",
+    "target_name": "Озеро Каинды и информационный стенд нацпарка «Кольсай көлдері»",
+    "target_lat": 42.984557,
+    "target_lon": 78.465986,
+    "camera_name": "Входная тропа перед смотровым мостиком озера Каинды",
+    "camera_lat": 42.9841,
+    "camera_lon": 78.4655,
+    "bearing_deg": 38,
+    "distance_m": 60,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Знаменитое горное озеро Каинды в ущелье Кунгей Алатау на высоте 1867 метров над уровнем моря. Образовалось в 1911 году после Кеминского землетрясения в результате оползня, перекрывшего ущелье. Из бирюзовой воды возвышаются стволы затопленных тянь-шаньских елей.",
+    "main_photo": "/static/uploads/8d5baf3f.jpg",
+    "clues": [
+      "Файл: images.jpg",
+      "Размер: 48 КБ",
+      "Информационный стенд маршрутов с казахской надписью «ҚАЙЫҢДЫ КӨЛІ / КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ»",
+      "Уникальный затопленный хвойный лес из стволов тянь-шаньской ели Шренка",
+      "Бирюзовый оттенок горной воды и скалистые склоны ущелья Кунгей Алатау",
+      "Национальный природный парк «Көлсай көлдері», Кегенский район, Казахстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_8d5baf3f_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.984557, 78.465986)."
+      },
+      {
+        "url": "/static/uploads/rev_8d5baf3f/8d5baf3f_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_8d5baf3f/8d5baf3f_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_8d5baf3f/8d5baf3f_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-8d5baf3f.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [
+        "каньон (каньон)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "strategy_summary": "Обнаружен прямой топоним нацпарка: Озеро Каинды (Қайыңды көлі, Кегенский р-н, Алматинская обл.).",
+      "recommended_candidates": [
+        "Озеро Каинды",
+        "Қайыңды көлі",
+        "Каинды Казахстан"
+      ],
+      "palette": {
+        "cyan_score": 0.078,
+        "green_score": 0.0,
+        "ochre_score": 0.418,
+        "white_score": 0.001,
+        "granite_score": 0.119,
+        "primary_biome": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/78.465986,42.984557",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=78.465986%2C42.984557&z=16&pt=78.465986,42.984557",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=42.984557,78.465986",
+    "evidence_sheet_url": "/static/uploads/evidence_case-8d5baf3f.jpg"
+  },
+  {
+    "id": "case-43d3166e",
+    "title": "Озеро Каинды (Қайыңды көлі)",
+    "country": "Казахстан",
+    "region": "Алматинская обл., Кегенский район, Саты",
+    "target_name": "Озеро Каинды и информационный стенд нацпарка «Кольсай көлдері»",
+    "target_lat": 42.984557,
+    "target_lon": 78.465986,
+    "camera_name": "Входная тропа перед смотровым мостиком озера Каинды",
+    "camera_lat": 42.9841,
+    "camera_lon": 78.4655,
+    "bearing_deg": 38,
+    "distance_m": 60,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Знаменитое горное озеро Каинды в ущелье Кунгей Алатау на высоте 1867 метров над уровнем моря. Образовалось в 1911 году после Кеминского землетрясения в результате оползня, перекрывшего ущелье. Из бирюзовой воды возвышаются стволы затопленных тянь-шаньских елей.",
+    "main_photo": "/static/uploads/43d3166e.jpg",
+    "clues": [
+      "Файл: IMG_7990.jpg",
+      "Размер: 531 КБ",
+      "Языковой анализ: Казахский язык ()",
+      "Распознанный текст на фото (OCR): «4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•», «POI KAINb Keni 03epo KaiblHAbl -Lake Kaindy AbU-Ub em MAPUfPYTb1Hb1H KAP,TACb' KAPTA MAPUIPYTOB 03EPO KAMSIÅÅb/ MAP OF KAIYND LARE ROUTE*»",
+      "Информационный стенд маршрутов с казахской надписью «ҚАЙЫҢДЫ КӨЛІ / КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ»",
+      "Уникальный затопленный хвойный лес из стволов тянь-шаньской ели Шренка",
+      "Бирюзовый оттенок горной воды и скалистые склоны ущелья Кунгей Алатау",
+      "Национальный природный парк «Көлсай көлдері», Кегенский район, Казахстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_43d3166e_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.984557, 78.465986)."
+      },
+      {
+        "url": "/static/uploads/rev_43d3166e/43d3166e_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_43d3166e/43d3166e_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_43d3166e/43d3166e_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-43d3166e.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [
+      "4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•",
+      "POI KAINb Keni 03epo KaiblHAbl -Lake Kaindy AbU-Ub em MAPUfPYTb1Hb1H KAP,TACb' KAPTA MAPUIPYTOB 03EPO KAMSIÅÅb/ MAP OF KAIYND LARE ROUTE*"
+    ],
+    "ocr_keywords": [
+      "йАнд",
+      "вдкде",
+      "айыиы",
+      "keni",
+      "Кайынды",
+      "kaindy",
+      "Йындь",
+      "МАРИ",
+      "ГРУТЫНЫН",
+      "КАРТАСЫ",
+      "КАРТ",
+      "МАРШРУТОВ",
+      "кдйЬ",
+      "АДьп",
+      "МАР",
+      "kAIYND",
+      "АКЕ",
+      "ROVTE",
+      "адг",
+      "теовео",
+      "кург",
+      "POI",
+      "KAINb",
+      "epo",
+      "KaiblHAbl",
+      "AbU",
+      "MAPUfPYTb",
+      "KAP",
+      "TACb",
+      "KAPTA"
+    ],
+    "ai_analysis": {
+      "scene_type": "Казахстан (Текстовые маркеры)",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "қ",
+        "Ө",
+        "Ң",
+        "Қ",
+        "і",
+        "І",
+        "ң",
+        "ө"
+      ],
+      "kz_terms": [
+        "көл (озеро)",
+        "көлі (озеро)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+      "strategy_summary": "Обнаружен прямой топоним нацпарка: Озеро Каинды (Қайыңды көлі, Кегенский р-н, Алматинская обл.).",
+      "recommended_candidates": [
+        "Озеро Каинды",
+        "Қайыңды көлі",
+        "Каинды Казахстан",
+        "йАнд",
+        "вдкде",
+        "айыиы"
+      ],
+      "palette": {
+        "cyan_score": 0.032,
+        "green_score": 0.016,
+        "ochre_score": 0.055,
+        "white_score": 0.004,
+        "granite_score": 0.189,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/78.465986,42.984557",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=78.465986%2C42.984557&z=16&pt=78.465986,42.984557",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=42.984557,78.465986",
+    "evidence_sheet_url": "/static/uploads/evidence_case-43d3166e.jpg"
+  },
+  {
+    "id": "case-7fd9aaa0",
+    "title": "ТРЦ «MEGA Silk Way» — супермаркет «Золотое Яблоко» (Астана)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "Парфюмерный супермаркет «Золотое Яблоко» в ТРЦ MEGA Silk Way",
+    "target_lat": 51.089614,
+    "target_lon": 71.40607,
+    "camera_name": "Центральный атриум ТРЦ MEGA Silk Way перед входом",
+    "camera_lat": 51.0895,
+    "camera_lon": 71.406,
+    "bearing_deg": 350,
+    "distance_m": 20,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Флагманский парфюмерно-косметический супермаркет «Золотое Яблоко» (Golden Apple) на 1 этаже крупнейшего торгово-развлекательного центра столицы «MEGA Silk Way» (проспект Кабанбай батыра, 62, район EXPO 2017).",
+    "main_photo": "/static/uploads/7fd9aaa0.jpg",
+    "clues": [
+      "Файл: camphoto_1903590565.jpg",
+      "Размер: 20 КБ",
+      "Фирменный фасад и вывеска супермаркета «Золотое Яблоко» (Golden Apple)",
+      "Интерьер и архитектурные галереи первого этажа ТРЦ MEGA Silk Way",
+      "Локация: проспект Кабанбай батыра 62, г. Астана, Республика Казахстан",
+      "Точные геокоординаты объекта: 51.089614, 71.406070"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_7fd9aaa0_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.089614, 71.406070)."
+      },
+      {
+        "url": "/static/uploads/rev_7fd9aaa0/7fd9aaa0_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_7fd9aaa0/7fd9aaa0_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_7fd9aaa0/7fd9aaa0_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-7fd9aaa0.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.021,
+        "green_score": 0.001,
+        "ochre_score": 0.107,
+        "white_score": 0.003,
+        "granite_score": 0.378,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.406070,51.089614",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.406070%2C51.089614&z=16&pt=71.406070,51.089614",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.089614,71.406070",
+    "evidence_sheet_url": "/static/uploads/evidence_case-7fd9aaa0.jpg"
+  },
+  {
+    "id": "case-f4629e2b",
+    "title": "Международный финансовый центр «Астана» (МФЦА / AIFC)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "МФЦА (AIFC) — пр. Мангилик Ел, 55 (Павильоны EXPO)",
+    "target_lat": 51.090347,
+    "target_lon": 71.424027,
+    "camera_name": "Главная эспланада МФЦА со стороны пр. Мангилик Ел",
+    "camera_lat": 51.09,
+    "camera_lon": 71.4235,
+    "bearing_deg": 30,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Международный финансовый центр «Астана» (МФЦА / AIFC) — финансовый хаб Центральной Азии на территории архитектурного комплекса EXPO (проспект Мангилик Ел, 55).",
+    "main_photo": "/static/uploads/f4629e2b.jpg",
+    "clues": [
+      "Файл: IMG_7619.jpg",
+      "Размер: 16 КБ",
+      "Yandex Vision карточка объекта: «Международный финансовый центр» (Астана)",
+      "Описание Yandex: Финансовый центр, расположенный в Астане, Казахстан. Официально открыт 5 июля 2018 года. Конституционный закон «О Международном финансовом центре “Аст",
+      "Архитектурный комплекс МФЦА (AIFC) на проспекте Мангилик Ел, 55",
+      "Павильоны EXPO / Сфера Нур Алем",
+      "Идентифицировано через Yandex Vision AI"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_f4629e2b_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.090347, 71.424027)."
+      },
+      {
+        "url": "/static/uploads/rev_f4629e2b/f4629e2b_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_f4629e2b/f4629e2b_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_f4629e2b/f4629e2b_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-f4629e2b.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ғ",
+        "і",
+        "ң",
+        "ә"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.303,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.02,
+        "granite_score": 0.085,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.424027,51.090347",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.424027%2C51.090347&z=16&pt=71.424027,51.090347",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.090347,71.424027",
+    "evidence_sheet_url": "/static/uploads/evidence_case-f4629e2b.jpg"
+  },
+  {
+    "id": "case-d27f6837",
+    "title": "ТРЦ «MEGA Silk Way» — супермаркет «Золотое Яблоко» (Астана)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "Парфюмерный супермаркет «Золотое Яблоко» в ТРЦ MEGA Silk Way",
+    "target_lat": 51.089614,
+    "target_lon": 71.40607,
+    "camera_name": "Центральный атриум ТРЦ MEGA Silk Way перед входом",
+    "camera_lat": 51.0895,
+    "camera_lon": 71.406,
+    "bearing_deg": 350,
+    "distance_m": 20,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Флагманский парфюмерно-косметический супермаркет «Золотое Яблоко» (Golden Apple) на 1 этаже крупнейшего торгово-развлекательного центра столицы «MEGA Silk Way» (проспект Кабанбай батыра, 62, район EXPO 2017).",
+    "main_photo": "/static/uploads/d27f6837.jpg",
+    "clues": [
+      "Файл: camphoto_1903590565.jpg",
+      "Размер: 20 КБ",
+      "Фирменный фасад и вывеска супермаркета «Золотое Яблоко» (Golden Apple)",
+      "Интерьер и архитектурные галереи первого этажа ТРЦ MEGA Silk Way",
+      "Локация: проспект Кабанбай батыра 62, г. Астана, Республика Казахстан",
+      "Точные геокоординаты объекта: 51.089614, 71.406070"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_d27f6837_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.089614, 71.406070)."
+      },
+      {
+        "url": "/static/uploads/rev_d27f6837/d27f6837_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_d27f6837/d27f6837_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_d27f6837/d27f6837_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-d27f6837.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.021,
+        "green_score": 0.001,
+        "ochre_score": 0.107,
+        "white_score": 0.003,
+        "granite_score": 0.378,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.406070,51.089614",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.406070%2C51.089614&z=16&pt=71.406070,51.089614",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.089614,71.406070",
+    "evidence_sheet_url": "/static/uploads/evidence_case-d27f6837.jpg"
+  },
+  {
+    "id": "case-63d3d28b",
+    "title": "Международный финансовый центр «Астана» (МФЦА / AIFC)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "МФЦА (AIFC) — пр. Мангилик Ел, 55 (Павильоны EXPO)",
+    "target_lat": 51.090347,
+    "target_lon": 71.424027,
+    "camera_name": "Главная эспланада МФЦА со стороны пр. Мангилик Ел",
+    "camera_lat": 51.09,
+    "camera_lon": 71.4235,
+    "bearing_deg": 30,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Международный финансовый центр «Астана» (МФЦА / AIFC) — финансовый хаб Центральной Азии на территории архитектурного комплекса EXPO (проспект Мангилик Ел, 55).",
+    "main_photo": "/static/uploads/63d3d28b.jpg",
+    "clues": [
+      "Файл: Международный финансовый центр «Астана» (МФЦА / AIFC)",
+      "Размер: 16 КБ",
+      "Языковой анализ: Казахский язык ()",
+      "Yandex Vision карточка объекта: «Международный финансовый центр» (Астана)",
+      "Описание Yandex: Финансовый центр, расположенный в Астане, Казахстан. Официально открыт 5 июля 2018 года. Конституционный закон «О Международном финансовом центре “Аст",
+      "Архитектурный комплекс МФЦА (AIFC) на проспекте Мангилик Ел, 55",
+      "Павильоны EXPO / Сфера Нур Алем",
+      "Идентифицировано через Yandex Vision AI"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_630b012a_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.090347, 71.424027)."
+      },
+      {
+        "url": "/static/uploads/rev_630b012a/63d3d28b_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_630b012a/63d3d28b_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_630b012a/63d3d28b_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/sat_63d3d28b_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.090347, 71.424027)."
+      },
+      {
+        "url": "/static/uploads/rev_63d3d28b/63d3d28b_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_63d3d28b/63d3d28b_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_63d3d28b/63d3d28b_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-63d3d28b.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ң",
+        "ә",
+        "ғ",
+        "і"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.303,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.02,
+        "granite_score": 0.085,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.424027,51.090347",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.424027%2C51.090347&z=16&pt=71.424027,51.090347",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.090347,71.424027",
+    "evidence_sheet_url": "/static/uploads/evidence_case-63d3d28b.jpg"
+  },
+  {
+    "id": "case-1685e24a",
+    "title": "Международный финансовый центр «Астана» (МФЦА / AIFC)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "МФЦА (AIFC) — пр. Мангилик Ел, 55 (Павильоны EXPO)",
+    "target_lat": 51.090347,
+    "target_lon": 71.424027,
+    "camera_name": "Главная эспланада МФЦА со стороны пр. Мангилик Ел",
+    "camera_lat": 51.09,
+    "camera_lon": 71.4235,
+    "bearing_deg": 30,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Международный финансовый центр «Астана» (МФЦА / AIFC) — финансовый хаб Центральной Азии на территории архитектурного комплекса EXPO (проспект Мангилик Ел, 55).",
+    "main_photo": "/static/uploads/1685e24a.jpg",
+    "clues": [
+      "Файл: Бизнес центры",
+      "Размер: 16 КБ",
+      "Yandex Vision карточка объекта: «Международный финансовый центр» (Астана)",
+      "Описание Yandex: Финансовый центр, расположенный в Астане, Казахстан. Официально открыт 5 июля 2018 года. Конституционный закон «О Международном финансовом центре “Аст",
+      "Архитектурный комплекс МФЦА (AIFC) на проспекте Мангилик Ел, 55",
+      "Павильоны EXPO / Сфера Нур Алем",
+      "Идентифицировано через Yandex Vision AI"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_60d9ae81_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.090347, 71.424027)."
+      },
+      {
+        "url": "/static/uploads/rev_60d9ae81/1685e24a_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_60d9ae81/1685e24a_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_60d9ae81/1685e24a_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/sat_1685e24a_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (59.954064, 30.450031)."
+      },
+      {
+        "url": "/static/uploads/rev_1685e24a/1685e24a_yandex.png",
+        "title": "Запуск 1: Yandex Vision AI (Основной поиск)",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и семантического анализа сцены через Яндекс."
+      },
+      {
+        "url": "/static/uploads/rev_1685e24a/1685e24a_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_1685e24a/1685e24a_google.png",
+        "title": "Запуск 3: Google Lens Cross-Match (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот кросс-валидации Google Lens."
+      },
+      {
+        "url": "/static/uploads/evidence_case-1685e24a.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ң",
+        "ә",
+        "ғ",
+        "і"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.303,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.02,
+        "granite_score": 0.085,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.424027,51.090347",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.424027%2C51.090347&z=16&pt=71.424027,51.090347",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.090347,71.424027",
+    "evidence_sheet_url": "/static/uploads/evidence_case-1685e24a.jpg"
+  },
+  {
+    "id": "case-3123bbc5",
+    "title": "Шымкент",
+    "country": "Қазақстан",
+    "region": "Шымкент",
+    "target_name": "Шымкент",
+    "target_lat": 42.3146962,
+    "target_lon": 69.5883282,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 42.3143962,
+    "camera_lon": 69.58802820000001,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "OSINT VERIFIED (Ensemble Consensus: 4/5 проходов)",
+    "description": "Локация верифицирована по ансамблевому консенсусу ориентира «Шымкент». Адрес: Lanzhou, 3/1, площадь Аль-Фараби, Әл-Фараби ауданы, Шымкент, 160018, Қазақстан.",
+    "main_photo": "/static/uploads/3123bbc5.jpg",
+    "clues": [
+      "Файл: Шымкент",
+      "Размер: 16 КБ",
+      "Госномер Код 13 -> Туркестанская область (центр: Туркестан)",
+      "Госномер Код 17 -> г. Шымкент (центр: Шымкент)",
+      "Консенсусный ориентир: Шымкент",
+      "Географическая привязка: Lanzhou, 3/1, площадь Аль-Фараби, Әл-Фараби ауданы, Шымкент, 160018, Қазақстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_30a58482_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.314696, 69.588328)."
+      },
+      {
+        "url": "/static/uploads/rev_30a58482/3123bbc5_google.png",
+        "title": "Запуск 1: Google Lens Full Frame (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Google активировал reCAPTCHA (защита от ботов по IP). Поиск бесшовно переключён на Yandex Vision AI."
+      },
+      {
+        "url": "/static/uploads/rev_30a58482/3123bbc5_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_30a58482/3123bbc5_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_3123bbc5_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.314696, 69.588328)."
+      },
+      {
+        "url": "/static/uploads/rev_3123bbc5/3123bbc5_google.png",
+        "title": "Запуск 1: Google Lens Full Frame (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Google активировал reCAPTCHA (защита от ботов по IP). Поиск бесшовно переключён на Yandex Vision AI."
+      },
+      {
+        "url": "/static/uploads/rev_3123bbc5/3123bbc5_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_3123bbc5/3123bbc5_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/evidence_case-3123bbc5.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ң",
+        "ғ",
+        "ә",
+        "і"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [
+        "Код 13 — Туркестанская область (Туркестан)",
+        "Код 17 — г. Шымкент"
+      ],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        },
+        {
+          "category": "region",
+          "icon": "🚗",
+          "title": "Автомобильный код региона РК",
+          "value": "Код 13 — Туркестанская область (Туркестан)",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.303,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.02,
+        "granite_score": 0.085,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/69.588328,42.314696",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=69.588328%2C42.314696&z=16&pt=69.588328,42.314696",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=42.314696,69.588328",
+    "evidence_sheet_url": "/static/uploads/evidence_case-3123bbc5.jpg"
+  },
+  {
+    "id": "case-cfaa28c8",
+    "title": "Бизнес центры",
+    "country": "Россия",
+    "region": "Санкт-Петербург",
+    "target_name": "Бизнес-центры «Ника» и «Сокол»",
+    "target_lat": 59.9540636,
+    "target_lon": 30.4500311,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 59.953763599999995,
+    "camera_lon": 30.4497311,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "OSINT VERIFIED (Ensemble Consensus: 4/5 проходов)",
+    "description": "Локация верифицирована по ансамблевому консенсусу ориентира «бизнес центры». Адрес: Jane Sarta, 2, Ириновский проспект, округ Пороховые, Санкт-Петербург, Северо-Западный федеральный округ, 195248, Россия.",
+    "main_photo": "/static/uploads/cfaa28c8.jpg",
+    "clues": [
+      "Файл: IMG_7619.jpg",
+      "Размер: 16 КБ",
+      "Консенсусный ориентир: бизнес центры",
+      "Географическая привязка: Jane Sarta, 2, Ириновский проспект, округ Пороховые, Санкт-Петербург, Северо-Западный федеральный округ, 195248, Россия"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_cfaa28c8_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (59.954064, 30.450031)."
+      },
+      {
+        "url": "/static/uploads/rev_cfaa28c8/cfaa28c8_google.png",
+        "title": "Запуск 1: Google Lens Full Frame (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Google активировал reCAPTCHA (защита от ботов по IP). Поиск бесшовно переключён на Yandex Vision AI."
+      },
+      {
+        "url": "/static/uploads/rev_cfaa28c8/cfaa28c8_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_cfaa28c8/cfaa28c8_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ғ",
+        "ә",
+        "ң",
+        "і"
+      ],
+      "kz_terms": [
+        "даңғылы (проспект)"
+      ],
+      "regions": [
+        "Код 13 — Туркестанская область (Туркестан)",
+        "Код 17 — г. Шымкент"
+      ],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        },
+        {
+          "category": "region",
+          "icon": "🚗",
+          "title": "Автомобильный код региона РК",
+          "value": "Код 13 — Туркестанская область (Туркестан)",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.303,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.02,
+        "granite_score": 0.085,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/30.450031,59.954064",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=30.450031%2C59.954064&z=16&pt=30.450031,59.954064",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=59.954064,30.450031"
+  },
+  {
+    "id": "case-d81ebdcd",
+    "title": "ТРЦ «MEGA Silk Way» — супермаркет «Золотое Яблоко» (Астана)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "Парфюмерный супермаркет «Золотое Яблоко» в ТРЦ MEGA Silk Way",
+    "target_lat": 51.089614,
+    "target_lon": 71.40607,
+    "camera_name": "Центральный атриум ТРЦ MEGA Silk Way перед входом",
+    "camera_lat": 51.0895,
+    "camera_lon": 71.406,
+    "bearing_deg": 350,
+    "distance_m": 20,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Флагманский парфюмерно-косметический супермаркет «Золотое Яблоко» (Golden Apple) на 1 этаже крупнейшего торгово-развлекательного центра столицы «MEGA Silk Way» (проспект Кабанбай батыра, 62, район EXPO 2017).",
+    "main_photo": "/static/uploads/d81ebdcd.jpg",
+    "clues": [
+      "Файл: camphoto_1903590565.jpg",
+      "Размер: 20 КБ",
+      "Фирменный фасад и вывеска супермаркета «Золотое Яблоко» (Golden Apple)",
+      "Интерьер и архитектурные галереи первого этажа ТРЦ MEGA Silk Way",
+      "Локация: проспект Кабанбай батыра 62, г. Астана, Республика Казахстан",
+      "Точные геокоординаты объекта: 51.089614, 71.406070"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_d81ebdcd_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.089614, 71.406070)."
+      },
+      {
+        "url": "/static/uploads/rev_d81ebdcd/d81ebdcd_google.png",
+        "title": "Запуск 1: Google Lens Full Frame (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Google активировал reCAPTCHA (защита от ботов по IP). Поиск бесшовно переключён на Yandex Vision AI."
+      },
+      {
+        "url": "/static/uploads/rev_d81ebdcd/d81ebdcd_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_d81ebdcd/d81ebdcd_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [
+        "Код 13 — Туркестанская область (Туркестан)"
+      ],
+      "anchors": [
+        {
+          "category": "region",
+          "icon": "🚗",
+          "title": "Автомобильный код региона РК",
+          "value": "Код 13 — Туркестанская область (Туркестан)",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.021,
+        "green_score": 0.001,
+        "ochre_score": 0.107,
+        "white_score": 0.003,
+        "granite_score": 0.378,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.406070,51.089614",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.406070%2C51.089614&z=16&pt=71.406070,51.089614",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.089614,71.406070"
+  },
+  {
+    "id": "case-4677f0e0",
+    "title": "ТРЦ «MEGA Silk Way» — супермаркет «Золотое Яблоко» (Астана)",
+    "country": "Казахстан",
+    "region": "г. Астана, район Есиль",
+    "target_name": "Парфюмерный супермаркет «Золотое Яблоко» в ТРЦ MEGA Silk Way",
+    "target_lat": 51.089614,
+    "target_lon": 71.40607,
+    "camera_name": "Центральный атриум ТРЦ MEGA Silk Way перед входом",
+    "camera_lat": 51.0895,
+    "camera_lon": 71.406,
+    "bearing_deg": 350,
+    "distance_m": 20,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Флагманский парфюмерно-косметический супермаркет «Золотое Яблоко» (Golden Apple) на 1 этаже крупнейшего торгово-развлекательного центра столицы «MEGA Silk Way» (проспект Кабанбай батыра, 62, район EXPO 2017).",
+    "main_photo": "/static/uploads/4677f0e0.jpg",
+    "clues": [
+      "Файл: camphoto_1903590565.jpg",
+      "Размер: 20 КБ",
+      "Фирменный фасад и вывеска супермаркета «Золотое Яблоко» (Golden Apple)",
+      "Интерьер и архитектурные галереи первого этажа ТРЦ MEGA Silk Way",
+      "Локация: проспект Кабанбай батыра 62, г. Астана, Республика Казахстан",
+      "Точные геокоординаты объекта: 51.089614, 71.406070"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_4677f0e0_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.089614, 71.406070)."
+      },
+      {
+        "url": "/static/uploads/rev_4677f0e0/4677f0e0_google.png",
+        "title": "Запуск 1: Google Lens Full Frame (reCAPTCHA)",
+        "type": "Google Lens AI Match",
+        "desc": "Google активировал reCAPTCHA (защита от ботов по IP). Поиск бесшовно переключён на Yandex Vision AI."
+      },
+      {
+        "url": "/static/uploads/rev_4677f0e0/4677f0e0_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_4677f0e0/4677f0e0_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Интерьер / Торговый комплекс (ТРЦ) / Городская застройка",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [
+        "Код 01 — г. Астана"
+      ],
+      "anchors": [
+        {
+          "category": "interior",
+          "icon": "🏬",
+          "title": "Интерьер коммерческого здания",
+          "value": "ТРЦ MEGA Silk Way / Золотое Яблоко",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Интерьер ТРЦ / Магазин",
+      "strategy_summary": "Идентифицирован торгово-развлекательный комплекс: ТРЦ MEGA Silk Way / парфюмерный супермаркет «Золотое Яблоко» (г. Астана).",
+      "recommended_candidates": [
+        "Золотое Яблоко Астана",
+        "MEGA Silk Way Астана",
+        "Золотое Яблоко",
+        "MEGA Silk Way"
+      ],
+      "palette": {
+        "cyan_score": 0.021,
+        "green_score": 0.001,
+        "ochre_score": 0.107,
+        "white_score": 0.003,
+        "granite_score": 0.378,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/71.406070,51.089614",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.406070%2C51.089614&z=17&pt=71.406070,51.089614",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.089614,71.406070",
+    "evidence_sheet_url": "/static/uploads/evidence_case-4677f0e0.jpg"
+  },
+  {
+    "id": "case-aceb2dab",
+    "title": "Озеро Каинды (Қайыңды көлі)",
+    "country": "Казахстан",
+    "region": "Алматинская обл., Кегенский район, Саты",
+    "target_name": "Озеро Каинды и информационный стенд нацпарка «Кольсай көлдері»",
+    "target_lat": 42.984557,
+    "target_lon": 78.465986,
+    "camera_name": "Входная тропа перед смотровым мостиком озера Каинды",
+    "camera_lat": 42.9841,
+    "camera_lon": 78.4655,
+    "bearing_deg": 38,
+    "distance_m": 60,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Знаменитое горное озеро Каинды в ущелье Кунгей Алатау на высоте 1867 метров над уровнем моря. Образовалось в 1911 году после Кеминского землетрясения в результате оползня, перекрывшего ущелье. Из бирюзовой воды возвышаются стволы затопленных тянь-шаньских елей.",
+    "main_photo": "/static/uploads/aceb2dab.jpg",
+    "clues": [
+      "Файл: IMG_7990.jpg",
+      "Размер: 531 КБ",
+      "Языковой анализ: Казахский язык ()",
+      "Распознанный текст на фото (OCR): «4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•», «POI KAINb Keni 03epo KaiblHAbl -Lake Kaindy AbU-Ub em MAPUfPYTb1Hb1H KAP,TACb' KAPTA MAPUIPYTOB 03EPO KAMSIÅÅb/ MAP OF KAIYND LARE ROUTE*»",
+      "Информационный стенд маршрутов с казахской надписью «ҚАЙЫҢДЫ КӨЛІ / КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ»",
+      "Уникальный затопленный хвойный лес из стволов тянь-шаньской ели Шренка",
+      "Бирюзовый оттенок горной воды и скалистые склоны ущелья Кунгей Алатау",
+      "Национальный природный парк «Көлсай көлдері», Кегенский район, Казахстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_aceb2dab_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.984557, 78.465986)."
+      },
+      {
+        "url": "/static/uploads/rev_aceb2dab/aceb2dab_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_aceb2dab/aceb2dab_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_aceb2dab/aceb2dab_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ocr_lines": [
+      "4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•",
+      "POI KAINb Keni 03epo KaiblHAbl -Lake Kaindy AbU-Ub em MAPUfPYTb1Hb1H KAP,TACb' KAPTA MAPUIPYTOB 03EPO KAMSIÅÅb/ MAP OF KAIYND LARE ROUTE*"
+    ],
+    "ocr_keywords": [
+      "йАнд",
+      "вдкде",
+      "айыиы",
+      "keni",
+      "Кайынды",
+      "kaindy",
+      "Йындь",
+      "МАРИ",
+      "ГРУТЫНЫН",
+      "КАРТАСЫ",
+      "КАРТ",
+      "МАРШРУТОВ",
+      "кдйЬ",
+      "АДьп",
+      "МАР",
+      "kAIYND",
+      "АКЕ",
+      "ROVTE",
+      "адг",
+      "теовео",
+      "кург",
+      "POI",
+      "KAINb",
+      "epo",
+      "KaiblHAbl",
+      "AbU",
+      "MAPUfPYTb",
+      "KAP",
+      "TACb",
+      "KAPTA"
+    ],
+    "ai_analysis": {
+      "scene_type": "Казахстан (Текстовые маркеры)",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•»",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•»",
+      "strategy_summary": "Обнаружен прямой топоним нацпарка: Озеро Каинды (Қайыңды көлі, Кегенский р-н, Алматинская обл.).",
+      "recommended_candidates": [
+        "Озеро Каинды",
+        "Қайыңды көлі",
+        "Каинды Казахстан",
+        "йАнд",
+        "вдкде",
+        "айыиы"
+      ],
+      "palette": {
+        "cyan_score": 0.032,
+        "green_score": 0.016,
+        "ochre_score": 0.055,
+        "white_score": 0.004,
+        "granite_score": 0.189,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true,
+    "twogis_url": "https://2gis.kz/geo/78.465986,42.984557",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=78.465986%2C42.984557&z=16&pt=78.465986,42.984557",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=42.984557,78.465986"
+  },
+  {
+    "id": "case-d38556cc",
+    "title": "dummy.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение",
+    "target_name": "Неопознанный объект",
+    "target_lat": 53.087433,
+    "target_lon": 70.252005,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 53.087133,
+    "camera_lon": 70.251705,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 100000,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с подсказкой.",
+    "main_photo": "/static/uploads/d38556cc.jpg",
+    "clues": [
+      "Файл: dummy.jpg",
+      "Размер: 24 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_d38556cc/d38556cc_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_d38556cc/d38556cc_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_d38556cc/d38556cc_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Горное бирюзовое озеро с хвойным лесом (Тянь-Шань, Алматинская обл.)",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Горное бирюзовое озеро с хвойным лесом (Тянь-Шань, Алматинская обл.)",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Горное бирюзовое озеро с хвойным лесом (Тянь-Шань, Алматинская обл.)",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Горное бирюзовое озеро с хвойным лесом (Тянь-Шань, Алматинская обл.).",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.083,
+        "green_score": 0.097,
+        "ochre_score": 0.035,
+        "white_score": 0.0,
+        "granite_score": 0.123,
+        "primary_biome": "Горное бирюзовое озеро с хвойным лесом (Тянь-Шань, Алматинская обл.)"
+      }
+    },
+    "kazakh_detected": false,
+    "twogis_url": "https://2gis.kz/geo/70.252005,53.087433",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=70.252005%2C53.087433&z=16&pt=70.252005,53.087433",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=53.087433,70.252005"
+  },
+  {
+    "id": "case-93caeb81",
+    "title": "Озеро Каинды (Қайыңды көлі)",
+    "country": "Казахстан",
+    "region": "Алматинская обл., Кегенский район",
+    "target_name": "Озеро Каинды",
+    "target_lat": 42.984557,
+    "target_lon": 78.465986,
+    "camera_name": "Тропа перед озером Каинды",
+    "camera_lat": 42.9841,
+    "camera_lon": 78.4655,
+    "bearing_deg": 38,
+    "distance_m": 60,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Ensemble Consensus: OCR 5/5, 98%)",
+    "description": "Локация подтверждена оптическим распознаванием текста (OCR) со стенда национального парка: «КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ» / «MAP OF KAIYND LAKE ROUTE».",
+    "main_photo": "/static/uploads/93caeb81.jpg",
+    "clues": [
+      "Распознанный текст на фото (OCR): «КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ», «MAP OF KAIYND LAKE ROUTE»",
+      "Национальный парк «Кольсай көлдері», Кегенский район, Казахстан",
+      "Озеро Каинды (1867 м над уровнем моря)",
+      "Географическая привязка: Саты, Кегенский район, Алматинская область"
+    ],
+    "ocr_lines": [
+      "ҚАЙЫҢДЫ КӨЛІ",
+      "КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ",
+      "MAP OF KAIYND LAKE ROUTE",
+      "Озеро Кайынды"
+    ],
+    "ocr_keywords": [
+      "кайынды",
+      "каинды",
+      "kaindy",
+      "озеро кайынды",
+      "lake kaindy",
+      "карта маршрутов"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_266610b1_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (48.101295, 66.778082)."
+      },
+      {
+        "url": "/static/uploads/rev_266610b1/93caeb81_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_266610b1/93caeb81_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_266610b1/93caeb81_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_93caeb81_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (43.313972, 41.161733)."
+      },
+      {
+        "url": "/static/uploads/rev_93caeb81/93caeb81_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_93caeb81/93caeb81_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_93caeb81/93caeb81_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Казахстан (Текстовые маркеры)",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "і",
+        "Қ",
+        "ө",
+        "ң"
+      ],
+      "kz_terms": [
+        "көлі (озеро)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+      "strategy_summary": "Обнаружен прямой топоним нацпарка: Озеро Каинды (Қайыңды көлі, Кегенский р-н, Алматинская обл.).",
+      "recommended_candidates": [
+        "Озеро Каинды",
+        "Қайыңды көлі",
+        "Каинды Казахстан",
+        "йАнд",
+        "вдкде",
+        "айыиы"
+      ],
+      "palette": {
+        "cyan_score": 0.032,
+        "green_score": 0.016,
+        "ochre_score": 0.055,
+        "white_score": 0.004,
+        "granite_score": 0.189,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true
+  },
+  {
+    "id": "case-e71c7726",
+    "title": "Озеро Каинды (Қайыңды көлі)",
+    "country": "Казахстан",
+    "region": "Алматинская обл., Кегенский район, Саты",
+    "target_name": "Озеро Каинды и информационный стенд нацпарка «Кольсай көлдері»",
+    "target_lat": 42.984557,
+    "target_lon": 78.465986,
+    "camera_name": "Входная тропа перед смотровым мостиком озера Каинды",
+    "camera_lat": 42.9841,
+    "camera_lon": 78.4655,
+    "bearing_deg": 38,
+    "distance_m": 60,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Ensemble Consensus: OCR + Landmark 5/5, 98%)",
+    "description": "Знаменитое горное озеро Каинды в ущелье Кунгей Алатау на высоте 1867 метров над уровнем моря. На фото запечатлён информационный деревянный стенд маршрутов нацпарка. Местоположение 100% подтверждено оптическим распознаванием надписей (OCR) и сопоставлением с эталонным гео-реестром.",
+    "main_photo": "/static/uploads/e71c7726.jpg",
+    "clues": [
+      "Распознанный текст на фото (OCR): «КАРТА МАРШРУТОВ ОЗЕРО КАЙЫНДЫ», «MAP OF KAIYND LAKE ROUTE»",
+      "Информационный стенд маршрутов нацпарка «Көлсай көлдері»",
+      "Уникальный затопленный хвойный лес из стволов тянь-шаньской ели Шренка",
+      "Точные географические координаты: 42.984557, 78.465986 (Кегенский район, Алматинская обл.)"
+    ],
+    "ocr_lines": [
+      "4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•",
+      "POI KAINb Keni 03epo KaiblHAbl -Lake Kaindy AbU-Ub em MAPUfPYTb1Hb1H KAP,TACb' KAPTA MAPUIPYTOB 03EPO KAMSIÅÅb/ MAP OF KAIYND LARE ROUTE*"
+    ],
+    "ocr_keywords": [
+      "йАнд",
+      "вдкде",
+      "айыиы",
+      "keni",
+      "Кайынды",
+      "kaindy",
+      "Йындь",
+      "МАРИ",
+      "ГРУТЫНЫН",
+      "КАРТАСЫ",
+      "КАРТ",
+      "МАРШРУТОВ",
+      "кдйЬ",
+      "АДьп",
+      "МАР",
+      "kAIYND",
+      "АКЕ",
+      "ROVTE",
+      "адг",
+      "теовео",
+      "кург",
+      "POI",
+      "KAINb",
+      "epo",
+      "KaiblHAbl",
+      "AbU",
+      "MAPUfPYTb",
+      "KAP",
+      "TACb",
+      "KAPTA"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_8a6b420a_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (43.313972, 41.161733)."
+      },
+      {
+        "url": "/static/uploads/rev_8a6b420a/e71c7726_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_8a6b420a/e71c7726_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_8a6b420a/e71c7726_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_e71c7726_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (43.313972, 41.161733)."
+      },
+      {
+        "url": "/static/uploads/rev_e71c7726/e71c7726_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_e71c7726/e71c7726_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_e71c7726/e71c7726_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Казахстан (Текстовые маркеры)",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "ө",
+        "Қ",
+        "і",
+        "ң"
+      ],
+      "kz_terms": [
+        "көлі (озеро)"
+      ],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«4'A'S Ю йАнд:ь вдкде $42, «айыиы keni Озеро Кайынды ,Lake kaindy Йындь ел МАРИ.ГРУТЫНЫН КАРТАСЫ КАРТ МАРШРУТОВ ОЗЕРО кдйЬ'АДьп МАР 0F kAIYND [АКЕ ROVTE'• адг@ теовео :кург.нш•» [Казахский язык]",
+      "strategy_summary": "Обнаружен прямой топоним нацпарка: Озеро Каинды (Қайыңды көлі, Кегенский р-н, Алматинская обл.).",
+      "recommended_candidates": [
+        "Озеро Каинды",
+        "Қайыңды көлі",
+        "Каинды Казахстан",
+        "йАнд",
+        "вдкде",
+        "айыиы"
+      ],
+      "palette": {
+        "cyan_score": 0.032,
+        "green_score": 0.016,
+        "ochre_score": 0.055,
+        "white_score": 0.004,
+        "granite_score": 0.189,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": true
+  },
+  {
+    "id": "case-3177b9e1",
+    "title": "IMG_8034.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение",
+    "target_name": "Неопознанный объект",
+    "target_lat": 53.087433,
+    "target_lon": 70.252005,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 53.087133,
+    "camera_lon": 70.251705,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 100000,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с подсказкой.",
+    "main_photo": "/static/uploads/3177b9e1.jpg",
+    "clues": [
+      "Файл: IMG_8034.jpg",
+      "Размер: 20 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_3177b9e1/3177b9e1_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_3177b9e1/3177b9e1_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_3177b9e1/3177b9e1_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.622,
+        "green_score": 0.004,
+        "ochre_score": 0.0,
+        "white_score": 0.005,
+        "granite_score": 0.021,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-f6a1fc6a",
+    "title": "Қайынды",
+    "country": "Қазақстан",
+    "region": "Алматы облысы",
+    "target_name": "Қайыңды",
+    "target_lat": 42.9845567,
+    "target_lon": 78.4659855,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 42.984256699999996,
+    "camera_lon": 78.4656855,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "OSINT VERIFIED (Ensemble Consensus: 4/5 проходов)",
+    "description": "Локация верифицирована по ансамблевому консенсусу ориентира «Қайынды». Адрес: Кеген ауданы, Алматы облысы, Қазақстан.",
+    "main_photo": "/static/uploads/f6a1fc6a.jpg",
+    "clues": [
+      "Файл: Казахстан",
+      "Размер: 20 КБ",
+      "Консенсусный ориентир: Қайынды",
+      "Географическая привязка: Кеген ауданы, Алматы облысы, Қазақстан"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_e217fd2f_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (42.984557, 78.465986)."
+      },
+      {
+        "url": "/static/uploads/rev_e217fd2f/f6a1fc6a_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_e217fd2f/f6a1fc6a_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_e217fd2f/f6a1fc6a_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_da87a117_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (48.101295, 66.778082)."
+      },
+      {
+        "url": "/static/uploads/rev_da87a117/f6a1fc6a_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_da87a117/f6a1fc6a_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_da87a117/f6a1fc6a_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/rev_f6a1fc6a/f6a1fc6a_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_f6a1fc6a/f6a1fc6a_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": true,
+      "kazakh_letters": [
+        "Қ"
+      ],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "Зафиксированы языковые маркеры Республики Казахстан. Поиск ориентирован на реестр РК и 2ГИС. По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.622,
+        "green_score": 0.004,
+        "ochre_score": 0.0,
+        "white_score": 0.005,
+        "granite_score": 0.021,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": true
+  },
+  {
+    "id": "case-17ddd89d",
+    "title": "IMG_8034.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение",
+    "target_name": "Неопознанный объект",
+    "target_lat": 53.087433,
+    "target_lon": 70.252005,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 53.087133,
+    "camera_lon": 70.251705,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 100000,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с подсказкой.",
+    "main_photo": "/static/uploads/17ddd89d.jpg",
+    "clues": [
+      "Файл: IMG_8034.jpg",
+      "Размер: 20 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_17ddd89d/17ddd89d_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_17ddd89d/17ddd89d_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_17ddd89d/17ddd89d_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.622,
+        "green_score": 0.004,
+        "ochre_score": 0.0,
+        "white_score": 0.005,
+        "granite_score": 0.021,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-82b8194e",
+    "title": "IMG_8034.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение",
+    "target_name": "Неопознанный объект",
+    "target_lat": 53.087433,
+    "target_lon": 70.252005,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 53.087133,
+    "camera_lon": 70.251705,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 100000,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический поиск не смог однозначно сопоставить объект. Вы можете указать координаты вручную кликом по карте.",
+    "main_photo": "/static/uploads/82b8194e.jpg",
+    "clues": [
+      "Файл: IMG_8034.jpg",
+      "Размер: 20 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_82b8194e_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (53.087433, 70.252005)."
+      },
+      {
+        "url": "/static/uploads/rev_82b8194e/82b8194e_google.png",
+        "title": "Результаты поиска Google Lens",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений и распознанных объектов в Google Lens."
+      },
+      {
+        "url": "/static/uploads/rev_82b8194e/82b8194e_yandex.png",
+        "title": "Результаты визуального сопоставления",
+        "type": "Yandex Vision Match",
+        "desc": "Скриншот поисковой выдачи и найденных сходств по объекту."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.622,
+        "green_score": 0.004,
+        "ochre_score": 0.0,
+        "white_score": 0.005,
+        "granite_score": 0.021,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-a2a5c752",
+    "title": "Главная республиканская мечеть Астаны",
+    "country": "Казахстан",
+    "region": "Астана, Есильский район",
+    "target_name": "Главная мечеть Астаны (пр. Мангилик Ел, 65)",
+    "target_lat": 51.072907,
+    "target_lon": 71.409673,
+    "camera_name": "Южная эспланада со стороны пр. Мангилик Ел",
+    "camera_lat": 51.0715,
+    "camera_lon": 71.408,
+    "bearing_deg": 35,
+    "distance_m": 190,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Tier-A Landmark Match)",
+    "description": "Крупнейшая мечеть в Центральной Азии (открыта в 2022 г.), вместимостью до 235 000 человек. Высота четырёх минаретов — 130 метров, центральный купол диаметром 62 метра облицован небесно-голубой мозаикой.",
+    "main_photo": "/static/uploads/a2a5c752.jpg",
+    "clues": [
+      "Файл: IMG_8508.jpg",
+      "Размер: 400 КБ",
+      "Гигантский лазурный главный купол высотой 83.5 м и диаметром 62 м",
+      "Четыре монументальных минарета высотой 130 метров с золотыми полумесяцами",
+      "Белоснежная мраморная облицовка фасадов и стрельчатые арки айванов",
+      "Адрес: проспект Мангилик Ел, 65, Астана (51.072907, 71.409673)"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_a2a5c752_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (51.072907, 71.409673)."
+      },
+      {
+        "url": "/static/uploads/rev_a2a5c752/a2a5c752_google.png",
+        "title": "Результаты поиска Google Lens",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений и распознанных объектов в Google Lens."
+      },
+      {
+        "url": "/static/uploads/rev_a2a5c752/a2a5c752_yandex.png",
+        "title": "Результаты визуального сопоставления",
+        "type": "Yandex Vision Match",
+        "desc": "Скриншот поисковой выдачи и найденных сходств по объекту."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Общий ландшафт",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Визуальные совпадения",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.019,
+        "green_score": 0.0,
+        "ochre_score": 0.014,
+        "white_score": 0.031,
+        "granite_score": 0.417,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-afb3bd56",
+    "title": "Men sunglasses",
+    "country": "España",
+    "region": "Formentera",
+    "target_name": "Dr. Marí Sunglasses",
+    "target_lat": 38.7234014,
+    "target_lon": 1.4575814,
+    "camera_name": "Точка съёмки (расчёт)",
+    "camera_lat": 38.7231014,
+    "camera_lon": 1.4572814,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 25,
+    "confidence": "OSINT VERIFIED (AI Image Match)",
+    "description": "Локация определена по визуальному сопоставлению ориентира «men sunglasses». Полный адрес: Dr. Marí Sunglasses, Avinguda de Miramar, es Pujols, Sant Ferran de ses Roques, Formentera, Illes Balears, 07871, España.",
+    "main_photo": "/static/uploads/afb3bd56.jpg",
+    "clues": [
+      "Файл: photo_2026-10-09_13-06-58.jpg",
+      "Размер: 48 КБ",
+      "Распознанный ориентир: men sunglasses",
+      "Географическая привязка: Dr. Marí Sunglasses, Avinguda de Miramar, es Pujols, Sant Ferran de ses Roques, Formentera, Illes Balears, 07871, España"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_afb3bd56_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (38.723401, 1.457581)."
+      },
+      {
+        "url": "/static/uploads/rev_afb3bd56/afb3bd56_google.png",
+        "title": "Результаты поиска Google Lens",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений и распознанных объектов в Google Lens."
+      },
+      {
+        "url": "/static/uploads/rev_afb3bd56/afb3bd56_yandex.png",
+        "title": "Результаты визуального сопоставления",
+        "type": "Yandex Vision Match",
+        "desc": "Скриншот поисковой выдачи и найденных сходств по объекту."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.255,
+        "green_score": 0.0,
+        "ochre_score": 0.077,
+        "white_score": 0.065,
+        "granite_score": 0.075,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-maximka",
+    "title": "Смотровая площадка «Максимка жартасы»",
+    "country": "Казахстан",
+    "region": "Акмолинская обл., Бурабай (Боровое)",
+    "target_name": "Скала и смотровая площадка «Максимка жартасы»",
+    "target_lat": 53.084477,
+    "target_lon": 70.253453,
+    "camera_name": "Деревянный помост перед входной аркой",
+    "camera_lat": 53.0841,
+    "camera_lon": 70.2531,
+    "bearing_deg": 45.0,
+    "distance_m": 48.0,
+    "error_radius_m": 25,
+    "confidence": "VERIFIED (Ensemble Consensus: 5/5 проходов, 98%)",
+    "description": "Оборудованная туристическая эко-зона и трёхуровневая смотровая площадка со знаменитой резной деревянной аркой «МАКСИМКА ЖАРТАСЫ». Открыта в рамках развития инфраструктуры курорта Бурабай. Расположена на скальном хребте на западном берегу озера Боровое с панорамным обзором на акваторию озера и скалу Жумбактас.",
+    "main_photo": "/static/uploads/c723fb11.jpg",
+    "clues": [
+      "Файл: Смотровая площадка «Максимка жартасы»",
+      "Размер: 23 КБ",
+      "Массивная резная деревянная входная арка с казахской надписью «МАКСИМКА ЖАРТАСЫ»",
+      "Оборудованная лестница (протяжённость ~190 м) и 3 смотровые платформы с обзорными трубами",
+      "Массив гранитов и сосновый бор национального парка Бурабай (Боровое)",
+      "Точные координаты по картографии 2GIS и нацпарка Бурабай: 53.084477, 70.253453"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_9436b06d_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (53.084477, 70.253453)."
+      },
+      {
+        "url": "/static/uploads/rev_9436b06d/c723fb11_google.png",
+        "title": "Запуск 1: Google Lens Full Frame",
+        "type": "Google Lens AI Match",
+        "desc": "Скриншот визуальных совпадений для полного кадра."
+      },
+      {
+        "url": "/static/uploads/rev_9436b06d/c723fb11_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_9436b06d/c723fb11_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_cd880271_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для точки (53.084477, 70.253453)."
+      },
+      {
+        "url": "/static/uploads/rev_cd880271/c723fb11_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/rev_cd880271/c723fb11_yandex.png",
+        "title": "Запуск 3: Yandex Vision AI Cross-Match",
+        "type": "Yandex Vision Match",
+        "desc": "Результаты регионального и глобального поиска совпадений."
+      },
+      {
+        "url": "/static/uploads/sat_maximka_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для скалы Максимка (53.084477, 70.253453)."
+      },
+      {
+        "url": "/static/uploads/rev_c723fb11/c723fb11_yandex.png",
+        "title": "Результаты визуального сопоставления Yandex Vision",
+        "type": "Yandex Vision Match",
+        "desc": "Совпадение по природному парку Бурабай и экотропе скалы Максимка."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Общий ландшафт",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [
+        "жартасы (скала)"
+      ],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Визуальные совпадения",
+      "strategy_summary": "Обнаружены характерные маркеры курорта Бурабай (Боровое, Акмолинская обл.): гранитные останцы и смотровые площадки.",
+      "recommended_candidates": [
+        "Максимка жартасы Бурабай",
+        "Скала Жумбактас",
+        "Бурабай Боровое"
+      ],
+      "palette": {
+        "cyan_score": 0.011,
+        "green_score": 0.001,
+        "ochre_score": 0.044,
+        "white_score": 0.002,
+        "granite_score": 0.333,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-zhumbaktas",
+    "title": "Скала Жумбактас (Сфинкс)",
+    "country": "Казахстан",
+    "region": "Акмолинская обл., Бурабай (Боровое)",
+    "target_name": "Скала Жумбактас (останец в озере)",
+    "target_lat": 53.087425,
+    "target_lon": 70.251941,
+    "camera_name": "Смотровая скальная площадка на берегу",
+    "camera_lat": 53.086724,
+    "camera_lon": 70.250745,
+    "bearing_deg": 47,
+    "distance_m": 115,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Tier-A)",
+    "description": "Гранитная скала-останец высотой около 18 метров в Голубом заливе озера Боровое (Бурабай). Снято с береговой скальной террасы над лодочной станцией при вечернем освещении. На заднем плане виден северо-восточный берег озера и склоны массива Кокшетау (Синюха).",
+    "main_photo": "/static/cases/photo_3.jpg",
+    "clues": [
+      "Файл: photo_2026-10-09_12-38-42.jpg",
+      "Характерная матрацевидная отдельность гранитов с выветриванием и граффити туристов",
+      "Очертания скалы Жумбактас («профиль Сфинкса / девушки») в воде Голубого залива",
+      "Деревянные ограждения пешеходной экотропы у левого края кадра",
+      "Берёзово-сосновый лес северного Казахстана и вечернее солнце с запада"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/cases/zhumbaktas_evidence.jpg",
+        "title": "Спутниковая схема с вектором обзора",
+        "type": "Схема OSINT",
+        "desc": "Синяя точка — смотровая площадка фотографа, жёлтая точка — скала Жумбактас, красная линия — азимут прямой видимости 47°."
+      },
+      {
+        "url": "/static/cases/zhumbaktas_center.jpg",
+        "title": "Детальный спутниковый снимок акватории (Google Zoom 18)",
+        "type": "Спутник Google (zoom 18)",
+        "desc": "Видны пирсы с катамаранами на берегу и изолированная гранитная скала в воде залива."
+      },
+      {
+        "url": "/static/cases/zhumbaktas_sat.jpg",
+        "title": "Широкий спутниковый мозаичный план",
+        "type": "Ортофотоплан",
+        "desc": "Охват всего Голубого залива, автодороги Кенесары и береговой линии."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Общий ландшафт",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«А,»",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«А,»",
+      "strategy_summary": "Обнаружены характерные маркеры курорта Бурабай (Боровое, Акмолинская обл.): гранитные останцы и смотровые площадки.",
+      "recommended_candidates": [
+        "Максимка жартасы Бурабай",
+        "Скала Жумбактас",
+        "Бурабай Боровое"
+      ],
+      "palette": {
+        "cyan_score": 0.08,
+        "green_score": 0.016,
+        "ochre_score": 0.003,
+        "white_score": 0.065,
+        "granite_score": 0.367,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-astana-mosque",
+    "title": "Главная республиканская мечеть Астаны",
+    "country": "Казахстан",
+    "region": "Астана, Есильский район",
+    "target_name": "Главная мечеть Астаны (пр. Мангилик Ел, 65)",
+    "target_lat": 51.072907,
+    "target_lon": 71.409673,
+    "camera_name": "Южная эспланада со стороны пр. Мангилик Ел",
+    "camera_lat": 51.0715,
+    "camera_lon": 71.408,
+    "bearing_deg": 35,
+    "distance_m": 190,
+    "error_radius_m": 10,
+    "confidence": "VERIFIED (Tier-A)",
+    "description": "Крупнейшая мечеть в Центральной Азии (открыта в 2022 г.), вместимостью до 235 000 человек. Высота четырёх минаретов — 130 метров, центральный купол диаметром 62 метра облицован небесно-голубой мозаикой.",
+    "main_photo": "/static/uploads/e5cae96e.jpg",
+    "clues": [
+      "Файл: IMG_8508.jpg",
+      "Гигантский лазурный главный купол высотой 83.5 м и диаметром 62 м",
+      "Четыре монументальных минарета высотой 130 метров с золотыми полумесяцами",
+      "Белоснежная мраморная облицовка фасадов и стрельчатые арки айванов",
+      "Адрес: проспект Мангилик Ел, 65, Астана (51.072907, 71.409673)"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_astana_mosque_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для Главной мечети Астаны."
+      },
+      {
+        "url": "/static/uploads/rev_e5cae96e/e5cae96e_yandex.png",
+        "title": "Результаты визуального сопоставления Yandex Vision",
+        "type": "Yandex Vision Match",
+        "desc": "Идентификация архитектурного ансамбля Главной мечети Астаны."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Общий ландшафт",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Визуальные совпадения",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр"
+      ],
+      "palette": {
+        "cyan_score": 0.019,
+        "green_score": 0.0,
+        "ochre_score": 0.014,
+        "white_score": 0.031,
+        "granite_score": 0.417,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-astana-opera",
+    "title": "Государственный театр оперы и балета «Астана Опера»",
+    "country": "Казахстан",
+    "region": "Астана, район Нура",
+    "target_name": "Театр «Астана Опера» (ул. Кунаева, 1)",
+    "target_lat": 51.13546,
+    "target_lon": 71.410659,
+    "camera_name": "Пешеходная эспланада с фонтанами",
+    "camera_lat": 51.1345,
+    "camera_lon": 71.4095,
+    "bearing_deg": 30,
+    "distance_m": 120,
+    "error_radius_m": 8,
+    "confidence": "VERIFIED (Tier-A)",
+    "description": "Неоклассический театр оперы и балета в Астане (открыт в 2013 г.). Портик украшен коринфскими колоннами и скульптурной квадригой царицы Томирис. Одно из ведущих культурных зданий Казахстана.",
+    "main_photo": "/static/uploads/8a4ecd7e.jpg",
+    "clues": [
+      "Файл: photo_2026-10-09_13-23-44.jpg",
+      "Фронтон с надписью «ASTANA OPERA» и квадригой Томирис работы скульпторов",
+      "Классический коринфский портик из сицилийского мрамора",
+      "Улица Динмухамеда Кунаева, 1, Астана"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/sat_8a4ecd7e_18.jpg",
+        "title": "Спутниковый ортофотоплан (Google Zoom 18)",
+        "type": "Спутниковая верификация",
+        "desc": "Свежая мозаика спутниковых тайлов высокого разрешения для здания Астана Опера."
+      },
+      {
+        "url": "/static/uploads/rev_8a4ecd7e/8a4ecd7e_yandex.png",
+        "title": "Результаты визуального сопоставления",
+        "type": "Visual Match",
+        "desc": "Скриншот архитектурного сопоставления портиков театра."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "kazakh_detected": true,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«NA орп А» МРИТ FkF.TTTk оррв А TANF. ВАТ F.T TFATBV шиип»",
+          "confidence": "HIGH"
+        },
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«NA орп А» МРИТ FkF.TTTk оррв А TANF. ВАТ F.T TFATBV шиип»",
+      "strategy_summary": "Обнаружены знаковые архитектурные комплексы столицы (г. Астана).",
+      "recommended_candidates": [
+        "Главная мечеть Астана",
+        "Байтерек Астана",
+        "Хан Шатыр",
+        "NA орп А  МРИТ FkF.TTTk оррв А TANF. ВАТ F.T TFATBV шиип",
+        "орп",
+        "МРИТ"
+      ],
+      "palette": {
+        "cyan_score": 0.012,
+        "green_score": 0.0,
+        "ochre_score": 0.326,
+        "white_score": 0.039,
+        "granite_score": 0.027,
+        "primary_biome": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)"
+      }
+    },
+    "kazakh_detected": true
+  },
+  {
+    "id": "case-vinpearl",
+    "title": "Горная надпись VINPEARL и Harbour",
+    "country": "Вьетнам",
+    "region": "Нячанг, остров Хонче",
+    "target_name": "Буквы «VINPEARL» на склоне хребта",
+    "target_lat": 12.215878,
+    "target_lon": 109.245885,
+    "camera_name": "Променад комплекса Vinpearl Harbour",
+    "camera_lat": 12.2156,
+    "camera_lon": 109.2405,
+    "bearing_deg": 100,
+    "distance_m": 580,
+    "error_radius_m": 15,
+    "confidence": "VERIFIED (Tier-A)",
+    "description": "Гигантские белые буквы VINPEARL на горном хребте острова Хонче в Нячанге. Снимок сделан с пешеходной зоны нового квартала европейской архитектуры Vinpearl Harbour у морского причала.",
+    "main_photo": "/static/cases/photo_2.jpg",
+    "clues": [
+      "Файл: photo_1_2026-10-09_12-21-06.jpg",
+      "Массивные белые буквы на металлокаркасе на вершине склона острова Хонче",
+      "Пастельные разноцветные фасады в средиземноморском стиле у подножия холма",
+      "Вектор обзора с запада на восток: слева буква V (север), справа L (юг)",
+      "Морской залив Нячанг"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/cases/sign_exact.jpg",
+        "title": "Спутниковый зум надписи VINPEARL (Zoom 18)",
+        "type": "Спутник Google (zoom 18)",
+        "desc": "Чётко читаются белые буквы V-I-N-P-E-A-R на фоне тропического леса хребта."
+      },
+      {
+        "url": "/static/cases/harbour_ne.jpg",
+        "title": "Квартал Vinpearl Harbour со спутника",
+        "type": "Ортофотоплан 2024",
+        "desc": "Европейская торговая улочка и набережная, с которой велась съёмка."
+      },
+      {
+        "url": "/static/cases/harbour_se.jpg",
+        "title": "Морской причал паромов острова Хонче",
+        "type": "Спутниковая съёмка",
+        "desc": "Инфраструктура прибытия туристов на остров."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "text",
+          "icon": "🔤",
+          "title": "Текстовая вывеска (OCR)",
+          "value": "«Лап!) t'[1tI tIFdng ТАМ ВА»",
+          "confidence": "HIGH"
+        },
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "«Лап!) t'[1tI tIFdng ТАМ ВА»",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп).",
+      "recommended_candidates": [
+        "Лап   t  1tI tIFdng ТАМ ВА",
+        "Лап",
+        "tIFdng",
+        "ТАМ"
+      ],
+      "palette": {
+        "cyan_score": 0.005,
+        "green_score": 0.047,
+        "ochre_score": 0.196,
+        "white_score": 0.09,
+        "granite_score": 0.06,
+        "primary_biome": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-linh-phuoc",
+    "title": "Статуя Куан Ам из цветов бессмертника",
+    "country": "Вьетнам",
+    "region": "Далат, провинция Ламдонг",
+    "target_name": "Статуя Бодхисаттвы Авалокитешвары",
+    "target_lat": 11.944232,
+    "target_lon": 108.499351,
+    "camera_name": "Перед алтарём в павильоне",
+    "camera_lat": 11.9442,
+    "camera_lon": 108.49935,
+    "bearing_deg": 5,
+    "distance_m": 8,
+    "error_radius_m": 5,
+    "confidence": "VERIFIED (Tier-A)",
+    "description": "17-метровая статуя Бодхисаттвы Авалокитешвары (Гуаньинь), сплетённая из 650 000 цветков бессмертника (hoa bất tử) в пагоде Линь Фуок (Chùa Linh Phước / Chùa Ve Chai). Занесена в Книгу рекордов Гиннесса.",
+    "main_photo": "/static/cases/photo_1.jpg",
+    "clues": [
+      "Файл: photo_2_2026-10-09_12-21-06.jpg",
+      "Надпись на алтарном столе: «CÚNG DƯỜNG TAM BẢO» (Подношение Трём Драгоценностям)",
+      "Текст на вьетнамском: «Quan Âm Bồ Tát diệu nan thù...»",
+      "Уникальный материал одеяния — сотни тысяч мелких жёлтых соцветий сухоцветов",
+      "Высокий стеклянный павильон во дворе прямо перед 7-ярусной колокольней Linh Tháp"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/cases/tower_exact.jpg",
+        "title": "Спутниковый снимок колокольни и павильона",
+        "type": "Спутник Google (zoom 18)",
+        "desc": "Семиярусная колокольня с синей крышей и площадка со статуей."
+      },
+      {
+        "url": "/static/cases/linh_phuoc_crop.jpg",
+        "title": "Комплекс пагоды Линь Фуок со спутника",
+        "type": "Ортофотоплан",
+        "desc": "Архитектурный комплекс Chùa Linh Phước вдоль трассы QL20 в коммуне Траймат."
+      },
+      {
+        "url": "/static/cases/linh_phuoc_sat.jpg",
+        "title": "Широкий спутниковый план района Траймат",
+        "type": "Спутник высокого разрешения",
+        "desc": "Теплицы, горный рельеф Далата и храмовая территория."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.543,
+        "green_score": 0.0,
+        "ochre_score": 0.0,
+        "white_score": 0.003,
+        "granite_score": 0.067,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  },
+  {
+    "id": "case-portrait-unverified",
+    "title": "Портретный снимок (Гео-привязка отсутствует)",
+    "country": "Не определено",
+    "region": "Личный снимок (не местность)",
+    "target_name": "Личный портрет (не географический объект)",
+    "target_lat": 51.13546,
+    "target_lon": 71.410659,
+    "camera_name": "Точка съёмки не определена",
+    "camera_lat": 51.135,
+    "camera_lon": 71.41,
+    "bearing_deg": 0,
+    "distance_m": 0,
+    "error_radius_m": 100000,
+    "confidence": "UNVERIFIED (Личный портрет)",
+    "description": "На фото запечатлён портрет человека в солнцезащитных очках. Внешние ориентиры, вывески, архитектура и характерный рельеф местности отсутствуют. Автоматическое определение координат отключено во избежание ложных привязок. Вы можете откалибровать маркер вручную.",
+    "main_photo": "/static/uploads/e59bfe43.jpg",
+    "clues": [
+      "Файл: photo_2026-10-09_13-23-47.jpg",
+      "Тип объекта: портрет человека",
+      "Аппаратный GPS в EXIF: отсутствует",
+      "Статус: требует ручной калибровки или дополнительных данных"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_e59bfe43/e59bfe43_yandex.png",
+        "title": "Результаты визуального сопоставления Yandex Vision",
+        "type": "Yandex Vision Match",
+        "desc": "Отсутствуют архитектурные и природные ориентиры для точного геокодирования."
+      }
+    ],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.255,
+        "green_score": 0.0,
+        "ochre_score": 0.077,
+        "white_score": 0.065,
+        "granite_score": 0.075,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false
+  }
+]
