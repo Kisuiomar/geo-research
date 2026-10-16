@@ -1,0 +1,35 @@
+services:
+  geo-research:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: geo-research-app
+    restart: unless-stopped
+    ports:
+      - "8765:8765"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - MAPILLARY_ACCESS_TOKEN=${MAPILLARY_ACCESS_TOKEN:-${MAPILLARY_TOKEN}}
+      - MAPILLARY_TOKEN=${MAPILLARY_TOKEN}
+      - PORT=8765
+    env_file: .env
+    volumes:
+      - .:/app
+      - model-cache:/root/.cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8765/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+
+volumes:
+  model-cache:

@@ -1,0 +1,12 @@
+.git
+.geo-cache
+cloned_repos
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+test_rev
+auto_rev
+intake_test
+test_google_out

@@ -260,17 +260,28 @@ function renderHomeShowcase(searchQuery = currentShowcaseSearch, filterTag = cur
       <img src="${ev.url}" alt="${ev.title}" class="evidence-mini-thumb" title="${ev.title}">
     `).join('');
 
+    const isIndoorBadge = c.is_indoor ? '<span class="indoor-badge" style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid #f59e0b; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700;">🏠 INDOOR</span>' : '';
+    const precisionBar = `
+      <div class="showcase-precision-bar" style="margin: 6px 0; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+        ${c.method ? `<span class="badge-method" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">🎯 ${c.method}</span>` : ''}
+        <span class="badge-radius" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">±${c.error_radius_m || 15} м</span>
+      </div>
+      ${c.warning ? `<div class="showcase-warning" style="font-size: 11px; color: #fbbf24; background: rgba(245, 158, 11, 0.12); border-left: 2px solid #f59e0b; padding: 4px 6px; margin: 4px 0; border-radius: 2px;">⚠️ ${c.warning}</div>` : ''}
+    `;
+
     card.innerHTML = `
       <div class="showcase-image-wrap">
         <img src="${c.main_photo}" alt="${c.title}" class="showcase-image" loading="lazy">
         <div class="showcase-badges">
           <span class="country-badge">${c.country}</span>
+          ${isIndoorBadge}
           <span class="confidence-badge">${c.confidence}</span>
         </div>
       </div>
       <div class="showcase-body">
         <div class="showcase-location">${c.region}</div>
         <h3 class="showcase-title">${c.title}</h3>
+        ${precisionBar}
         <p class="showcase-desc">${c.description}</p>
         
         <div class="showcase-evidence-thumbs">
@@ -329,9 +340,32 @@ function selectCase(caseId, navigateToMap = true) {
 
 function updateSidebar(c) {
   document.getElementById('caseCountry').textContent = c.country || 'ЛОКАЦИЯ';
-  document.getElementById('caseConfidence').textContent = c.confidence || 'ВЕРИФИЦИРОВАНО';
+  const confEl = document.getElementById('caseConfidence');
+  if (confEl) {
+    confEl.innerHTML = `${escapeHtml(c.confidence || 'ВЕРИФИЦИРОВАНО')} ${c.is_indoor ? '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;margin-left:5px;">🏠 INDOOR</span>' : ''}`;
+  }
   document.getElementById('caseTitle').textContent = c.title;
   document.getElementById('caseRegion').textContent = c.region || '';
+
+  // Precision & Method Bar
+  let precisionBox = document.getElementById('sidebarPrecisionBox');
+  if (!precisionBox) {
+    const parent = document.getElementById('caseRegion')?.parentElement;
+    if (parent) {
+      precisionBox = document.createElement('div');
+      precisionBox.id = 'sidebarPrecisionBox';
+      parent.insertBefore(precisionBox, document.getElementById('caseRegion').nextSibling);
+    }
+  }
+  if (precisionBox) {
+    precisionBox.innerHTML = `
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 8px 0; font-size:11px;">
+        ${c.method ? `<span style="background:rgba(59,130,246,0.18);color:#93c5fd;border:1px solid rgba(59,130,246,0.3);padding:2px 7px;border-radius:4px;font-weight:600;">🎯 ${escapeHtml(c.method)}</span>` : ''}
+        <span style="background:rgba(16,185,129,0.18);color:#6ee7b7;border:1px solid rgba(16,185,129,0.3);padding:2px 7px;border-radius:4px;font-weight:600;">📏 CEP ±${c.error_radius_m || 15} м</span>
+      </div>
+      ${c.warning ? `<div style="font-size:11px;color:#fbbf24;background:rgba(245,158,11,0.15);border-left:3px solid #f59e0b;padding:5px 8px;margin-bottom:8px;border-radius:3px;line-height:1.4;">⚠️ <b>Внимание:</b> ${escapeHtml(c.warning)}</div>` : ''}
+    `;
+  }
 
   // Main Photo
   const mainImg = document.getElementById('mainPhotoImg');
@@ -2722,6 +2756,41 @@ function renderAiScoutCard(c) {
           chip.addEventListener('click', () => openAiScoutModal(c));
           anchorsList.appendChild(chip);
         });
+
+        // Add precision diagnostics chips
+        if (c.is_indoor) {
+          const indChip = document.createElement('div');
+          indChip.className = 'ai-anchor-chip';
+          indChip.style.borderColor = '#f59e0b';
+          indChip.innerHTML = `<span class="anc-icon">🏠</span><span class="anc-val"><b style="color:#fbbf24;">Интерьер:</b> ${escapeHtml(c.scene_type || 'Внутри здания')} (уличная сетка заблокирована)</span>`;
+          anchorsList.prepend(indChip);
+        }
+
+        const mb = (c.diagnostics && c.diagnostics.mountain_bearing) || (c.diagnostics && c.diagnostics.gemini_vision && c.diagnostics.gemini_vision.almaty_mountain_bearing);
+        if (mb && (mb.mountain_visible || mb.city_sector)) {
+          const mbChip = document.createElement('div');
+          mbChip.className = 'ai-anchor-chip';
+          mbChip.style.borderColor = '#3b82f6';
+          mbChip.innerHTML = `<span class="anc-icon">⛰️</span><span class="anc-val"><b style="color:#93c5fd;">Горный пеленг Алматы:</b> ${escapeHtml(mb.city_sector || 'Заилийский Алатау')} (${escapeHtml(mb.shooting_angle || 'Южный горизонт')})</span>`;
+          anchorsList.appendChild(mbChip);
+        }
+
+        if (c.diagnostics && c.diagnostics.brand_cluster) {
+          const bc = c.diagnostics.brand_cluster;
+          const bcChip = document.createElement('div');
+          bcChip.className = 'ai-anchor-chip';
+          bcChip.style.borderColor = '#10b981';
+          bcChip.innerHTML = `<span class="anc-icon">🏬</span><span class="anc-val"><b style="color:#34d399;">ТРЦ Кластер брендов:</b> ${(bc.matched_brands || []).map(escapeHtml).join(' + ')} (CEP ±35м)</span>`;
+          anchorsList.appendChild(bcChip);
+        }
+
+        if (c.street_view_matches && c.street_view_matches.length > 0) {
+          const svChip = document.createElement('div');
+          svChip.className = 'ai-anchor-chip';
+          svChip.style.borderColor = '#06b6d4';
+          svChip.innerHTML = `<span class="anc-icon">📷</span><span class="anc-val"><b style="color:#22d3ee;">Mapillary:</b> ${c.street_view_matches.length} уличных панорам верифицировано</span>`;
+          anchorsList.appendChild(svChip);
+        }
       }
     }
   } else {

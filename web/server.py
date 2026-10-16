@@ -59,8 +59,14 @@ from web.modules import (
     parse_exif_timestamp, interpolate_from_timeline,
     KAZAKHSTAN_REGIONS, KAZAKHSTAN_LANDMARKS_GAZETTEER, KZ_KNOWLEDGE_CATEGORIES,
     generate_kz_first_answer, evaluate_ubinam_confidence_ladder,
-    mine_kazakh_signboards, validate_kazakh_iin_bin,
-    calculate_kz_distance_matrix, inject_gps_exif
+    calculate_kz_distance_matrix, inject_gps_exif,
+    locate_exact_spot, refine_dense_grid_gpu, refine_dense_grid,
+    extract_multiscale_image_embedding, enrich_geoclip_gallery,
+    lock_geoclip_to_kazakhstan, detect_indoor_cv,
+    search_overpass_brand_cluster, fetch_mapillary_street_view,
+    analyze_with_gemini_vision, extract_text_from_photo,
+    extract_kz_metadata_clues, get_device,
+    model
 )
 
 app = FastAPI(title="GeoSleuth Intelligence Hub", version="2.0.0")
@@ -1899,6 +1905,51 @@ async def _run_5pass_pipeline_internal(
     post_ocr = {"lines": ocr_lines, "keywords": ocr_keywords, "text_raw": " ".join(all_detected_texts)}
     ai_clues = ai_analyze_photo_clues(saved_path, post_ocr, orig_filename)
 
+    # 5b. Deep Precision Cascade & Exact Spot Refinement (GPU Grid + Overpass Brand Cluster + Mountain Bearing + Mapillary)
+    job["logs"].append("🎯 [ШАГ 5+: ГЛУБОКАЯ ТОЧНОСТЬ]: Запуск каскада exact_locator (GPU сетка 15м, Overpass бренды, пеленг гор, Mapillary)...")
+    exact_details = None
+    try:
+        geoclip_m = model.get_model() if hasattr(model, "get_model") else None
+        exact_details = locate_exact_spot(
+            geoclip_m,
+            str(saved_path),
+            matched_target["lat"],
+            matched_target["lon"]
+        )
+    except Exception as ex:
+        job["logs"].append(f"⚠️ Инфо каскада exact_locator: {ex}")
+
+    if exact_details:
+        ex_lat = exact_details.get("exact_lat")
+        ex_lon = exact_details.get("exact_lon")
+        ex_radius = exact_details.get("radius_m")
+        ex_method = exact_details.get("method")
+        ex_indoor = exact_details.get("is_indoor", False)
+        ex_label = exact_details.get("matched_label")
+        ex_street = exact_details.get("street_view_matches", [])
+
+        if ex_lat is not None and ex_lon is not None:
+            matched_target["lat"] = ex_lat
+            matched_target["lon"] = ex_lon
+            matched_target["camera_lat"] = ex_lat - 0.0003
+            matched_target["camera_lon"] = ex_lon - 0.0003
+
+        if ex_label:
+            matched_target["target_name"] = ex_label
+            matched_target["title"] = ex_label
+
+        job["logs"].append(f"✅ [Точность повышена]: Метод «{ex_method}», CEP: ±{ex_radius}м, Indoor: {ex_indoor}")
+        
+        # Add street view matches to evidence photos
+        for sv in ex_street[:2]:
+            if sv.get("thumb_url"):
+                evidence_photos.append({
+                    "url": sv["thumb_url"],
+                    "title": f"Mapillary Street View ({sv.get('id')})",
+                    "type": "Уличная панорама (Street-Level)",
+                    "desc": f"Уличный снимок Mapillary рядом с точкой ({sv.get('lat', 0):.5f}, {sv.get('lon', 0):.5f}), азимут: {sv.get('compass_angle', 0):.0f}°."
+                })
+
     # Build or update case object
     case_id = target_case_id if target_case_id else f"case-{job_id}"
     tgt_lat = matched_target["lat"]
@@ -1906,6 +1957,10 @@ async def _run_5pass_pipeline_internal(
     twogis_url = f"https://2gis.kz/geo/{tgt_lon:.6f},{tgt_lat:.6f}"
     yandex_url = f"https://yandex.kz/maps/?ll={tgt_lon:.6f}%2C{tgt_lat:.6f}&z=16&pt={tgt_lon:.6f},{tgt_lat:.6f}"
     google_url = f"https://www.google.com/maps/search/?api=1&query={tgt_lat:.6f},{tgt_lon:.6f}"
+
+    calculated_error_radius = exact_details.get("radius_m") if (exact_details and exact_details.get("radius_m")) else (
+        5 if (exif["has_gps"] or "Landmark" in confidence) else (100000 if "UNVERIFIED" in confidence else 25)
+    )
 
     new_case = {
         "id": case_id,
@@ -1920,7 +1975,7 @@ async def _run_5pass_pipeline_internal(
         "camera_lon": matched_target.get("camera_lon", tgt_lon - 0.0003),
         "bearing_deg": matched_target.get("bearing_deg", 45),
         "distance_m": matched_target.get("distance_m", 45),
-        "error_radius_m": 5 if (exif["has_gps"] or "Landmark" in confidence) else (100000 if "UNVERIFIED" in confidence else 25),
+        "error_radius_m": calculated_error_radius,
         "confidence": confidence,
         "description": matched_target["desc"],
         "main_photo": f"/static/uploads/{saved_path.name}",
@@ -1932,7 +1987,14 @@ async def _run_5pass_pipeline_internal(
         "kazakh_detected": ai_clues.get("kazakh_detected", False),
         "twogis_url": twogis_url,
         "yandex_maps_url": yandex_url,
-        "google_maps_url": google_url
+        "google_maps_url": google_url,
+        "is_indoor": exact_details.get("is_indoor", False) if exact_details else False,
+        "scene_type": exact_details.get("scene_type", "indoor" if exact_details and exact_details.get("is_indoor") else "outdoor") if exact_details else "outdoor",
+        "method": exact_details.get("method", "Ensemble Consensus") if exact_details else "Ensemble Consensus",
+        "warning": exact_details.get("warning") if exact_details else None,
+        "exact_details": exact_details,
+        "street_view_matches": exact_details.get("street_view_matches", []) if exact_details else [],
+        "diagnostics": exact_details.get("diagnostics", {}) if exact_details else {},
     }
 
     # 5c. Generate Executive OSINT Evidence Sheet
@@ -1977,6 +2039,13 @@ async def _run_5pass_pipeline_internal(
                 c["yandex_maps_url"] = new_case["yandex_maps_url"]
                 c["google_maps_url"] = new_case["google_maps_url"]
                 c["evidence_sheet_url"] = new_case.get("evidence_sheet_url", "")
+                c["is_indoor"] = new_case.get("is_indoor", False)
+                c["scene_type"] = new_case.get("scene_type", "outdoor")
+                c["method"] = new_case.get("method", "Ensemble Consensus")
+                c["warning"] = new_case.get("warning")
+                c["exact_details"] = new_case.get("exact_details")
+                c["street_view_matches"] = new_case.get("street_view_matches", [])
+                c["diagnostics"] = new_case.get("diagnostics", {})
                 existing_urls = {ev["url"] for ev in c.get("evidence_photos", [])}
                 fresh_ev = [ev for ev in new_case["evidence_photos"] if ev["url"] not in existing_urls]
                 c["evidence_photos"] = fresh_ev + c.get("evidence_photos", [])
@@ -2495,13 +2564,144 @@ async def run_ocr_upload(file: UploadFile = File(...)):
 @app.get("/api/health")
 def get_health():
     cases = load_cases()
+    cuda_ok = False
+    gpu_name = None
+    try:
+        import torch
+        cuda_ok = bool(torch.cuda.is_available())
+        if cuda_ok:
+            gpu_name = torch.cuda.get_device_name(0)
+    except Exception:
+        pass
     return {
         "status": "ok",
-        "platform": "GeoSleuth Intelligence Hub 2.0",
+        "platform": "GeoSleuth Intelligence Hub 2.0 (GPU-Accelerated)",
         "cases_count": len(cases),
         "active_jobs": len([j for j in scan_jobs.values() if j.get("status") == "running"]),
         "python": sys.version.split()[0],
+        "cuda_available": cuda_ok,
+        "gpu_device": gpu_name,
+        "geoclip_loaded": model.is_loaded() if hasattr(model, "is_loaded") else False,
         "server_time": datetime.utcnow().isoformat() + "Z"
+    }
+
+@app.get("/api/system-status")
+def api_system_status():
+    import psutil
+    cuda_ok = False
+    gpu_name = "None (CPU Mode)"
+    vram_used_gb = 0.0
+    vram_total_gb = 0.0
+    try:
+        import torch
+        cuda_ok = bool(torch.cuda.is_available())
+        if cuda_ok:
+            gpu_name = torch.cuda.get_device_name(0)
+            vram_total_gb = round(torch.cuda.get_device_properties(0).total_memory / (1024**3), 2)
+            vram_used_gb = round(torch.cuda.memory_allocated(0) / (1024**3), 2)
+    except Exception:
+        pass
+
+    mem = psutil.virtual_memory()
+    return {
+        "cuda_available": cuda_ok,
+        "gpu_device": gpu_name,
+        "vram_used_gb": vram_used_gb,
+        "vram_total_gb": vram_total_gb,
+        "ram_used_gb": round(mem.used / (1024**3), 1),
+        "ram_total_gb": round(mem.total / (1024**3), 1),
+        "ram_percent": mem.percent,
+        "geoclip_loaded": model.is_loaded() if hasattr(model, "is_loaded") else False,
+    }
+
+@app.post("/api/predict")
+async def api_predict(
+    file: UploadFile = File(...),
+    top_k: int = 5
+):
+    """Прямой инференс GeoCLIP + каскада exact_locator для быстрой проверки точности."""
+    ext = Path(file.filename).suffix or ".jpg"
+    job_id = uuid.uuid4().hex[:8]
+    temp_path = UPLOAD_DIR / f"predict_{job_id}{ext}"
+    content = await file.read()
+    with open(temp_path, "wb") as f:
+        f.write(content)
+
+    try:
+        predictions = model.predict(content, top_k=top_k)
+        city_lat = predictions[0]["lat"] if predictions else 43.2389
+        city_lon = predictions[0]["lon"] if predictions else 76.8897
+        exact_details = locate_exact_spot(model.get_model(), str(temp_path), city_lat, city_lon)
+        
+        if exact_details and "exact_lat" in exact_details and "exact_lon" in exact_details:
+            if predictions:
+                predictions[0]["lat"] = exact_details["exact_lat"]
+                predictions[0]["lon"] = exact_details["exact_lon"]
+                if exact_details.get("matched_label"):
+                    predictions[0]["target_name"] = exact_details["matched_label"]
+
+        return {
+            "status": "ok",
+            "predictions": predictions,
+            "exact_details": exact_details,
+            "is_indoor": exact_details.get("is_indoor", False) if exact_details else False,
+            "method": exact_details.get("method") if exact_details else "GeoCLIP",
+            "radius_m": exact_details.get("radius_m", 15) if exact_details else 2500,
+        }
+    finally:
+        if temp_path.exists():
+            try:
+                temp_path.unlink()
+            except Exception:
+                pass
+
+@app.post("/api/cases/{case_id}/exact-refine")
+async def api_case_exact_refine(case_id: str):
+    """Запускает exact_locator для уже существующего кейса."""
+    cases = load_cases()
+    c = next((item for item in cases if item["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+
+    photo_path = get_photo_path(c)
+    if not photo_path or not photo_path.exists():
+        raise HTTPException(status_code=400, detail="Фото кейса не найдено")
+
+    base_lat = c.get("target_lat") or c.get("camera_lat") or 43.2389
+    base_lon = c.get("target_lon") or c.get("camera_lon") or 76.8897
+
+    exact_details = locate_exact_spot(model.get_model(), str(photo_path), base_lat, base_lon)
+    if exact_details:
+        if exact_details.get("exact_lat") and exact_details.get("exact_lon"):
+            c["target_lat"] = exact_details["exact_lat"]
+            c["target_lon"] = exact_details["exact_lon"]
+            c["camera_lat"] = exact_details["exact_lat"] - 0.0003
+            c["camera_lon"] = exact_details["exact_lon"] - 0.0003
+            c["twogis_url"] = f"https://2gis.kz/geo/{c['target_lon']:.6f},{c['target_lat']:.6f}"
+            c["yandex_maps_url"] = f"https://yandex.kz/maps/?ll={c['target_lon']:.6f}%2C{c['target_lat']:.6f}&z=16&pt={c['target_lon']:.6f},{c['target_lat']:.6f}"
+            c["google_maps_url"] = f"https://www.google.com/maps/search/?api=1&query={c['target_lat']:.6f},{c['target_lon']:.6f}"
+
+        if exact_details.get("matched_label"):
+            c["target_name"] = exact_details["matched_label"]
+
+        if exact_details.get("radius_m"):
+            c["error_radius_m"] = exact_details["radius_m"]
+
+        c["is_indoor"] = exact_details.get("is_indoor", False)
+        c["scene_type"] = exact_details.get("scene_type", "indoor" if c["is_indoor"] else "outdoor")
+        c["method"] = exact_details.get("method", "Exact Spot Refinement")
+        c["warning"] = exact_details.get("warning")
+        c["exact_details"] = exact_details
+        c["street_view_matches"] = exact_details.get("street_view_matches", [])
+        c["diagnostics"] = exact_details.get("diagnostics", {})
+
+        save_cases(cases)
+
+    return {
+        "status": "ok",
+        "case_id": case_id,
+        "exact_details": exact_details,
+        "case": c
     }
 
 def audit_and_sanitize_image(image_path: Path, output_path: Path) -> dict:
@@ -2954,4 +3154,8 @@ def serve_index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8765, reload=False)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8765))
+    uvicorn.run(app, host=host, port=port, reload=False)
+
+

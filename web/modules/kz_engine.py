@@ -596,8 +596,9 @@ def mine_kazakh_signboards(text: str) -> dict:
     # Compose targeted 2GIS / Yandex search queries
     all_terms = mined["streets"] + mined["businesses"] + mined["institutions"]
     for t in all_terms[:5]:
-        query_2gis = f"https://2gis.kz/search/{re.sub(r'\\s+', '%20', t)}"
-        query_yandex = f"https://yandex.kz/maps/?text={re.sub(r'\\s+', '%20', t)}"
+        t_clean = re.sub(r'\s+', '%20', t)
+        query_2gis = f"https://2gis.kz/search/{t_clean}"
+        query_yandex = f"https://yandex.kz/maps/?text={t_clean}"
         mined["search_queries"].append({
             "term": t,
             "twogis_url": query_2gis,

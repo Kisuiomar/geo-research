@@ -25,3 +25,13 @@ from web.modules.kz_engine import (
     mine_kazakh_signboards, validate_kazakh_iin_bin,
     calculate_kz_distance_matrix, inject_gps_exif
 )
+from web.modules.exact_locator import (
+    locate_exact_spot, refine_dense_grid_gpu, refine_dense_grid,
+    extract_multiscale_image_embedding, enrich_geoclip_gallery,
+    lock_geoclip_to_kazakhstan, detect_indoor_cv,
+    search_overpass_brand_cluster, fetch_mapillary_street_view,
+    analyze_with_gemini_vision, extract_text_from_photo,
+    extract_kz_metadata_clues, get_device,
+    INDOOR_OCR_STOPWORDS
+)
+from web.modules import model
