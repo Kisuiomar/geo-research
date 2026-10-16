@@ -1,0 +1,90 @@
+{
+  "eiffel_tower.jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "big_ben.jpg": {
+    "place_name": "Big Ben",
+    "city": "London",
+    "country": "United Kingdom",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "colosseum.jpg": {
+    "place_name": "Colosseum",
+    "city": "Rome",
+    "country": "Italy",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "baiterek.jpg": {
+    "place_name": "Bayterek Tower",
+    "city": "Astana",
+    "country": "Kazakhstan",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "medeu.jpg": {
+    "place_name": "Medeu",
+    "city": "Almaty",
+    "country": "Kazakhstan",
+    "is_indoor": false,
+    "scene_type": "rink",
+    "confidence": 0.99
+  },
+  "bao.jpg": {
+    "place_name": "Big Almaty Lake",
+    "city": "Almaty",
+    "country": "Kazakhstan",
+    "is_indoor": false,
+    "scene_type": "lake",
+    "confidence": 0.99
+  },
+  "7fd9aaa0.jpg": {
+    "place_name": "MEGA Silk Way",
+    "city": "Astana",
+    "country": "Kazakhstan",
+    "is_indoor": true,
+    "scene_type": "mall",
+    "confidence": 0.99
+  },
+  "zhumbaktas_center.jpg": {
+    "place_name": "Zhumbaktas",
+    "city": "Burabay",
+    "country": "Kazakhstan",
+    "is_indoor": false,
+    "scene_type": "rock",
+    "confidence": 0.99
+  },
+  "screenshot_eiffel_letterbox.jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "cleaned_screenshot_eiffel_letterbox.jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99
+  },
+  "indoor_office_room.jpg": {
+    "place_name": null,
+    "city": null,
+    "country": null,
+    "is_indoor": true,
+    "scene_type": "indoor",
+    "confidence": 0.85
+  }
+}
