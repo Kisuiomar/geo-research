@@ -125,7 +125,7 @@ def generate_ela(image_path: Path, output_path: Path, quality: int = 90, scale: 
             if isinstance(extrema, (list, tuple)):
                 for ex in extrema:
                     if isinstance(ex, (list, tuple)) and len(ex) > 1:
-                        max_diff = max(max_diff, int(ex[1]))
+                        max_diff = max(max_diff, ex[1])
                     elif isinstance(ex, (int, float)):
                         max_diff = max(max_diff, int(ex))
             if max_diff == 0:
@@ -1708,8 +1708,9 @@ async def _run_5pass_pipeline_internal(
         job["logs"].append(f"🔤 [OSINT Алфавит]: Язык: {sc['language']} ({sc['country']}) [буквы: {', '.join(sc['chars_detected'])}]")
 
     # 3. Temporal EXIF Timeline Interpolation (FindMyPhoto)
-    if exif.get("date") and isinstance(exif.get("date"), str):
-        target_dt = parse_exif_timestamp(str(exif["date"]))
+    date_val = exif.get("date")
+    if isinstance(date_val, str) and date_val:
+        target_dt = parse_exif_timestamp(date_val)
         if target_dt:
             known_anchors = []
             for c_item in load_cases():
