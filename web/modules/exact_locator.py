@@ -4,6 +4,7 @@ import re
 import json
 import math
 import base64
+import logging
 import subprocess
 import requests
 import numpy as np
@@ -11,25 +12,34 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from PIL import Image
 
+logger = logging.getLogger(__name__)
+
 try:
     from dotenv import load_dotenv
     load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 except Exception:
     pass
 
+torch: Any = None
 try:
     import torch
 except ImportError:
-    torch = None
+    pass
 
+cv2: Any = None
 try:
     import cv2
 except ImportError:
-    cv2 = None
+    pass
 
 
-def get_device():
-    return torch.device("cuda" if (torch is not None and torch.cuda.is_available()) else "cpu")
+def get_device() -> Any:
+    t: Any = torch
+    if t is not None and t.cuda.is_available():
+        return t.device("cuda")
+    elif t is not None:
+        return t.device("cpu")
+    return "cpu"
 
 
 def extract_multiscale_image_embedding(model_obj, img: Image.Image, device: Any) -> Any:
@@ -39,6 +49,8 @@ def extract_multiscale_image_embedding(model_obj, img: Image.Image, device: Any)
     - 25% центральный кроп (фокус на архитектуре)
     - 25% полоса горизонта (горы / силуэт застройки)
     """
+    if torch is None:
+        return None
     w, h = img.size
     crops = [
         img,                                                                     # 1. Полный кадр
@@ -455,7 +467,8 @@ def detect_indoor_cv(image_path: str) -> Dict[str, Any]:
             sky_ratio = float(np.count_nonzero(sky_mask_blue)) / float(top_crop.shape[0] * top_crop.shape[1])
         else:
             sky_mask_bright = cv2.inRange(hsv_top, (0, 0, 215), (180, 40, 255))
-            sky_ratio = float(np.count_nonzero(sky_mask_blue | sky_mask_bright)) / float(top_crop.shape[0] * top_crop.shape[1])
+            combined_sky = cv2.bitwise_or(sky_mask_blue, sky_mask_bright)
+            sky_ratio = float(np.count_nonzero(combined_sky)) / float(top_crop.shape[0] * top_crop.shape[1])
 
         is_night_outdoor = False
         if sky_ratio < 0.03 and mean_v_top < 50 and edge_density_top < 0.035:
@@ -491,13 +504,14 @@ def normalize_kz_address_query(text: str) -> str:
     return t.strip()
 
 
-def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
+def extract_global_and_kz_clues(texts: List[Any]) -> Dict[str, Any]:
     """
     Универсальный парсер микро-признаков по всему миру и Казахстану:
     1. Казахстанские правила (почтовые индексы, городские коды телефонов, автономера 01-20, БИН).
     2. Глобальные правила (международные телефонные коды стран +1..+998, национальные доменные зоны, символы валют).
     """
-    clues = {
+    matched_clues: List[str] = []
+    clues: Dict[str, Any] = {
         "country": None,
         "country_code": None,
         "postal_code": None,
@@ -508,12 +522,12 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
         "anchor_lat": None,
         "anchor_lon": None,
         "confidence": 0.0,
-        "matched_clues": []
+        "matched_clues": matched_clues
     }
     if not texts:
         return clues
 
-    joined = " ".join([str(t) for t in texts])
+    joined = " ".join([str(t) for t in texts if t is not None])
 
     # 1. Казахстан: Почтовые индексы (старый 6-значный 010000..169999)
     m_post_old = re.search(r"\b(0[1-9]|1[0-6])\d{4}\b", joined)
@@ -529,7 +543,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
             clues["anchor_lat"] = lat
             clues["anchor_lon"] = lon
             clues["confidence"] = 0.90
-            clues["matched_clues"].append(f"KZ Postal Code {code} -> {city_name}")
+            matched_clues.append(f"KZ Postal Code {code} -> {city_name}")
 
     # Казахстан: Новый 7-значный индекс Казпочты (например, A05B2Y3)
     if not clues["postal_code"]:
@@ -546,7 +560,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                 clues["anchor_lat"] = lat
                 clues["anchor_lon"] = lon
                 clues["confidence"] = 0.88
-                clues["matched_clues"].append(f"Kazpost {code} -> {city_name}")
+                matched_clues.append(f"Kazpost {code} -> {city_name}")
 
     # 2. Казахстан: Телефонные коды городов (+7 727, (7172), 8(7252))
     for code, (city_name, lat, lon) in KZ_PHONE_CODES.items():
@@ -560,7 +574,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                 clues["anchor_lat"] = lat
                 clues["anchor_lon"] = lon
                 clues["confidence"] = 0.85
-            clues["matched_clues"].append(f"KZ Phone Code {code} -> {city_name}")
+            matched_clues.append(f"KZ Phone Code {code} -> {city_name}")
             break
 
     # 3. Казахстан: Автомобильные номера РК (123 ABC 02 или 02 | 123 ABC)
@@ -578,16 +592,17 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                 clues["anchor_lat"] = lat
                 clues["anchor_lon"] = lon
                 clues["confidence"] = 0.80
-            clues["matched_clues"].append(f"KZ License Plate Region {reg} -> {city_name}")
+            matched_clues.append(f"KZ License Plate Region {reg} -> {city_name}")
 
     # 4. Казахстан: БИН / ИИН (12 цифр)
     bin_match = re.search(r"\b(БИН|ИИН|BIN|IIN)[:\s]*([0-9]{12})\b", joined, re.IGNORECASE)
     if bin_match:
         clues["bin"] = bin_match.group(2)
-        clues["matched_clues"].append(f"Kazakh Fiscal BIN: {clues['bin']}")
+        matched_clues.append(f"Kazakh Fiscal BIN: {clues['bin']}")
 
     # 5. МЕЖДУНАРОДНЫЕ ТЕЛЕФОННЫЕ КОДЫ СТРАН (если страна ещё не зафиксирована с высокой уверенностью)
-    if not clues["country_code"] or clues["confidence"] < 0.85:
+    conf_val = float(clues.get("confidence") or 0.0)
+    if not clues["country_code"] or conf_val < 0.85:
         for p_code, (c_name, c_iso, c_lat, c_lon) in GLOBAL_COUNTRY_PHONE_CODES.items():
             esc = re.escape(p_code)
             pattern = rf"(?:^|[^\d])({esc})[\s\-\(]*\d{{2,4}}[\s\-\)]*\d+"
@@ -599,7 +614,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                     clues["anchor_lat"] = c_lat
                     clues["anchor_lon"] = c_lon
                     clues["confidence"] = 0.78
-                clues["matched_clues"].append(f"International Phone Prefix {p_code} -> {c_name} ({c_iso})")
+                matched_clues.append(f"International Phone Prefix {p_code} -> {c_name} ({c_iso})")
                 break
 
     # 6. НАЦИОНАЛЬНЫЕ ДОМЕННЫЕ ЗОНЫ (ccTLDs) НА БАННЕРАХ / ВЫВЕСКАХ (.de, .fr, .jp, .uk, .tr, .kz...)
@@ -613,7 +628,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                     clues["anchor_lat"] = c_lat
                     clues["anchor_lon"] = c_lon
                     clues["confidence"] = 0.75
-            clues["matched_clues"].append(f"ccTLD {tld} -> {c_name} ({c_iso})")
+            matched_clues.append(f"ccTLD {tld} -> {c_name} ({c_iso})")
             break
 
     # 7. МИРОВЫЕ ВАЛЮТЫ (€, £, $, ¥, ₩, ₺, ₸, ₽, AED, CHF)
@@ -627,7 +642,7 @@ def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
                     clues["anchor_lat"] = c_lat
                     clues["anchor_lon"] = c_lon
                     clues["confidence"] = 0.65
-            clues["matched_clues"].append(f"Currency Symbol {curr_sym} -> {c_name} ({c_iso})")
+            matched_clues.append(f"Currency Symbol {curr_sym} -> {c_name} ({c_iso})")
             break
 
     return clues
@@ -640,7 +655,7 @@ def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
 
 
 def search_overpass_brand_cluster(
-    brands: List[str],
+    brands: List[Any],
     city_lat: float,
     city_lon: float,
     radius_m: int = 15000,
@@ -969,7 +984,7 @@ def extract_text_from_photo(image_path: str, is_indoor: bool = False) -> List[st
 
 
 def geocode_osm_global(
-    candidates: List[str],
+    candidates: List[Any],
     is_indoor: bool = False,
     city_lat: Optional[float] = None,
     city_lon: Optional[float] = None,
@@ -1119,8 +1134,8 @@ def refine_dense_grid_gpu(
     except Exception:
         pass
 
-    loc_enc = getattr(model_obj, "gps_encoder", getattr(model_obj, "location_encoder", None))
-    if loc_enc is None:
+    loc_enc: Any = getattr(model_obj, "gps_encoder", getattr(model_obj, "location_encoder", None))
+    if loc_enc is None or not callable(loc_enc):
         return refine_dense_grid_cpu(geoclip_model, image_path, center_lat, center_lon, is_indoor)
 
     try:
@@ -1203,7 +1218,9 @@ def refine_dense_grid_cpu(
 
             g = _build_grid(base_lat, base_lon, radius_m=450, step_m=15)
             t = torch.tensor(g, dtype=torch.float32, device=device)
-            loc_enc = getattr(model_obj, "location_encoder", getattr(model_obj, "gps_encoder", None))
+            loc_enc: Any = getattr(model_obj, "location_encoder", getattr(model_obj, "gps_encoder", None))
+            if loc_enc is None or not callable(loc_enc):
+                return {"status": "skipped", "lat": base_lat, "lon": base_lon, "radius_m": 250}
             loc_emb = loc_enc(t)
             loc_emb = loc_emb / loc_emb.norm(dim=-1, keepdim=True)
             scores = (img_emb @ loc_emb.T).squeeze(0)
@@ -1357,7 +1374,7 @@ def locate_exact_spot(
             }
 
     # 5. Пространственное пересечение брендов (Overpass API Brand Cluster -> 35м) по всему миру
-    if is_indoor:
+    if is_indoor and city_lat is not None and city_lon is not None:
         brand_candidates = []
         for b in vlm_data.get("search_queries", []) + ocr_texts + vlm_data.get("detected_text", []):
             if b and str(b).lower() not in INDOOR_OCR_STOPWORDS:
@@ -1391,9 +1408,9 @@ def locate_exact_spot(
     general_terrain = vlm_data.get("terrain_bearing", {})
 
     is_almaty_area = (
-        (43.00 <= city_lat <= 43.55 and 76.60 <= city_lon <= 77.25)
+        (city_lat is not None and city_lon is not None and 43.00 <= city_lat <= 43.55 and 76.60 <= city_lon <= 77.25)
         or (detected_city and "almaty" in str(detected_city).lower())
-        or (region_mode == "kz" and 43.0 <= city_lat <= 43.6)
+        or (region_mode == "kz" and city_lat is not None and 43.0 <= city_lat <= 43.6)
     )
 
     almaty_sector_applied = None
@@ -1530,7 +1547,9 @@ def locate_exact_spot(
         }
 
     # 10. GeoCLIP доводка с ультраплотной сеткой на GPU
-    grid_res = refine_dense_grid(geoclip_model, image_path, city_lat, city_lon, is_indoor=is_indoor)
+    c_lat: float = float(city_lat) if city_lat is not None else (43.2389 if region_mode == "kz" else 48.8584)
+    c_lon: float = float(city_lon) if city_lon is not None else (76.8897 if region_mode == "kz" else 2.2945)
+    grid_res = refine_dense_grid(geoclip_model, image_path, c_lat, c_lon, is_indoor=is_indoor)
 
     # Динамическое именование метода с указанием страны
     country_display = detected_country or (clues.get("country") if clues else None)
@@ -1548,15 +1567,15 @@ def locate_exact_spot(
     elif almaty_sector_applied:
         method_name = f"Almaty Mountain Bearing ({almaty_sector_applied}) + Outdoor Grid (15m)"
         warning_msg = None
-        street_views = fetch_mapillary_street_view(grid_res.get("lat", city_lat), grid_res.get("lon", city_lon))
+        street_views = fetch_mapillary_street_view(grid_res.get("lat", c_lat), grid_res.get("lon", c_lon))
     else:
         method_name = f"{country_display} Outdoor GPU Grid (15m)"
         warning_msg = None
-        street_views = fetch_mapillary_street_view(grid_res.get("lat", city_lat), grid_res.get("lon", city_lon))
+        street_views = fetch_mapillary_street_view(grid_res.get("lat", c_lat), grid_res.get("lon", c_lon))
 
     return {
-        "exact_lat": grid_res.get("lat", city_lat),
-        "exact_lon": grid_res.get("lon", city_lon),
+        "exact_lat": grid_res.get("lat", c_lat),
+        "exact_lon": grid_res.get("lon", c_lon),
         "radius_m": grid_res.get("radius_m", 2500 if is_indoor else 15),
         "is_indoor": is_indoor,
         "country": detected_country,

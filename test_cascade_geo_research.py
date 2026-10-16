@@ -1,13 +1,18 @@
 import os
 import sys
+from typing import Any
 from pathlib import Path
 from PIL import Image
 
-try:
-    sys.stdout.reconfigure(line_buffering=True, errors="backslashreplace")
-    sys.stderr.reconfigure(line_buffering=True, errors="backslashreplace")
-except Exception:
-    pass
+_out_reconf = getattr(sys.stdout, "reconfigure", None)
+if callable(_out_reconf):
+    try:
+        _out_reconf(line_buffering=True, errors="backslashreplace")
+        _err_reconf = getattr(sys.stderr, "reconfigure", None)
+        if callable(_err_reconf):
+            _err_reconf(line_buffering=True, errors="backslashreplace")
+    except Exception:
+        pass
 
 ROOT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT_DIR))
@@ -46,17 +51,22 @@ def run_tests():
         print(f"Torch check error: {e}")
 
     print("\n--- TEST 2: Worldwide Gallery Enrichment (>100 000 points) ---")
-    m = model.get_model()
+    m: Any = model.get_model()
+    assert m is not None, "GeoCLIP model failed to initialize"
     # Check default global gallery size
     set_geoclip_region(m, "global")
-    gallery_pts = len(m.gps_gallery)
+    gallery_obj: Any = getattr(m, "gps_gallery", None)
+    assert gallery_obj is not None, "Model missing gps_gallery"
+    gallery_pts = len(gallery_obj)
     print(f"Global GeoCLIP gallery points on GPU: {gallery_pts:,}")
     assert gallery_pts > 100000, f"Expected global gallery > 100,000 points, got {gallery_pts}"
     print("✔ Global worldwide gallery (>100k points) validated on GPU!")
 
     # Check KZ mode switching
     set_geoclip_region(m, "kz")
-    kz_pts = len(m.gps_gallery)
+    kz_gallery_obj: Any = getattr(m, "gps_gallery", None)
+    assert kz_gallery_obj is not None, "Model missing gps_gallery"
+    kz_pts = len(kz_gallery_obj)
     print(f"Kazakhstan focused gallery points: {kz_pts:,}")
     assert kz_pts > 1000, f"Expected KZ gallery > 1,000 points, got {kz_pts}"
     # Switch back to global as default
