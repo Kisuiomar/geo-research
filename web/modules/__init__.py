@@ -33,6 +33,9 @@ from web.modules.exact_locator import (
     analyze_with_gemini_vision, extract_text_from_photo,
     extract_global_and_kz_clues, extract_kz_metadata_clues,
     geocode_osm_global, get_device,
+    preprocess_clean_internet_image, compute_image_dhash,
+    verify_and_geocode_landmark, semantic_sanity_check,
+    visual_memory, search_ocr_osm, haversine_km,
     INDOOR_OCR_STOPWORDS
 )
 from web.modules import model

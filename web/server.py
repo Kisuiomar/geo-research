@@ -66,6 +66,8 @@ from web.modules import (
     search_overpass_brand_cluster, fetch_mapillary_street_view,
     analyze_with_gemini_vision, extract_text_from_photo,
     extract_kz_metadata_clues, get_device,
+    verify_and_geocode_landmark, preprocess_clean_internet_image,
+    visual_memory, semantic_sanity_check, search_ocr_osm,
     model
 )
 
@@ -1203,10 +1205,14 @@ def extract_high_value_poi_queries(text: str) -> list[str]:
             
     return clean_and_filter_candidates(cands)
 
-def search_photon(query: str, prefer_kazakhstan: bool = True):
+def search_photon(query: str, prefer_kazakhstan: bool = True, city_lat: Optional[float] = None, city_lon: Optional[float] = None):
     try:
         q = query.strip()
-        url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&lat=51.169392&lon=71.449074"
+        url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&limit=5"
+        if city_lat is not None and city_lon is not None:
+            url += f"&lat={city_lat}&lon={city_lon}"
+        elif prefer_kazakhstan:
+            url += "&lat=51.169392&lon=71.449074"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (GeoSleuth/2.0)"})
         with urllib.request.urlopen(req, timeout=6) as response:
             data = json.loads(response.read().decode("utf-8"))

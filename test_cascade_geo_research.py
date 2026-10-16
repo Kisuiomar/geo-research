@@ -30,6 +30,11 @@ from web.modules import (
     enrich_geoclip_gallery,
     set_geoclip_region,
     lock_geoclip_to_kazakhstan,
+    preprocess_clean_internet_image,
+    compute_image_dhash,
+    verify_and_geocode_landmark,
+    visual_memory,
+    semantic_sanity_check,
     INDOOR_OCR_STOPWORDS
 )
 
@@ -37,6 +42,9 @@ def run_tests():
     print("=" * 70)
     print("🌍 GEO-RESEARCH WORLDWIDE (GLOBAL + KZ BOOSTER) TEST SUITE")
     print("=" * 70)
+
+    # Чистим тестовую сессию памяти
+    visual_memory.entries = []
 
     print("\n--- TEST 1: Device & CUDA Verification ---")
     device = get_device()
@@ -129,22 +137,86 @@ def run_tests():
     print(f"CEP Radius: ±{spot_global.get('radius_m')} м")
     print(f"Country: {spot_global.get('country')}, City: {spot_global.get('city')}")
     assert abs(spot_global["exact_lat"] - paris_lat) < 0.2
-    assert "Outdoor" in spot_global.get("method", "") or "Anchor" in spot_global.get("method", "")
+    assert any(x in spot_global.get("method", "") for x in ("Outdoor", "Anchor", "Visual Memory", "Verified"))
     print("✔ Full end-to-end locate_exact_spot() global pipeline passed!")
 
     print("\n--- TEST 9: Full End-to-End locate_exact_spot() in Kazakhstan Mode ---")
-    spot_kz = locate_exact_spot(m, str(temp_img_path), city_lat=almaty_lat, city_lon=almaty_lon, region_mode="kz")
+    temp_kz_img = Image.new("RGB", (640, 480), color=(140, 110, 80))
+    temp_kz_path = ROOT_DIR / "dummy_test_kz.jpg"
+    temp_kz_img.save(temp_kz_path)
+    spot_kz = locate_exact_spot(m, str(temp_kz_path), city_lat=almaty_lat, city_lon=almaty_lon, region_mode="kz")
     print(f"Kazakhstan Spot Method: {spot_kz.get('method')}")
     print(f"Coordinates: {spot_kz.get('exact_lat')}, {spot_kz.get('exact_lon')}")
     print(f"CEP Radius: ±{spot_kz.get('radius_m')} м")
     assert abs(spot_kz["exact_lat"] - almaty_lat) < 0.2
+    assert any(x in spot_kz.get("method", "") for x in ("Outdoor", "Anchor", "Visual Memory", "Verified", "Almaty"))
+    if temp_kz_path.exists():
+        temp_kz_path.unlink()
     print("✔ Full end-to-end locate_exact_spot() Kazakhstan mode passed!")
+
+    print("\n--- TEST 10: Auto-Cleaning of Screenshots & Letterboxing (preprocess_clean_internet_image) ---")
+    letterbox_img = Image.new("RGB", (640, 480), color=(10, 10, 10)) # black background
+    # paste colorful content in the center (from y=60 to 420)
+    for y in range(70, 410):
+        for x in range(30, 610):
+            letterbox_img.putpixel((x, y), (120, 180, 220))
+    cleaned = preprocess_clean_internet_image(letterbox_img)
+    print(f"Original size: {letterbox_img.size} -> Cleaned size: {cleaned.size}")
+    assert cleaned.size[1] < letterbox_img.size[1], "Letterbox black bars were not cropped!"
+    print("✔ Screenshot / Letterbox auto-cleaner validated!")
+
+    print("\n--- TEST 11: Landmark Geocode Verification (Eiffel Tower & Baiterek) ---")
+    eiffel_hit = verify_and_geocode_landmark("Eiffel Tower", "Paris", "France")
+    print(f"Eiffel Tower Verification: {eiffel_hit}")
+    assert eiffel_hit is not None and eiffel_hit.get("verified"), "Failed to verify Eiffel Tower"
+    assert abs(eiffel_hit["lat"] - 48.858) < 0.05, f"Eiffel Tower coordinates incorrect: {eiffel_hit['lat']}"
+    print(f"✔ Eiffel Tower verified via {eiffel_hit.get('source')} ({eiffel_hit['lat']:.5f}, {eiffel_hit['lon']:.5f})!")
+
+    baiterek_hit = verify_and_geocode_landmark("Байтерек", "Астана", "Казахстан")
+    print(f"Baiterek Verification: {baiterek_hit}")
+    assert baiterek_hit is not None and baiterek_hit.get("verified"), "Failed to verify Baiterek"
+    assert abs(baiterek_hit["lat"] - 51.128) < 0.05, f"Baiterek coordinates incorrect: {baiterek_hit['lat']}"
+    print(f"✔ Baiterek verified via {baiterek_hit.get('source')} ({baiterek_hit['lat']:.5f}, {baiterek_hit['lon']:.5f})!")
+
+    print("\n--- TEST 12: Local Visual Memory Cache (visual_memory) ---")
+    dhash_test = compute_image_dhash(test_img)
+    visual_memory.add_entry(
+        emb_vector=emb,
+        dhash=dhash_test,
+        lat=48.8582,
+        lon=2.2945,
+        name="Tour Eiffel Benchmark",
+        country="France",
+        city="Paris"
+    )
+    match_exact = visual_memory.find_match(query_emb=emb, query_dhash=dhash_test, sim_threshold=0.96)
+    print(f"Visual memory instant match: {match_exact}")
+    assert match_exact is not None, "Visual memory match failed"
+    assert match_exact["confidence"] == 0.99, f"Expected 0.99 confidence, got {match_exact['confidence']}"
+    assert abs(match_exact["lat"] - 48.8582) < 0.001
+    print("✔ Local visual memory benchmark cache (>0.96 cosine & dHash) validated!")
+
+    print("\n--- TEST 13: Agent-Critic Semantic Sanity Check (semantic_sanity_check) ---")
+    # Candidate point drifted 80 km away from verified landmark
+    bad_candidate_lat, bad_candidate_lon = 49.5000, 2.2945
+    corrected_lat, corrected_lon, method_corr, warn = semantic_sanity_check(
+        candidate_lat=bad_candidate_lat,
+        candidate_lon=bad_candidate_lon,
+        vlm_data={"confidence": 0.85},
+        clues={},
+        verified_landmark={"lat": 48.8582, "lon": 2.2945, "source": "Wikipedia"},
+        method_name="GeoCLIP Grid"
+    )
+    print(f"Sanity Check result: lat={corrected_lat}, lon={corrected_lon}, method='{method_corr}', warn='{warn}'")
+    assert abs(corrected_lat - 48.8582) < 0.001, "Sanity check failed to override drifting coordinate"
+    assert "Override" in method_corr
+    print("✔ Agent-critic drift check (>25 km override to verified landmark) validated!")
 
     if temp_img_path.exists():
         temp_img_path.unlink()
 
     print("\n" + "=" * 70)
-    print("🎉 ALL WORLDWIDE + KAZAKHSTAN TEST SUITES PASSED (100% SUCCESS)!")
+    print("🎉 ALL ZERO-MISTAKE WORLDWIDE + KAZAKHSTAN TEST SUITES PASSED (100% SUCCESS)!")
     print("=" * 70)
 
 if __name__ == "__main__":

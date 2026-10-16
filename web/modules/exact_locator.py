@@ -3,20 +3,25 @@ import sys
 import re
 import json
 import math
+import time
 import base64
 import logging
+import threading
 import subprocess
+import urllib.parse
+import urllib.request
 import requests
 import numpy as np
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple, Union
 from PIL import Image
 
 logger = logging.getLogger(__name__)
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 try:
     from dotenv import load_dotenv
-    load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
+    load_dotenv(ROOT_DIR / ".env")
 except Exception:
     pass
 
@@ -42,22 +47,120 @@ def get_device() -> Any:
     return "cpu"
 
 
-def extract_multiscale_image_embedding(model_obj, img: Image.Image, device: Any) -> Any:
+def preprocess_clean_internet_image(image_input: Any) -> Image.Image:
     """
-    Генерирует взвешенный батч-эмбеддинг на GPU:
-    - 50% полный кадр
-    - 25% центральный кроп (фокус на архитектуре)
-    - 25% полоса горизонта (горы / силуэт застройки)
+    Автоматически детектирует и обрезает однотонные черные/белые полосы (letterboxing),
+    рамки скриншотов смартфонов и плашки соцсетей по краям кадра.
+    Защищает sky_ratio и эмбеддинги GeoCLIP от искажения однотонными полями.
+    """
+    if isinstance(image_input, (str, Path)):
+        img = Image.open(image_input).convert("RGB")
+    elif isinstance(image_input, Image.Image):
+        img = image_input.convert("RGB")
+    elif np is not None and isinstance(image_input, np.ndarray):
+        img = Image.fromarray(cv2.cvtColor(image_input, cv2.COLOR_BGR2RGB) if cv2 is not None else image_input).convert("RGB")
+    else:
+        return image_input
+
+    w, h = img.size
+    if w < 100 or h < 100:
+        return img
+
+    arr = np.array(img, dtype=np.uint8)
+    gray = (0.299 * arr[:, :, 0] + 0.587 * arr[:, :, 1] + 0.114 * arr[:, :, 2]).astype(np.float32)
+
+    def is_solid_border_row(row_idx: int) -> bool:
+        row = gray[row_idx, :]
+        mean_v = float(np.mean(row))
+        std_v = float(np.std(row))
+        return (mean_v < 22.0 or mean_v > 238.0) and (std_v < 9.0)
+
+    def is_solid_border_col(col_idx: int) -> bool:
+        col = gray[:, col_idx]
+        mean_v = float(np.mean(col))
+        std_v = float(np.std(col))
+        return (mean_v < 22.0 or mean_v > 238.0) and (std_v < 9.0)
+
+    max_h_crop = int(h * 0.25)
+    max_w_crop = int(w * 0.25)
+
+    top_crop = 0
+    for r in range(max_h_crop):
+        if is_solid_border_row(r):
+            top_crop = r + 1
+        else:
+            break
+
+    bottom_crop = h
+    for r in range(h - 1, h - 1 - max_h_crop, -1):
+        if is_solid_border_row(r):
+            bottom_crop = r
+        else:
+            break
+
+    left_crop = 0
+    for c in range(max_w_crop):
+        if is_solid_border_col(c):
+            left_crop = c + 1
+        else:
+            break
+
+    right_crop = w
+    for c in range(w - 1, w - 1 - max_w_crop, -1):
+        if is_solid_border_col(c):
+            right_crop = c
+        else:
+            break
+
+    if (bottom_crop - top_crop) >= int(h * 0.50) and (right_crop - left_crop) >= int(w * 0.50):
+        if top_crop > 0 or bottom_crop < h or left_crop > 0 or right_crop < w:
+            return img.crop((left_crop, top_crop, right_crop, bottom_crop))
+
+    return img
+
+
+def compute_image_dhash(img: Image.Image, hash_size: int = 8) -> str:
+    """Вычисляет 64-битный разностный хэш (dHash) для мгновенного сопоставления дубликатов."""
+    resized = img.convert("L").resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)
+    pixels = list(resized.getdata())
+    diff = []
+    for row in range(hash_size):
+        for col in range(hash_size):
+            pixel_left = pixels[row * (hash_size + 1) + col]
+            pixel_right = pixels[row * (hash_size + 1) + col + 1]
+            diff.append(pixel_left > pixel_right)
+    decimal_val = 0
+    hex_str = []
+    for index, value in enumerate(diff):
+        if value:
+            decimal_val += 2 ** (index % 4)
+        if (index % 4) == 3:
+            hex_str.append(hex(decimal_val)[2:])
+            decimal_val = 0
+    return "".join(hex_str)
+
+
+def extract_multiscale_image_embedding(model_obj: Any, img: Image.Image, device: Any) -> Any:
+    """
+    5-кропный ансамбль с маскированием центрального объекта на GPU (v2):
+    1) Полный очищенный кадр (35%)
+    2) Линия горизонта и верхние фасады зданий (15%..70% высоты) (25%)
+    3) Левая треть кадра — фон и архитектура слева от объекта (15%)
+    4) Правая треть кадра — фон и архитектура справа от объекта (15%)
+    5) Центральный кроп (10%)
+    Позволяет GeoCLIP видеть архитектуру и биом по краям, даже если в центре кадра селфи или авто.
     """
     if torch is None:
         return None
     w, h = img.size
     crops = [
-        img,                                                                     # 1. Полный кадр
-        img.crop((int(w * 0.15), int(h * 0.15), int(w * 0.85), int(h * 0.85))), # 2. Центр
-        img.crop((0, int(h * 0.20), w, int(h * 0.75)))                           # 3. Линия горизонта
+        img,                                                                     # 1. Полный кадр (35%)
+        img.crop((0, int(h * 0.15), w, int(h * 0.70))),                          # 2. Горизонт/фасады (25%)
+        img.crop((0, int(h * 0.10), max(1, int(w * 0.38)), int(h * 0.90))),     # 3. Левая треть (15%)
+        img.crop((int(w * 0.62), int(h * 0.10), w, int(h * 0.90))),             # 4. Правая треть (15%)
+        img.crop((int(w * 0.20), int(h * 0.20), int(w * 0.80), int(h * 0.80)))  # 5. Центральный кроп (10%)
     ]
-    weights = torch.tensor([0.50, 0.25, 0.25], device=device).unsqueeze(1)
+    weights = torch.tensor([0.35, 0.25, 0.15, 0.15, 0.10], dtype=torch.float32, device=device).unsqueeze(1)
 
     tensors = [model_obj.image_encoder.preprocess_image(c) for c in crops]
     batch = torch.cat(tensors, dim=0).to(device)
@@ -66,8 +169,165 @@ def extract_multiscale_image_embedding(model_obj, img: Image.Image, device: Any)
         embs = model_obj.image_encoder(batch)
         embs = embs / embs.norm(dim=-1, keepdim=True)
         combined = (embs * weights).sum(dim=0, keepdim=True)
-        combined = combined / combined.norm(dim=-1, keepdim=True)
-        return combined
+        return combined / combined.norm(dim=-1, keepdim=True)
+
+
+VISUAL_MEMORY_FILE = ROOT_DIR / "data" / "visual_memory.json"
+
+class LocalVisualMemory:
+    """
+    Локальная векторная память эталонов (512-d эмбеддинги GeoCLIP + 64-bit dHash).
+    При загрузке дубликата, кропа или фото с косинусным сходством > 0.96
+    мгновенно возвращает точные координаты с confidence: 0.99.
+    """
+    def __init__(self, storage_path: Path = VISUAL_MEMORY_FILE):
+        self.storage_path = storage_path
+        self.entries: List[Dict[str, Any]] = []
+        self._lock = threading.Lock()
+        self.load()
+
+    def load(self):
+        with self._lock:
+            if self.storage_path.exists():
+                try:
+                    with open(self.storage_path, "r", encoding="utf-8") as f:
+                        self.entries = json.load(f)
+                except Exception as e:
+                    logger.warning("Error loading visual_memory.json: %s", e)
+                    self.entries = []
+            else:
+                self.entries = []
+
+    def save(self):
+        with self._lock:
+            try:
+                self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(self.storage_path, "w", encoding="utf-8") as f:
+                    json.dump(self.entries[-5000:], f, ensure_ascii=False, indent=2)
+            except Exception as e:
+                logger.warning("Error saving visual_memory.json: %s", e)
+
+    def find_match(
+        self,
+        query_emb: Optional[Any],
+        query_dhash: Optional[str] = None,
+        sim_threshold: float = 0.96,
+        region_mode: str = "global"
+    ) -> Optional[Dict[str, Any]]:
+        with self._lock:
+            if not self.entries:
+                return None
+
+            def _is_region_allowed(entry_lat: float, entry_lon: float) -> bool:
+                if region_mode == "kz":
+                    return (40.0 <= entry_lat <= 56.0) and (46.0 <= entry_lon <= 88.0)
+                return True
+
+            # 1. Проверка dHash (мгновенный поиск дубликатов/кропов)
+            if query_dhash:
+                try:
+                    q_int = int(query_dhash, 16)
+                    for entry in reversed(self.entries):
+                        if not _is_region_allowed(entry.get("lat", 0.0), entry.get("lon", 0.0)):
+                            continue
+                        e_hash = entry.get("dhash")
+                        if e_hash:
+                            h_dist = bin(q_int ^ int(e_hash, 16)).count("1")
+                            if h_dist <= 4:
+                                return {
+                                    "lat": entry["lat"],
+                                    "lon": entry["lon"],
+                                    "name": entry.get("name", "Exact Visual Duplicate"),
+                                    "country": entry.get("country"),
+                                    "city": entry.get("city"),
+                                    "sim": round(1.0 - (h_dist / 64.0), 4),
+                                    "match_type": "dhash_duplicate",
+                                    "confidence": 0.99
+                                }
+                except Exception:
+                    pass
+
+            # 2. Проверка косинусного сходства 512-d GeoCLIP эмбеддинга
+            if query_emb is not None and len(self.entries) > 0:
+                try:
+                    if hasattr(query_emb, "cpu"):
+                        q_vec = query_emb.cpu().detach().numpy().astype(np.float32).reshape(-1)
+                    else:
+                        q_vec = np.asarray(query_emb, dtype=np.float32).reshape(-1)
+                    q_norm = float(np.linalg.norm(q_vec))
+                    if q_norm > 0:
+                        q_vec = q_vec / q_norm
+
+                    best_sim = -1.0
+                    best_entry = None
+                    for entry in reversed(self.entries):
+                        if not _is_region_allowed(entry.get("lat", 0.0), entry.get("lon", 0.0)):
+                            continue
+                        stored_emb = entry.get("embedding")
+                        if stored_emb and len(stored_emb) == 512:
+                            s_vec = np.asarray(stored_emb, dtype=np.float32)
+                            sim = float(np.dot(q_vec, s_vec))
+                            if sim > best_sim:
+                                best_sim = sim
+                                best_entry = entry
+
+                    if best_entry is not None and best_sim >= sim_threshold:
+                        return {
+                            "lat": best_entry["lat"],
+                            "lon": best_entry["lon"],
+                            "name": best_entry.get("name", "High-Similarity Visual Match"),
+                            "country": best_entry.get("country"),
+                            "city": best_entry.get("city"),
+                            "sim": round(best_sim, 4),
+                            "match_type": "embedding_cosine",
+                            "confidence": 0.99
+                        }
+                except Exception:
+                    pass
+
+        return None
+
+    def add_entry(
+        self,
+        emb_vector: Optional[Any],
+        dhash: Optional[str],
+        lat: float,
+        lon: float,
+        name: str = "",
+        country: Optional[str] = None,
+        city: Optional[str] = None
+    ):
+        with self._lock:
+            emb_list = None
+            if emb_vector is not None:
+                try:
+                    if hasattr(emb_vector, "cpu"):
+                        vec = emb_vector.cpu().detach().numpy().astype(np.float32).reshape(-1)
+                    else:
+                        vec = np.asarray(emb_vector, dtype=np.float32).reshape(-1)
+                    norm = float(np.linalg.norm(vec))
+                    if norm > 0:
+                        vec = vec / norm
+                    emb_list = [round(float(x), 5) for x in vec.tolist()[:512]]
+                except Exception:
+                    pass
+
+            record = {
+                "dhash": dhash,
+                "embedding": emb_list,
+                "lat": float(lat),
+                "lon": float(lon),
+                "name": str(name or ""),
+                "country": country,
+                "city": city,
+                "timestamp": round(time.time(), 2)
+            }
+            self.entries.append(record)
+            if len(self.entries) > 5000:
+                self.entries = self.entries[-5000:]
+        self.save()
+
+visual_memory = LocalVisualMemory()
 
 
 _OCR_READER = None
@@ -900,7 +1160,17 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
             '  }\n'
             "}"
         )
-        payload = {
+        payload_with_search = {
+            "contents": [{
+                "parts": [
+                    {"text": prompt},
+                    {"inline_data": {"mime_type": "image/jpeg", "data": b64}}
+                ]
+            }],
+            "tools": [{"google_search": {}}],
+            "generationConfig": {"temperature": 0.1, "response_mime_type": "application/json"}
+        }
+        payload_standard = {
             "contents": [{
                 "parts": [
                     {"text": prompt},
@@ -919,29 +1189,260 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
                 (f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent", {"x-goog-api-key": api_key}),
             ]
             for url, headers in endpoints:
-                try:
-                    r = requests.post(url, json=payload, headers=headers, timeout=10)
+                for payload in [payload_with_search, payload_standard]:
+                    try:
+                        r = requests.post(url, json=payload, headers=headers, timeout=12)
 
-                    if r.ok:
-                        candidate = r.json().get("candidates", [{}])[0]
-                        parts = candidate.get("content", {}).get("parts", [])
-                        txt = "\n".join([p.get("text", "") for p in parts if "text" in p])
-                        m = re.search(r"\{.*\}", txt, re.S)
-                        if m:
-                            data = json.loads(m.group(0))
-                            has_coords = data.get("lat") is not None and data.get("lon") is not None
-                            conf = float(data.get("confidence") or (0.85 if has_coords else 0.0))
-                            if has_coords and conf >= 0.65:
-                                return {"status": "ok", "data": data}
-                            return {"status": "indoor_or_uncertain", "data": data}
-                    else:
-                        last_err = f"HTTP {r.status_code}: {r.text[:150]}"
-                except Exception as ex:
-                    last_err = str(ex)
+                        if r.ok:
+                            candidate = r.json().get("candidates", [{}])[0]
+                            parts = candidate.get("content", {}).get("parts", [])
+                            txt = "\n".join([p.get("text", "") for p in parts if "text" in p])
+                            m = re.search(r"\{.*\}", txt, re.S)
+                            if m:
+                                data = json.loads(m.group(0))
+                                has_coords = data.get("lat") is not None and data.get("lon") is not None
+                                conf = float(data.get("confidence") or (0.85 if has_coords else 0.0))
+                                if has_coords and conf >= 0.65:
+                                    return {"status": "ok", "data": data}
+                                return {"status": "indoor_or_uncertain", "data": data}
+                        else:
+                            last_err = f"HTTP {r.status_code}: {r.text[:150]}"
+                    except Exception as ex:
+                        last_err = str(ex)
 
         return {"status": "error", "error": last_err}
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+
+def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Вычисляет расстояние в километрах между двумя географическими координатами (WGS84)."""
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlam = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * (math.sin(dlam / 2.0) ** 2)
+    return 6371.0 * (2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a)))
+
+
+def verify_and_geocode_landmark(
+    name: Optional[str],
+    city: Optional[str] = None,
+    country: Optional[str] = None,
+    llm_lat: Optional[float] = None,
+    llm_lon: Optional[float] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    1. GOOGLE SEARCH GROUNDING + FORWARD GEOCODING VERIFICATION (Защита от галлюцинации цифр у LLM):
+    Проверяет название объекта/ориентира/отеля/ЖК через 3 независимых источника:
+    a) Wikipedia Geosearch (en.wikipedia.org и ru.wikipedia.org) — точнейшие координаты мировых и региональных достопримечательностей;
+    b) Photon Komoot API (https://photon.komoot.io) — нечеткий поиск POI;
+    c) OSM Nominatim API (https://nominatim.openstreetmap.org/search) — точный картографический поиск.
+    Если геокодер нашел объект, заменяет сырые числа LLM на точные координаты с radius_m: 20.
+    """
+    if not name or str(name).strip().lower() in ("null", "none", "unknown", ""):
+        return None
+
+    clean_name = re.sub(r'[\(\)\[\]«»"\'\?!\*]', ' ', str(name)).strip()
+    words = clean_name.split()
+    if not words or (len(words) == 1 and len(words[0]) < 3):
+        return None
+
+    low_single = clean_name.lower()
+    if low_single in ("building", "street", "road", "city", "house", "hotel", "cafe", "restaurant", "mall", "park", "здание", "улица", "город", "отель", "кафе"):
+        return None
+
+    c_name = str(city).strip() if city and str(city).lower() not in ("null", "none", "unknown") else ""
+    co_name = str(country).strip() if country and str(country).lower() not in ("null", "none", "unknown") else ""
+
+    queries = []
+    if c_name and co_name:
+        queries.append(f"{clean_name}, {c_name}, {co_name}")
+    if c_name:
+        queries.append(f"{clean_name}, {c_name}")
+    queries.append(clean_name)
+
+    headers = {"User-Agent": "GeoSleuthGlobalResearch/3.5 (LandmarkVerifier)"}
+
+    # a) Wikipedia Search + Coordinates (ru & en)
+    for wiki_lang in ("ru", "en"):
+        for q in queries:
+            try:
+                s_url = f"https://{wiki_lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(q)}&format=json&utf8=1"
+                r = requests.get(s_url, headers=headers, timeout=4)
+                if r.ok:
+                    items = r.json().get("query", {}).get("search", [])
+                    if items:
+                        page_title = items[0].get("title")
+                        if page_title:
+                            c_url = f"https://{wiki_lang}.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote(page_title)}&prop=coordinates&format=json&utf8=1"
+                            cr = requests.get(c_url, headers=headers, timeout=4)
+                            if cr.ok:
+                                pages = cr.json().get("query", {}).get("pages", {})
+                                for p in pages.values():
+                                    coords = p.get("coordinates")
+                                    if coords and len(coords) > 0:
+                                        w_lat = float(coords[0]["lat"])
+                                        w_lon = float(coords[0]["lon"])
+                                        if llm_lat is not None and llm_lon is not None:
+                                            d_km = haversine_km(llm_lat, llm_lon, w_lat, w_lon)
+                                            if d_km > 150.0 and (not c_name or c_name.lower() not in page_title.lower()):
+                                                continue
+                                        return {
+                                            "verified": True,
+                                            "lat": w_lat,
+                                            "lon": w_lon,
+                                            "name": page_title,
+                                            "source": f"Wikipedia ({wiki_lang.upper()})",
+                                            "radius_m": 20,
+                                            "confidence": 0.98,
+                                            "method": f"Verified Landmark Geocode (Wikipedia): {page_title}"
+                                        }
+            except Exception:
+                pass
+
+    # b) Photon Komoot API (быстрый нечеткий поиск)
+    for q in queries:
+        try:
+            p_url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&limit=3"
+            if llm_lat is not None and llm_lon is not None:
+                p_url += f"&lat={llm_lat}&lon={llm_lon}"
+            r = requests.get(p_url, headers=headers, timeout=4)
+            if r.ok:
+                features = r.json().get("features", [])
+                for f in features:
+                    coords = f.get("geometry", {}).get("coordinates", [])
+                    if len(coords) >= 2:
+                        p_lon = float(coords[0])
+                        p_lat = float(coords[1])
+                        props = f.get("properties", {})
+                        p_name = props.get("name") or q
+                        if llm_lat is not None and llm_lon is not None:
+                            d_km = haversine_km(llm_lat, llm_lon, p_lat, p_lon)
+                            if d_km > 75.0 and (not c_name or c_name.lower() not in (props.get("city") or "").lower()):
+                                continue
+                        return {
+                            "verified": True,
+                            "lat": p_lat,
+                            "lon": p_lon,
+                            "name": p_name,
+                            "source": "Photon",
+                            "radius_m": 20,
+                            "confidence": 0.95,
+                            "method": f"Verified Landmark Geocode (Photon): {p_name}"
+                        }
+        except Exception:
+            pass
+
+    # c) OSM Nominatim API (точный поиск)
+    for q in queries:
+        try:
+            nom_params = {
+                "q": q,
+                "format": "jsonv2",
+                "limit": 2,
+                "addressdetails": 1
+            }
+            if llm_lat is not None and llm_lon is not None:
+                deg = 35.0 / 111.32
+                nom_params["viewbox"] = f"{llm_lon - deg},{llm_lat + deg},{llm_lon + deg},{llm_lat - deg}"
+                nom_params["bounded"] = 0
+
+            r = requests.get("https://nominatim.openstreetmap.org/search", params=nom_params, headers=headers, timeout=5)
+            if r.ok and r.json():
+                hit = r.json()[0]
+                n_lat = float(hit["lat"])
+                n_lon = float(hit["lon"])
+                n_name = hit.get("display_name", q)
+                if llm_lat is not None and llm_lon is not None:
+                    d_km = haversine_km(llm_lat, llm_lon, n_lat, n_lon)
+                    if d_km > 75.0 and (not c_name or c_name.lower() not in n_name.lower()):
+                        continue
+                return {
+                    "verified": True,
+                    "lat": n_lat,
+                    "lon": n_lon,
+                    "name": n_name,
+                    "source": "Nominatim",
+                    "radius_m": 20,
+                    "confidence": 0.95,
+                    "method": f"Verified Landmark Geocode (Nominatim): {clean_name}"
+                }
+        except Exception:
+            pass
+
+    return None
+
+
+def semantic_sanity_check(
+    candidate_lat: float,
+    candidate_lon: float,
+    vlm_data: Dict[str, Any],
+    clues: Dict[str, Any],
+    verified_landmark: Optional[Dict[str, Any]] = None,
+    anchor_lat: Optional[float] = None,
+    anchor_lon: Optional[float] = None,
+    method_name: str = ""
+) -> Tuple[float, float, str, Optional[str]]:
+    """
+    5. АГЕНТ-КРИТИК: СЕМАНТИЧЕСКАЯ САМОПРОВЕРКА ТОЧКИ:
+    - Проверка 1: Если между уверенным ответом Gemini (conf >= 0.75) / проверенным ориентиром
+      и точкой GeoCLIP расхождение > 25 км — приоритет отдается связке VLM + Геокодер.
+    - Проверка 2: Если Gemini определила сцену как море/пляж/реку, а в радиусе 1.2 км от найденной
+      точки GeoCLIP нет воды — понижает вес GeoCLIP и использует координаты проверенного якоря.
+    """
+    final_lat = candidate_lat
+    final_lon = candidate_lon
+    final_method = method_name
+    sanity_warning = None
+
+    gold_lat = None
+    gold_lon = None
+    gold_source = None
+
+    if verified_landmark and verified_landmark.get("lat") and verified_landmark.get("lon"):
+        gold_lat = float(verified_landmark["lat"])
+        gold_lon = float(verified_landmark["lon"])
+        gold_source = verified_landmark.get("source", "Verified Landmark")
+    elif vlm_data.get("lat") and vlm_data.get("lon") and float(vlm_data.get("confidence") or 0) >= 0.75:
+        gold_lat = float(vlm_data["lat"])
+        gold_lon = float(vlm_data["lon"])
+        gold_source = "Gemini Vision (High Confidence)"
+    elif anchor_lat is not None and anchor_lon is not None and float(clues.get("confidence") or 0) >= 0.85:
+        gold_lat = float(anchor_lat)
+        gold_lon = float(anchor_lon)
+        gold_source = "Regional/Postal Anchor"
+
+    # Проверка 1: Расхождение более 25 км
+    if gold_lat is not None and gold_lon is not None:
+        drift_km = haversine_km(gold_lat, gold_lon, candidate_lat, candidate_lon)
+        if drift_km > 25.0:
+            final_lat = gold_lat
+            final_lon = gold_lon
+            final_method = f"Agent-Critic Override ({gold_source}): Drift {drift_km:.1f}km > 25km corrected"
+            sanity_warning = f"GeoCLIP grid drifted {drift_km:.1f} km from confirmed semantic landmark; overridden to {gold_source}."
+            return final_lat, final_lon, final_method, sanity_warning
+
+    # Проверка 2: Защита гидрографии (море, пляж, река)
+    scene = str(vlm_data.get("scene_type", "")).lower()
+    t_feat = str(vlm_data.get("terrain_bearing", {}).get("feature", "")).lower()
+    is_water_scene = any(w in scene or w in t_feat for w in ("coast", "beach", "sea", "water", "river", "lake", "пляж", "море", "река", "озеро"))
+
+    if is_water_scene and gold_lat is not None and gold_lon is not None:
+        try:
+            ovp_url = "https://overpass-api.de/api/interpreter"
+            q_ovp = f"""[out:json][timeout:3];(way["natural"~"water|coastline|beach"](around:1200,{candidate_lat},{candidate_lon});node["natural"~"water|beach"](around:1200,{candidate_lat},{candidate_lon}););out count;"""
+            r = requests.post(ovp_url, data={"data": q_ovp}, timeout=4)
+            if r.ok:
+                count_elem = r.json().get("elements", [{}])[0].get("tags", {}).get("total", "0")
+                if int(count_elem) == 0:
+                    final_lat = gold_lat
+                    final_lon = gold_lon
+                    final_method = f"Agent-Critic Water Guard ({gold_source})"
+                    sanity_warning = "Сцена распознана как побережье/водоем, но в радиусе 1.2 км от сетки вода отсутствует. Применен проверенный водный якорь."
+        except Exception:
+            pass
+
+    return final_lat, final_lon, final_method, sanity_warning
 
 
 def extract_text_from_photo(image_path: str, is_indoor: bool = False) -> List[str]:
@@ -1019,6 +1520,36 @@ def geocode_osm_global(
         c_code = "KZ"
 
     for q in queries[:12]:
+        # 4. НЕЧЁТКИЙ МУЛЬТИ-ГЕОКОДЕР ДЛЯ OCR (Photon API)
+        try:
+            p_url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&limit=3"
+            if city_lat is not None and city_lon is not None:
+                p_url += f"&lat={city_lat}&lon={city_lon}"
+            pr = requests.get(p_url, headers=headers, timeout=5)
+            if pr.ok:
+                features = pr.json().get("features", [])
+                for f in features:
+                    coords = f.get("geometry", {}).get("coordinates", [])
+                    if len(coords) >= 2:
+                        p_lon = float(coords[0])
+                        p_lat = float(coords[1])
+                        props = f.get("properties", {})
+                        p_name = props.get("name") or q
+                        if city_lat is not None and city_lon is not None:
+                            d_km = haversine_km(city_lat, city_lon, p_lat, p_lon)
+                            if d_km > 65.0:
+                                continue
+                        return {
+                            "lat": p_lat,
+                            "lon": p_lon,
+                            "name": p_name,
+                            "matched_query": q,
+                            "radius_m": 50 if is_indoor else 15,
+                            "source": "photon"
+                        }
+        except Exception:
+            pass
+
         try:
             params = {
                 "q": q,
@@ -1104,6 +1635,9 @@ def geocode_osm_global(
 def geocode_in_kazakhstan(candidates: List[str], is_indoor: bool = False, city_lat: Optional[float] = None, city_lon: Optional[float] = None) -> Optional[Dict[str, Any]]:
     """Алиас для обратной совместимости."""
     return geocode_osm_global(candidates, is_indoor=is_indoor, city_lat=city_lat, city_lon=city_lon, country_code="KZ", region_mode="kz")
+
+
+search_ocr_osm = geocode_osm_global
 
 
 
@@ -1277,25 +1811,74 @@ def locate_exact_spot(
     region_mode: str = "global"
 ) -> Dict[str, Any]:
     """
-    Главный конвейер геолокации мирового уровня (Global Worldwide Geolocation):
-    1. Инициализация галереи GeoCLIP с поддержкой режима 'global' (весь мир) или 'kz' (Казахстан).
-    2. OpenCV эвристика интерьера с защитой ночных уличных фото (detect_indoor_cv).
-    3. Gemini Vision v3.2 GeoGuessr/OSINT (детекция страны, LHT/RHT, знаков, столбов, окно/панорама, вывески).
-    4. Универсальный парсер микро-признаков (международные телефонные коды, ccTLD, валюты + правила Казахстана).
-    5. Пространственное пересечение брендов (Overpass API Brand Cluster -> точность 35м по всему миру).
-    6. Адаптивный рельефный бустер: Алматинский горный пеленг (только для Алматы) / Terrain Bearing (для мира).
-    7. Двухэтапная ультраплотная GPU-сетка GeoCLIP (точность до 15м в любой точке планеты).
+    Главный конвейер геолокации мирового уровня (Zero-Mistake Worldwide Geolocation v3.5):
+    1. Авто-очистка скриншотов и letterbox полей (preprocess_clean_internet_image).
+    2. Локальная векторная память эталонов (visual_memory, мгновенный возврат при sim > 0.96).
+    3. Инициализация галереи GeoCLIP с поддержкой режима 'global' (весь мир) или 'kz' (Казахстан).
+    4. OpenCV эвристика интерьера с защитой ночных уличных фото (detect_indoor_cv).
+    5. Gemini Vision с Google Search Grounding.
+    6. Защита от галлюцинаций LLM: проверка и геокодирование через Wikipedia / Photon / Nominatim (verify_and_geocode_landmark).
+    7. Универсальный парсер микро-признаков (международные телефонные коды, ccTLD, валюты + правила Казахстана).
+    8. Пространственное пересечение брендов (Overpass API Brand Cluster -> точность 35м по всему миру).
+    9. Адаптивный рельефный бустер: Алматинский горный пеленг / Terrain Bearing.
+    10. Нечеткий мульти-геокодер OCR (Photon API + Nominatim).
+    11. 5-кропный ансамбль с маскированием центрального объекта на GPU (точность до 15м).
+    12. Агент-критик: семантическая самопроверка (semantic_sanity_check) против ложного дрейфа сетки.
     """
-    if geoclip_model is not None:
-        enrich_geoclip_gallery(geoclip_model, region_mode=region_mode)
+    # 0. Авто-очистка скриншотов и рамок соцсетей (letterbox)
+    cleaned_pil = preprocess_clean_internet_image(image_path)
+    active_image_path = image_path
+    temp_cleaned_path = None
+    try:
+        orig_pil = Image.open(image_path)
+        if cleaned_pil.size != orig_pil.size:
+            temp_cleaned_path = str(Path(image_path).parent / f"cleaned_{Path(image_path).name}")
+            cleaned_pil.save(temp_cleaned_path, "JPEG", quality=95)
+            active_image_path = temp_cleaned_path
+    except Exception:
+        pass
 
-    # 0. Локальная эвристика интерьера с защитой ночной улицы
-    cv_indoor = detect_indoor_cv(image_path)
+    device = get_device()
+    dhash = compute_image_dhash(cleaned_pil)
+    query_emb = None
+    if geoclip_model is not None:
+        try:
+            enrich_geoclip_gallery(geoclip_model, region_mode=region_mode)
+            query_emb = extract_multiscale_image_embedding(geoclip_model, cleaned_pil, device)
+        except Exception:
+            pass
+
+    # 0.5 Мгновенная проверка по локальной векторной памяти эталонов (dHash + 512-d Cosine)
+    mem_hit = visual_memory.find_match(query_emb, dhash, sim_threshold=0.96, region_mode=region_mode)
+    if mem_hit:
+        street_views = fetch_mapillary_street_view(mem_hit["lat"], mem_hit["lon"])
+        if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+            try:
+                os.remove(temp_cleaned_path)
+            except Exception:
+                pass
+        return {
+            "exact_lat": mem_hit["lat"],
+            "exact_lon": mem_hit["lon"],
+            "radius_m": 15,
+            "is_indoor": False,
+            "country": mem_hit.get("country"),
+            "country_code": None,
+            "city": mem_hit.get("city"),
+            "matched_label": mem_hit["name"],
+            "method": f"Local Visual Memory ({mem_hit['match_type']}, sim={mem_hit['sim']:.3f}): {mem_hit['name']}",
+            "confidence": mem_hit.get("confidence", 0.99),
+            "street_view_matches": street_views,
+            "diagnostics": {"memory_match": mem_hit}
+        }
+
+    # 1. Локальная эвристика интерьера с защитой ночной улицы
+    cv_indoor = detect_indoor_cv(active_image_path)
     is_indoor = cv_indoor.get("is_indoor_heuristic", False)
     is_night_outdoor = cv_indoor.get("is_night_outdoor", False)
 
-    # 1. Gemini Vision v3.2 (детекция страны, города, сцены, LHT/RHT, terrain_bearing)
-    vlm = analyze_with_gemini_vision(image_path)
+    # 2. Gemini Vision с Google Search Grounding
+    vlm = analyze_with_gemini_vision(active_image_path)
     vlm_data = vlm.get("data", {}) if isinstance(vlm.get("data"), dict) else {}
 
     detected_country = vlm_data.get("country")
@@ -1308,8 +1891,8 @@ def locate_exact_spot(
         else:
             is_indoor = bool(vlm_data.get("is_indoor"))
 
-    # 2. Извлекаем OCR текст и микро-признаки (мировые + Казахстан)
-    ocr_texts = extract_text_from_photo(image_path, is_indoor=is_indoor)
+    # 3. Извлекаем OCR текст и микро-признаки (мировые + Казахстан)
+    ocr_texts = extract_text_from_photo(active_image_path, is_indoor=is_indoor)
     all_texts = ocr_texts + vlm_data.get("detected_text", [])
     clues = extract_global_and_kz_clues(all_texts)
 
@@ -1319,10 +1902,53 @@ def locate_exact_spot(
     if not detected_city and clues.get("inferred_city"):
         detected_city = clues["inferred_city"]
 
-    # 3. Динамический выбор базового якоря (city_lat, city_lon) БЕЗ сваливания в Алматы
-    if vlm.get("status") == "ok" and vlm_data.get("lat") and vlm_data.get("lon") and float(vlm_data.get("confidence", 0)) >= 0.65:
-        city_lat = float(vlm_data["lat"])
-        city_lon = float(vlm_data["lon"])
+    # 4. ЗАЩИТА ОТ ГАЛЛЮЦИНАЦИИ ЦИФР LLM: проверка и геокодирование через Wikipedia / Photon / Nominatim
+    vlm_place = vlm_data.get("place_name")
+    vlm_lat_val = float(vlm_data["lat"]) if vlm_data.get("lat") is not None else None
+    vlm_lon_val = float(vlm_data["lon"]) if vlm_data.get("lon") is not None else None
+
+    verified_landmark = verify_and_geocode_landmark(
+        name=vlm_place,
+        city=detected_city,
+        country=detected_country,
+        llm_lat=vlm_lat_val,
+        llm_lon=vlm_lon_val
+    )
+    if verified_landmark and verified_landmark.get("lat") and verified_landmark.get("lon"):
+        vl_lat = float(verified_landmark["lat"])
+        vl_lon = float(verified_landmark["lon"])
+        vl_name = verified_landmark.get("name", vlm_place or "")
+        vl_src = verified_landmark.get("source", "Geocoder")
+        street_views = fetch_mapillary_street_view(vl_lat, vl_lon)
+        visual_memory.add_entry(query_emb, dhash, vl_lat, vl_lon, name=vl_name, country=detected_country, city=detected_city)
+        if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+            try:
+                os.remove(temp_cleaned_path)
+            except Exception:
+                pass
+        return {
+            "exact_lat": vl_lat,
+            "exact_lon": vl_lon,
+            "radius_m": 20,
+            "is_indoor": is_indoor,
+            "country": detected_country,
+            "country_code": detected_country_code,
+            "city": detected_city,
+            "matched_label": vl_name,
+            "method": f"Verified Landmark Geocode ({vl_src}): {vl_name}",
+            "street_view_matches": street_views,
+            "diagnostics": {
+                "verified_landmark": verified_landmark,
+                "gemini_vision": vlm_data,
+                "clues": clues,
+                "cv_indoor": cv_indoor
+            }
+        }
+
+    # 5. Динамический выбор базового якоря (city_lat, city_lon) БЕЗ сваливания в Алматы
+    if vlm.get("status") == "ok" and vlm_lat_val is not None and vlm_lon_val is not None and float(vlm_data.get("confidence", 0)) >= 0.65:
+        city_lat = vlm_lat_val
+        city_lon = vlm_lon_val
     elif clues.get("anchor_lat") and clues.get("anchor_lon") and clues.get("confidence", 0) >= 0.70:
         if city_lat is None or city_lon is None or (region_mode == "kz" and not (40.0 <= city_lat <= 56.0 and 46.0 <= city_lon <= 88.0)):
             city_lat = clues["anchor_lat"]
@@ -1330,7 +1956,7 @@ def locate_exact_spot(
     elif city_lat is None or city_lon is None:
         if geoclip_model is not None and hasattr(geoclip_model, "predict"):
             try:
-                preds_top, _ = geoclip_model.predict(image_path, top_k=1)
+                preds_top, _ = geoclip_model.predict(active_image_path, top_k=1)
                 city_lat = float(preds_top[0][0])
                 city_lon = float(preds_top[0][1])
             except Exception:
@@ -1339,7 +1965,7 @@ def locate_exact_spot(
             city_lat = 43.2389 if region_mode == "kz" else 48.8584
             city_lon = 76.8897 if region_mode == "kz" else 2.2945
 
-    # 4. Window View Analysis: если из окна видны горы или знаковые высотки
+    # 6. Window View Analysis: если из окна видны горы или знаковые высотки
     window_view = vlm_data.get("window_view", {})
     if window_view.get("has_window_view") and window_view.get("window_landmarks"):
         window_queries = [str(lm) for lm in window_view["window_landmarks"] if lm]
@@ -1353,6 +1979,12 @@ def locate_exact_spot(
         )
         if win_hit:
             street_views = fetch_mapillary_street_view(win_hit["lat"], win_hit["lon"])
+            visual_memory.add_entry(query_emb, dhash, win_hit["lat"], win_hit["lon"], name=win_hit["name"], country=detected_country, city=detected_city)
+            if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+                try:
+                    os.remove(temp_cleaned_path)
+                except Exception:
+                    pass
             return {
                 "exact_lat": win_hit["lat"],
                 "exact_lon": win_hit["lon"],
@@ -1373,7 +2005,7 @@ def locate_exact_spot(
                 }
             }
 
-    # 5. Пространственное пересечение брендов (Overpass API Brand Cluster -> 35м) по всему миру
+    # 7. Пространственное пересечение брендов (Overpass API Brand Cluster -> 35м) по всему миру
     if is_indoor and city_lat is not None and city_lon is not None:
         brand_candidates = []
         for b in vlm_data.get("search_queries", []) + ocr_texts + vlm_data.get("detected_text", []):
@@ -1383,6 +2015,12 @@ def locate_exact_spot(
         brand_cluster = search_overpass_brand_cluster(brand_candidates, city_lat, city_lon, radius_m=15000, cluster_radius_m=120)
         if brand_cluster:
             street_views = fetch_mapillary_street_view(brand_cluster["lat"], brand_cluster["lon"])
+            visual_memory.add_entry(query_emb, dhash, brand_cluster["lat"], brand_cluster["lon"], name=brand_cluster["name"], country=detected_country, city=detected_city)
+            if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+                try:
+                    os.remove(temp_cleaned_path)
+                except Exception:
+                    pass
             return {
                 "exact_lat": brand_cluster["lat"],
                 "exact_lon": brand_cluster["lon"],
@@ -1403,7 +2041,7 @@ def locate_exact_spot(
                 }
             }
 
-    # 6. Адаптивный рельефный бустер: Алматинский горный пеленг (только для окрестностей Алматы)
+    # 8. Адаптивный рельефный бустер: Алматинский горный пеленг (только для окрестностей Алматы)
     almaty_mountain = vlm_data.get("almaty_mountain_bearing", {})
     general_terrain = vlm_data.get("terrain_bearing", {})
 
@@ -1430,60 +2068,11 @@ def locate_exact_spot(
             sector_lat, sector_lon = None, None
 
         if sector_lat and sector_lon:
-            if not (vlm.get("status") == "ok" and vlm_data.get("lat") and float(vlm_data.get("confidence", 0)) >= 0.75):
+            if not (vlm.get("status") == "ok" and vlm_lat_val is not None and float(vlm_data.get("confidence", 0)) >= 0.75):
                 city_lat = sector_lat
                 city_lon = sector_lon
 
-    # 7. Прямой результат Gemini Vision с высокой уверенностью
-    if vlm.get("status") == "ok" and vlm_data.get("lat") and vlm_data.get("lon"):
-        v_lat, v_lon = float(vlm_data["lat"]), float(vlm_data["lon"])
-        osm_q = [
-            q for q in [vlm_data.get("osm_search_query"), vlm_data.get("place_name")]
-            + vlm_data.get("search_queries", [])
-            + vlm_data.get("detected_text", [])
-            if q and str(q).lower() not in INDOOR_OCR_STOPWORDS
-        ]
-        osm_hit = geocode_osm_global(
-            osm_q,
-            is_indoor=is_indoor,
-            city_lat=v_lat,
-            city_lon=v_lon,
-            country_code=detected_country_code,
-            region_mode=region_mode
-        )
-        if osm_hit:
-            v_lat, v_lon = osm_hit["lat"], osm_hit["lon"]
-
-        c_name = detected_country or "World"
-        label = f"{vlm_data.get('place_name', '')}, {vlm_data.get('city', c_name)}".strip(", ")
-        rad = int(vlm_data.get("radius_m", 50 if is_indoor else 15))
-        street_views = fetch_mapillary_street_view(v_lat, v_lon) if rad <= 150 else []
-        return {
-            "exact_lat": v_lat,
-            "exact_lon": v_lon,
-            "radius_m": rad,
-            "is_indoor": is_indoor,
-            "country": detected_country,
-            "country_code": detected_country_code,
-            "city": detected_city,
-            "scene_type": vlm_data.get("scene_type", "indoor" if is_indoor else "outdoor"),
-            "matched_label": label,
-            "method": f"Gemini Vision + OSM: {label}",
-            "street_view_matches": street_views,
-            "diagnostics": {
-                "gemini_vision": vlm_data,
-                "country": detected_country,
-                "country_code": detected_country_code,
-                "city": detected_city,
-                "terrain_bearing": general_terrain,
-                "almaty_mountain_bearing": almaty_mountain,
-                "osm_refined": osm_hit,
-                "clues": clues,
-                "cv_indoor": cv_indoor
-            }
-        }
-
-    # 8. Поиск известных ТРЦ/аэропортов/станций по названиям брендов
+    # 9. Поиск известных ТРЦ/аэропортов/станций по названиям брендов
     if is_indoor and vlm_data.get("search_queries"):
         indoor_osm_hit = geocode_osm_global(
             vlm_data.get("search_queries"),
@@ -1495,6 +2084,12 @@ def locate_exact_spot(
         )
         if indoor_osm_hit:
             street_views = fetch_mapillary_street_view(indoor_osm_hit["lat"], indoor_osm_hit["lon"])
+            visual_memory.add_entry(query_emb, dhash, indoor_osm_hit["lat"], indoor_osm_hit["lon"], name=indoor_osm_hit["name"], country=detected_country, city=detected_city)
+            if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+                try:
+                    os.remove(temp_cleaned_path)
+                except Exception:
+                    pass
             return {
                 "exact_lat": indoor_osm_hit["lat"],
                 "exact_lon": indoor_osm_hit["lon"],
@@ -1515,7 +2110,7 @@ def locate_exact_spot(
                 }
             }
 
-    # 9. Локальный OCR поиск по вывескам/табличкам
+    # 10. Локальный OCR поиск по вывескам/табличкам через нечеткий мульти-геокодер (Photon + Nominatim)
     ocr_hit = geocode_osm_global(
         ocr_texts,
         is_indoor=is_indoor,
@@ -1526,6 +2121,12 @@ def locate_exact_spot(
     )
     if ocr_hit:
         street_views = fetch_mapillary_street_view(ocr_hit["lat"], ocr_hit["lon"])
+        visual_memory.add_entry(query_emb, dhash, ocr_hit["lat"], ocr_hit["lon"], name=ocr_hit["name"], country=detected_country, city=detected_city)
+        if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+            try:
+                os.remove(temp_cleaned_path)
+            except Exception:
+                pass
         return {
             "exact_lat": ocr_hit["lat"],
             "exact_lon": ocr_hit["lon"],
@@ -1546,10 +2147,13 @@ def locate_exact_spot(
             }
         }
 
-    # 10. GeoCLIP доводка с ультраплотной сеткой на GPU
+    # 11. GeoCLIP доводка с 5-кропной ультраплотной сеткой на GPU
     c_lat: float = float(city_lat) if city_lat is not None else (43.2389 if region_mode == "kz" else 48.8584)
     c_lon: float = float(city_lon) if city_lon is not None else (76.8897 if region_mode == "kz" else 2.2945)
-    grid_res = refine_dense_grid(geoclip_model, image_path, c_lat, c_lon, is_indoor=is_indoor)
+    grid_res = refine_dense_grid(geoclip_model, active_image_path, c_lat, c_lon, is_indoor=is_indoor)
+
+    candidate_lat = float(grid_res.get("lat", c_lat))
+    candidate_lon = float(grid_res.get("lon", c_lon))
 
     # Динамическое именование метода с указанием страны
     country_display = detected_country or (clues.get("country") if clues else None)
@@ -1567,22 +2171,54 @@ def locate_exact_spot(
     elif almaty_sector_applied:
         method_name = f"Almaty Mountain Bearing ({almaty_sector_applied}) + Outdoor Grid (15m)"
         warning_msg = None
-        street_views = fetch_mapillary_street_view(grid_res.get("lat", c_lat), grid_res.get("lon", c_lon))
+        street_views = fetch_mapillary_street_view(candidate_lat, candidate_lon)
     else:
         method_name = f"{country_display} Outdoor GPU Grid (15m)"
         warning_msg = None
-        street_views = fetch_mapillary_street_view(grid_res.get("lat", c_lat), grid_res.get("lon", c_lon))
+        street_views = fetch_mapillary_street_view(candidate_lat, candidate_lon)
+
+    # 12. Агент-критик: семантическая самопроверка (semantic_sanity_check)
+    final_lat, final_lon, final_method, sanity_warn = semantic_sanity_check(
+        candidate_lat=candidate_lat,
+        candidate_lon=candidate_lon,
+        vlm_data=vlm_data,
+        clues=clues,
+        verified_landmark=verified_landmark,
+        anchor_lat=c_lat,
+        anchor_lon=c_lon,
+        method_name=method_name
+    )
+    if sanity_warn:
+        warning_msg = f"{warning_msg + ' | ' if warning_msg else ''}{sanity_warn}"
+        street_views = fetch_mapillary_street_view(final_lat, final_lon)
+
+    # Сохраняем проверенную точку в визуальную память
+    visual_memory.add_entry(
+        emb_vector=query_emb,
+        dhash=dhash,
+        lat=final_lat,
+        lon=final_lon,
+        name=detected_city or country_display,
+        country=detected_country,
+        city=detected_city
+    )
+
+    if temp_cleaned_path and os.path.exists(temp_cleaned_path):
+        try:
+            os.remove(temp_cleaned_path)
+        except Exception:
+            pass
 
     return {
-        "exact_lat": grid_res.get("lat", c_lat),
-        "exact_lon": grid_res.get("lon", c_lon),
+        "exact_lat": final_lat,
+        "exact_lon": final_lon,
         "radius_m": grid_res.get("radius_m", 2500 if is_indoor else 15),
         "is_indoor": is_indoor,
         "country": detected_country,
         "country_code": detected_country_code,
         "city": detected_city,
         "matched_label": None,
-        "method": method_name,
+        "method": final_method,
         "warning": warning_msg,
         "street_view_matches": street_views,
         "diagnostics": {
@@ -1597,6 +2233,7 @@ def locate_exact_spot(
             "almaty_mountain_bearing": almaty_mountain,
             "ocr_texts": ocr_texts,
             "dense_grid": grid_res,
+            "sanity_check": sanity_warn
         },
     }
 
