@@ -175,6 +175,21 @@
 
       <!-- Instant Dropzone Card in Hero -->
       <div class="hero-upload-card">
+        <!-- Geographic Region Scope Switcher -->
+        <div class="region-mode-bar" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <span style="font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Охват поиска:</span>
+          <div class="region-toggle-pills" style="display: inline-flex; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 9999px; padding: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+            <label class="region-pill active" id="heroRegionGlobalLabel" style="cursor: pointer; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; transition: all 0.2s; display: flex; align-items: center; gap: 6px; background: #2563eb; color: #ffffff; box-shadow: 0 0 12px rgba(37,99,235,0.5);">
+              <input type="radio" name="region_mode_selector" value="global" checked style="display: none;">
+              <span>🌍 Весь мир (Global)</span>
+            </label>
+            <label class="region-pill" id="heroRegionKzLabel" style="cursor: pointer; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; transition: all 0.2s; display: flex; align-items: center; gap: 6px; color: #94a3b8;">
+              <input type="radio" name="region_mode_selector" value="kz" style="display: none;">
+              <span>🇰🇿 Фокус: Казахстан</span>
+            </label>
+          </div>
+        </div>
+
         <div class="hero-dropzone" id="heroDropzone">
           <input type="file" id="heroFileInput" accept="image/*" class="dropzone-input">
           <div class="hero-dropzone-inner">
@@ -1157,6 +1172,27 @@
           <div class="dropzone-preview" id="dropzonePreview" style="display: none;">
             <img src="" id="uploadPreviewImg" alt="Превью загрузки">
             <div class="preview-meta" id="uploadPreviewMeta"></div>
+          </div>
+        </div>
+
+        <!-- Geographic Scope Switcher inside Modal -->
+        <div class="modal-region-scope" style="margin: 14px 0; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">🌐</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #f1f5f9;">Региональный режим поиска</div>
+              <div style="font-size: 11px; color: #94a3b8;">GeoCLIP глобальная галерея или принудительная локализация в РК</div>
+            </div>
+          </div>
+          <div class="region-toggle-pills" style="display: inline-flex; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 9999px; padding: 3px;">
+            <label class="modal-region-pill active" id="modalRegionGlobalLabel" style="cursor: pointer; padding: 5px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; transition: all 0.2s; background: #2563eb; color: #ffffff;">
+              <input type="radio" name="modal_region_mode_selector" value="global" checked style="display: none;">
+              <span>🌍 Весь мир</span>
+            </label>
+            <label class="modal-region-pill" id="modalRegionKzLabel" style="cursor: pointer; padding: 5px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; transition: all 0.2s; color: #94a3b8;">
+              <input type="radio" name="modal_region_mode_selector" value="kz" style="display: none;">
+              <span>🇰🇿 Казахстан</span>
+            </label>
           </div>
         </div>
 

@@ -80,15 +80,114 @@ def get_ocr_reader():
     return _OCR_READER if _OCR_READER is not False else None
 
 
-# Стоп-слова, которые часто встречаются внутри зданий и дают ложные совпадения в OSM
+# Мультиязычные стоп-слова, которые часто встречаются внутри зданий и дают ложные совпадения в OSM (RU, KZ, EN, ES, FR, DE, TR)
 INDOOR_OCR_STOPWORDS = {
-    "выход", "шығу", "exit", "вход", "кіру", "enter", "welcome", "қош", "келдіңіздер",
-    "касса", "туалет", "wc", "этаж", "қабат", "лифт", "акция", "скидки", "sale",
-    "открыто", "ашық", "закрыто", "жабық", "меню", "menu", "coffee", "кофе",
-    "чай", "tea", "open", "close", "push", "pull", "на себя", "от себя", "wifi", "wi-fi",
-    "гардероб", "зал", "зона", "терминал", "банкомат", "администрация", "информация", "ақпарат",
-    "стойка", "паркинг", "parking", "p1", "p2", "p3", "цоколь", "цокольный",
-    "осторожно", "внимание", "намазхана", "намаз", "smoking", "курение"
+    # Russian
+    "выход", "вход", "касса", "акция", "скидки", "скидка", "этаж", "лифт", "туалет", "wc",
+    "гардероб", "зал", "зона", "терминал", "банкомат", "администрация", "информация", "стойка",
+    "паркинг", "цоколь", "цокольный", "осторожно", "внимание", "курение", "на себя", "от себя",
+    "открыто", "закрыто", "меню", "кофе", "чай",
+    # Kazakh
+    "шығу", "кіру", "ашық", "жабық", "қабат", "дәретхана", "намазхана", "ақпарат", "жеңілдік",
+    "қош", "келдіңіздер",
+    # English
+    "exit", "entrance", "enter", "welcome", "cashier", "checkout", "floor", "level", "restroom",
+    "toilet", "elevator", "stairs", "sale", "discount", "open", "close", "closed", "push", "pull",
+    "wifi", "wi-fi", "parking", "p1", "p2", "p3", "information", "info", "warning", "caution",
+    "smoking", "no smoking", "coffee", "tea", "menu",
+    # Spanish
+    "salida", "entrada", "caja", "rebajas", "descuento", "piso", "planta", "baño", "servicios",
+    "ascensor", "escaleras", "abierto", "cerrado", "empujar", "tirar", "aparcamiento", "cajero",
+    # French
+    "sortie", "entrée", "caisse", "solde", "soldes", "étage", "niveau", "toilettes", "ascenseur",
+    "escalier", "ouvert", "fermé", "pousser", "tirer", "stationnement",
+    # German
+    "ausgang", "eingang", "kasse", "rabatt", "etage", "stock", "stockwerk", "aufzug", "treppe",
+    "geöffnet", "geschlossen", "drücken", "ziehen", "parkplatz", "parkhaus",
+    # Turkish
+    "çıkış", "giriş", "kasa", "indirim", "kat", "tuvalet", "asansör", "merdiven", "açık", "kapalı",
+    "itiniz", "çekiniz", "otopark", "danışma"
+}
+
+# Международные телефонные коды стран
+GLOBAL_COUNTRY_PHONE_CODES = {
+    "+1": ("United States / Canada", "US", 39.8283, -98.5795),
+    "+44": ("United Kingdom", "GB", 55.3781, -3.4360),
+    "+49": ("Germany", "DE", 51.1657, 10.4515),
+    "+33": ("France", "FR", 46.2276, 2.2137),
+    "+81": ("Japan", "JP", 36.2048, 138.2529),
+    "+82": ("South Korea", "KR", 35.9078, 127.7669),
+    "+86": ("China", "CN", 35.8617, 104.1954),
+    "+90": ("Turkey", "TR", 38.9637, 35.2433),
+    "+971": ("United Arab Emirates", "AE", 23.4241, 53.8478),
+    "+39": ("Italy", "IT", 41.8719, 12.5674),
+    "+34": ("Spain", "ES", 40.4637, -3.7492),
+    "+48": ("Poland", "PL", 51.9194, 19.1451),
+    "+31": ("Netherlands", "NL", 52.1326, 5.2913),
+    "+41": ("Switzerland", "CH", 46.8182, 8.2275),
+    "+43": ("Austria", "AT", 47.5162, 14.5501),
+    "+46": ("Sweden", "SE", 60.1282, 18.6435),
+    "+47": ("Norway", "NO", 60.4720, 8.4689),
+    "+358": ("Finland", "FI", 61.9241, 25.7482),
+    "+61": ("Australia", "AU", -25.2744, 133.7751),
+    "+55": ("Brazil", "BR", -14.2350, -51.9253),
+    "+91": ("India", "IN", 20.5937, 78.9629),
+    "+65": ("Singapore", "SG", 1.3521, 103.8198),
+    "+966": ("Saudi Arabia", "SA", 23.8859, 45.0792),
+    "+996": ("Kyrgyzstan", "KG", 41.2044, 74.7661),
+    "+998": ("Uzbekistan", "UZ", 41.3775, 64.5853),
+    "+994": ("Azerbaijan", "AZ", 40.1431, 47.5769),
+    "+995": ("Georgia", "GE", 42.3154, 43.3569),
+}
+
+# Национальные доменные зоны стран (ccTLDs)
+GLOBAL_CCTLDS = {
+    ".us": ("United States", "US", 39.8283, -98.5795),
+    ".uk": ("United Kingdom", "GB", 55.3781, -3.4360),
+    ".co.uk": ("United Kingdom", "GB", 55.3781, -3.4360),
+    ".de": ("Germany", "DE", 51.1657, 10.4515),
+    ".fr": ("France", "FR", 46.2276, 2.2137),
+    ".jp": ("Japan", "JP", 36.2048, 138.2529),
+    ".kr": ("South Korea", "KR", 35.9078, 127.7669),
+    ".cn": ("China", "CN", 35.8617, 104.1954),
+    ".tr": ("Turkey", "TR", 38.9637, 35.2433),
+    ".ae": ("United Arab Emirates", "AE", 23.4241, 53.8478),
+    ".it": ("Italy", "IT", 41.8719, 12.5674),
+    ".es": ("Spain", "ES", 40.4637, -3.7492),
+    ".pl": ("Poland", "PL", 51.9194, 19.1451),
+    ".nl": ("Netherlands", "NL", 52.1326, 5.2913),
+    ".ch": ("Switzerland", "CH", 46.8182, 8.2275),
+    ".at": ("Austria", "AT", 47.5162, 14.5501),
+    ".se": ("Sweden", "SE", 60.1282, 18.6435),
+    ".no": ("Norway", "NO", 60.4720, 8.4689),
+    ".fi": ("Finland", "FI", 61.9241, 25.7482),
+    ".au": ("Australia", "AU", -25.2744, 133.7751),
+    ".br": ("Brazil", "BR", -14.2350, -51.9253),
+    ".ca": ("Canada", "CA", 56.1304, -106.3468),
+    ".in": ("India", "IN", 20.5937, 78.9629),
+    ".sg": ("Singapore", "SG", 1.3521, 103.8198),
+    ".kz": ("Kazakhstan", "KZ", 48.0196, 66.9237),
+    ".ru": ("Russia", "RU", 61.5240, 105.3188),
+    ".ua": ("Ukraine", "UA", 48.3794, 31.1656),
+    ".ge": ("Georgia", "GE", 42.3154, 43.3569),
+    ".uz": ("Uzbekistan", "UZ", 41.3775, 64.5853),
+    ".kg": ("Kyrgyzstan", "KG", 41.2044, 74.7661),
+    ".az": ("Azerbaijan", "AZ", 40.1431, 47.5769),
+}
+
+# Мировые символы валют
+GLOBAL_CURRENCIES = {
+    "€": ("Eurozone", "EU", 50.0, 10.0),
+    "£": ("United Kingdom", "GB", 55.3781, -3.4360),
+    "$": ("United States / Americas", "US", 39.8283, -98.5795),
+    "¥": ("Japan / China", "JP", 36.2048, 138.2529),
+    "₩": ("South Korea", "KR", 35.9078, 127.7669),
+    "₺": ("Turkey", "TR", 38.9637, 35.2433),
+    "₹": ("India", "IN", 20.5937, 78.9629),
+    "₸": ("Kazakhstan", "KZ", 48.0196, 66.9237),
+    "₽": ("Russia", "RU", 61.5240, 105.3188),
+    "CHF": ("Switzerland", "CH", 46.8182, 8.2275),
+    "AED": ("United Arab Emirates", "AE", 23.4241, 53.8478),
 }
 
 # Казахстанские телефонные коды фиксированной связи
@@ -179,46 +278,76 @@ KAZPOST_NEW_LETTERS = {
 # Обогащённая опорная сетка Казахстана (города, парки и ключевые природные зоны)
 KZ_HUBS = [
     # 1. Бурабай / Боровое (Жумбактас, Окжетпес)
-    ("Burabay (Borovoe), Zhumbaktas & Okzhetpes", 53.0837, 70.2709, 8000, 50),
+    ("Burabay (Borovoe), Zhumbaktas & Okzhetpes", 53.0837, 70.2709, 6000, 200),
     # 2. Алматы и знаковые локации
-    ("Almaty City & Arbat", 43.2389, 76.8897, 20000, 180),
-    ("Almaty, First President Park", 43.1903, 76.8858, 3000, 40),
-    ("Almaty, Central Park (Gorky Park)", 43.2625, 76.9686, 2500, 40),
-    ("Almaty, Botanical Garden", 43.2197, 76.9136, 2000, 40),
-    ("Almaty, Kok-Tobe & Terrenkur", 43.2330, 76.9760, 4000, 50),
-    ("Almaty, Panfilov Park & Zenkov Cathedral", 43.2588, 76.9535, 3000, 40),
-    ("Almaty, Medeu High-Altitude Skating Rink", 43.1575, 77.0589, 7000, 60),
-    ("Almaty, Shymbulak Ski Resort", 43.1284, 77.0811, 6000, 60),
-    ("Almaty, Big Almaty Lake (BAO)", 43.0506, 76.9850, 6000, 80),
+    ("Almaty City & Arbat", 43.2389, 76.8897, 12000, 300),
+    ("Almaty, First President Park", 43.1903, 76.8858, 3000, 150),
+    ("Almaty, Central Park (Gorky Park)", 43.2625, 76.9686, 2500, 150),
+    ("Almaty, Botanical Garden", 43.2197, 76.9136, 2000, 150),
+    ("Almaty, Kok-Tobe & Terrenkur", 43.2330, 76.9760, 4000, 200),
+    ("Almaty, Panfilov Park & Zenkov Cathedral", 43.2588, 76.9535, 2500, 150),
+    ("Almaty, Medeu High-Altitude Skating Rink", 43.1575, 77.0589, 5000, 200),
+    ("Almaty, Shymbulak Ski Resort", 43.1284, 77.0811, 4000, 200),
+    ("Almaty, Big Almaty Lake (BAO)", 43.0506, 76.9850, 4000, 200),
     # 3. Природные жемчужины Алматинского региона
-    ("Kolsai Lakes National Park", 42.9897, 78.3256, 8000, 80),
-    ("Kaindy Lake (Sunken Forest)", 42.9844, 78.4660, 6000, 80),
-    ("Charyn Canyon (Valley of Castles)", 43.3550, 79.0792, 9000, 80),
+    ("Kolsai Lakes National Park", 42.9897, 78.3256, 5000, 200),
+    ("Kaindy Lake (Sunken Forest)", 42.9844, 78.4660, 4000, 200),
+    ("Charyn Canyon (Valley of Castles)", 43.3550, 79.0792, 6000, 200),
     # 4. Астана (Левый берег, Байтерек, Мечеть, Ботанический)
-    ("Astana, Baiterek, Central Park & Botanical Garden", 51.1280, 71.4300, 18000, 150),
-    ("Astana, Grand Mosque & Expo", 51.0729, 71.4096, 12000, 120),
+    ("Astana, Baiterek, Central Park & Botanical Garden", 51.1280, 71.4300, 12000, 300),
+    ("Astana, Grand Mosque & Expo", 51.0729, 71.4096, 10000, 250),
     # 5. Другие крупные города РК
-    ("Karaganda, Central Park & City", 49.8047, 73.1094, 15000, 180),
-    ("Shymkent, Parks & City", 42.3417, 69.5901, 16000, 180),
-    ("Turkestan, Khoja Ahmed Yasawi Mausoleum", 43.2973, 68.2517, 10000, 120),
-    ("Aktau & Caspian Sea Coast", 43.6532, 51.1691, 12000, 180),
-    ("Mangystau, Bozzhira Tract (Ustyurt)", 43.4167, 54.0667, 10000, 100),
-    ("Ust-Kamenogorsk & Altai Foothills", 49.9483, 82.6285, 12000, 200),
-    ("East Kazakhstan, Katon-Karagay & Belukha", 49.1667, 85.6000, 12000, 120),
-    ("Aktobe", 50.2839, 57.1670, 10000, 200),
-    ("Taraz", 42.9000, 71.3667, 10000, 200),
-    ("Pavlodar", 52.2873, 76.9674, 10000, 200),
-    ("Semey", 50.4111, 80.2275, 10000, 200),
-    ("Atyrau", 47.0945, 51.9238, 10000, 200),
-    ("Kokshetau", 53.2833, 69.3833, 10000, 200),
-    ("Kostanay", 53.2144, 63.6246, 10000, 200),
-    ("Kyzylorda", 44.8488, 65.4823, 10000, 200),
-    ("Uralsk", 51.2333, 51.3667, 10000, 200),
-    ("Petropavlovsk", 54.8728, 69.1430, 10000, 200),
-    ("Taldykorgan", 45.0156, 78.3739, 10000, 200),
+    ("Karaganda, Central Park & City", 49.8047, 73.1094, 10000, 300),
+    ("Shymkent, Parks & City", 42.3417, 69.5901, 10000, 300),
+    ("Turkestan, Khoja Ahmed Yasawi Mausoleum", 43.2973, 68.2517, 6000, 200),
+    ("Aktau & Caspian Sea Coast", 43.6532, 51.1691, 10000, 300),
+    ("Mangystau, Bozzhira Tract (Ustyurt)", 43.4167, 54.0667, 6000, 200),
+    ("Ust-Kamenogorsk & Altai Foothills", 49.9483, 82.6285, 8000, 300),
+    ("East Kazakhstan, Katon-Karagay & Belukha", 49.1667, 85.6000, 8000, 250),
+    ("Aktobe", 50.2839, 57.1670, 8000, 300),
+    ("Taraz", 42.9000, 71.3667, 8000, 300),
+    ("Pavlodar", 52.2873, 76.9674, 8000, 300),
+    ("Semey", 50.4111, 80.2275, 8000, 300),
+    ("Atyrau", 47.0945, 51.9238, 8000, 300),
+    ("Kokshetau", 53.2833, 69.3833, 8000, 300),
+    ("Kostanay", 53.2144, 63.6246, 8000, 300),
+    ("Kyzylorda", 44.8488, 65.4823, 8000, 300),
+    ("Uralsk", 51.2333, 51.3667, 8000, 300),
+    ("Petropavlovsk", 54.8728, 69.1430, 8000, 300),
+    ("Taldykorgan", 45.0156, 78.3739, 8000, 300),
 ]
 
-_KZ_GALLERY_SET = False
+# Ключевые мировые мега-хабы и знаковые архитектурные локации
+WORLD_HUBS = [
+    ("Paris, Eiffel Tower & Champs-Elysees", 48.8584, 2.2945, 10000, 300),
+    ("London, Big Ben & Westminster", 51.5007, -0.1246, 10000, 300),
+    ("Tokyo, Shibuya & Tokyo Tower", 35.6586, 139.7454, 12000, 300),
+    ("New York, Manhattan & Times Square", 40.7580, -73.9855, 12000, 300),
+    ("Rome, Colosseum & Vatican", 41.8902, 12.4922, 9000, 300),
+    ("Istanbul, Sultanahmet & Bosphorus", 41.0082, 28.9784, 12000, 300),
+    ("Dubai, Downtown & Burj Khalifa", 25.1972, 55.2744, 10000, 300),
+    ("Berlin, Brandenburg Gate & Mitte", 52.5163, 13.3777, 10000, 300),
+    ("Sydney, Opera House & Harbor", -33.8568, 151.2153, 10000, 300),
+    ("Singapore, Marina Bay Sands", 1.2838, 103.8591, 8000, 300),
+    ("Cairo, Giza Pyramids & Nile", 29.9792, 31.1342, 10000, 300),
+    ("Seoul, Gangnam & N Seoul Tower", 37.5512, 126.9882, 12000, 300),
+    ("Rio de Janeiro, Christ the Redeemer", -22.9519, -43.2105, 10000, 300),
+    ("San Francisco, Golden Gate & Bay Area", 37.7749, -122.4194, 10000, 300),
+    ("Hong Kong, Victoria Peak & Central", 22.2800, 114.1588, 8000, 300),
+    ("Bangkok, Grand Palace & Chao Phraya", 13.7500, 100.5000, 10000, 300),
+    ("Amsterdam, Canals & Center", 52.3676, 4.9041, 8000, 300),
+    ("Madrid, Puerta del Sol & Gran Via", 40.4168, -3.7038, 10000, 300),
+    ("Vienna, Historic Center", 48.2082, 16.3738, 8000, 300),
+    ("Prague, Charles Bridge & Old Town", 50.0875, 14.4211, 8000, 300),
+    ("Barcelona, Sagrada Familia & Beach", 41.4036, 2.1744, 8000, 300),
+    ("Toronto, CN Tower & Downtown", 43.6426, -79.3871, 10000, 300),
+    ("Beijing, Forbidden City", 39.9042, 116.4074, 12000, 300),
+    ("Buenos Aires, Obelisco", -34.6037, -58.3816, 10000, 300),
+    ("Tashkent, Amir Timur Square", 41.3111, 69.2797, 10000, 300),
+    ("Bishkek, Ala-Too Square", 42.8746, 74.6122, 8000, 300),
+    ("Baku, Flame Towers & Boulevard", 40.3756, 49.8328, 8000, 300),
+    ("Tbilisi, Old Town & Narikala", 41.6938, 44.8015, 8000, 300),
+]
 
 
 def _build_grid(lat: float, lon: float, radius_m: float, step_m: float) -> np.ndarray:
@@ -243,27 +372,56 @@ def _unwrap_geoclip(geoclip_model):
     return None
 
 
-def lock_geoclip_to_kazakhstan(geoclip_model):
-    """Заменяет глобальную сетку GeoCLIP на плотную сетку городов, парков и природных зон Казахстана."""
-    global _KZ_GALLERY_SET
-    if _KZ_GALLERY_SET or torch is None:
+def enrich_geoclip_gallery(geoclip_model, region_mode: str = "global"):
+    """
+    Обогащает галерею GeoCLIP:
+    1. По умолчанию (region_mode="global") сохраняет полную мировую галерею GeoCLIP (~100 000 точек)
+       и добавляет к ней плотную сетку хабов Казахстана и ключевых мировых локаций.
+    2. При region_mode="kz" переключает модель на локальную сетку Казахстана.
+    """
+    if torch is None:
         return
     model_obj = _unwrap_geoclip(geoclip_model)
     if model_obj is None or not hasattr(model_obj, "gps_gallery"):
         return
-    try:
-        device = model_obj.gps_gallery.device
-        grids = [_build_grid(lat, lon, r, s) for (_, lat, lon, r, s) in KZ_HUBS]
-        kz_arr = np.vstack(grids)
-        model_obj.gps_gallery = torch.tensor(kz_arr, dtype=torch.float32, device=device)
-        _KZ_GALLERY_SET = True
-    except Exception:
-        pass
+
+    # Сохраняем исходную глобальную галерею GeoCLIP (100k мировых точек)
+    if not hasattr(model_obj, "_original_global_gallery"):
+        model_obj._original_global_gallery = model_obj.gps_gallery.clone()
+
+    if not hasattr(model_obj, "_global_gallery") or not hasattr(model_obj, "_kz_gallery"):
+        try:
+            device = model_obj.gps_gallery.device
+            grids_kz = [_build_grid(lat, lon, r, s) for (_, lat, lon, r, s) in KZ_HUBS]
+            grids_world = [_build_grid(lat, lon, r, s) for (_, lat, lon, r, s) in WORLD_HUBS]
+            kz_arr = np.vstack(grids_kz)
+            world_extra_arr = np.vstack(grids_world) if grids_world else np.empty((0, 2), dtype=np.float32)
+
+            kz_tensor = torch.tensor(kz_arr, dtype=torch.float32, device=device)
+            extra_tensor = torch.tensor(np.vstack([kz_arr, world_extra_arr]), dtype=torch.float32, device=device)
+
+            model_obj._kz_gallery = kz_tensor
+            model_obj._global_gallery = torch.cat([model_obj._original_global_gallery, extra_tensor], dim=0)
+        except Exception as e:
+            logger.warning("Error building enriched galleries: %s", e)
+            model_obj._global_gallery = model_obj._original_global_gallery
+
+    # Применяем режим
+    if region_mode == "kz" and hasattr(model_obj, "_kz_gallery"):
+        model_obj.gps_gallery = model_obj._kz_gallery
+    else:
+        model_obj.gps_gallery = getattr(model_obj, "_global_gallery", model_obj._original_global_gallery)
 
 
-def enrich_geoclip_gallery(geoclip_model):
-    """Алиас для lock_geoclip_to_kazakhstan."""
-    lock_geoclip_to_kazakhstan(geoclip_model)
+def set_geoclip_region(geoclip_model, region_mode: str = "global"):
+    """Переключает активную сетку GeoCLIP между 'global' и 'kz'."""
+    enrich_geoclip_gallery(geoclip_model, region_mode=region_mode)
+
+
+def lock_geoclip_to_kazakhstan(geoclip_model):
+    """Принудительно устанавливает фокус галереи на Казахстан (обратная совместимость)."""
+    enrich_geoclip_gallery(geoclip_model, region_mode="kz")
+
 
 
 def detect_indoor_cv(image_path: str) -> Dict[str, Any]:
@@ -333,12 +491,15 @@ def normalize_kz_address_query(text: str) -> str:
     return t.strip()
 
 
-def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
+def extract_global_and_kz_clues(texts: List[str]) -> Dict[str, Any]:
     """
-    Ищет казахстанские микро-признаки: почтовые индексы, городские коды телефонов,
-    автомобильные номера регионов и БИН/ИИН для точной географической привязки.
+    Универсальный парсер микро-признаков по всему миру и Казахстану:
+    1. Казахстанские правила (почтовые индексы, городские коды телефонов, автономера 01-20, БИН).
+    2. Глобальные правила (международные телефонные коды стран +1..+998, национальные доменные зоны, символы валют).
     """
     clues = {
+        "country": None,
+        "country_code": None,
         "postal_code": None,
         "phone_code": None,
         "plate_region": None,
@@ -354,21 +515,23 @@ def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
 
     joined = " ".join([str(t) for t in texts])
 
-    # 1. Почтовые индексы (старый 6-значный 010000..169999)
+    # 1. Казахстан: Почтовые индексы (старый 6-значный 010000..169999)
     m_post_old = re.search(r"\b(0[1-9]|1[0-6])\d{4}\b", joined)
     if m_post_old:
         code = m_post_old.group(0)
         prefix = code[:2]
         if prefix in KZ_POSTAL_PREFIXES:
             city_name, lat, lon = KZ_POSTAL_PREFIXES[prefix]
+            clues["country"] = "Kazakhstan"
+            clues["country_code"] = "KZ"
             clues["postal_code"] = code
             clues["inferred_city"] = city_name
             clues["anchor_lat"] = lat
             clues["anchor_lon"] = lon
             clues["confidence"] = 0.90
-            clues["matched_clues"].append(f"Postal Code {code} -> {city_name}")
+            clues["matched_clues"].append(f"KZ Postal Code {code} -> {city_name}")
 
-    # Новый 7-значный индекс Казпочты (например, A05B2Y3)
+    # Казахстан: Новый 7-значный индекс Казпочты (например, A05B2Y3)
     if not clues["postal_code"]:
         m_post_new = re.search(r"\b([A-Z])\d{2}[A-Z0-9]{4}\b", joined)
         if m_post_new:
@@ -376,6 +539,8 @@ def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
             first_letter = code[0]
             if first_letter in KAZPOST_NEW_LETTERS:
                 city_name, lat, lon = KAZPOST_NEW_LETTERS[first_letter]
+                clues["country"] = "Kazakhstan"
+                clues["country_code"] = "KZ"
                 clues["postal_code"] = code
                 clues["inferred_city"] = city_name
                 clues["anchor_lat"] = lat
@@ -383,20 +548,22 @@ def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
                 clues["confidence"] = 0.88
                 clues["matched_clues"].append(f"Kazpost {code} -> {city_name}")
 
-    # 2. Телефонные коды городов (+7 727, (7172), 8(7252))
+    # 2. Казахстан: Телефонные коды городов (+7 727, (7172), 8(7252))
     for code, (city_name, lat, lon) in KZ_PHONE_CODES.items():
         pattern = rf"(?:\+7|8)[\s\-\(]*{code}[\s\-\)]*\d+"
         if re.search(pattern, joined):
             clues["phone_code"] = code
             if not clues["inferred_city"]:
+                clues["country"] = "Kazakhstan"
+                clues["country_code"] = "KZ"
                 clues["inferred_city"] = city_name
                 clues["anchor_lat"] = lat
                 clues["anchor_lon"] = lon
                 clues["confidence"] = 0.85
-            clues["matched_clues"].append(f"Phone Code {code} -> {city_name}")
+            clues["matched_clues"].append(f"KZ Phone Code {code} -> {city_name}")
             break
 
-    # 3. Автомобильные номера РК (123 ABC 02 или 02 | 123 ABC)
+    # 3. Казахстан: Автомобильные номера РК (123 ABC 02 или 02 | 123 ABC)
     plate_match = re.search(r"\b\d{3}\s?[A-Z]{2,3}\s?(0[1-9]|1[0-9]|20)\b", joined) or \
                   re.search(r"\b(0[1-9]|1[0-9]|20)\s?\|\s?\d{3}\s?[A-Z]{2,3}\b", joined)
     if plate_match:
@@ -405,19 +572,71 @@ def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
             city_name, lat, lon = KZ_PLATE_REGIONS[reg]
             clues["plate_region"] = reg
             if not clues["inferred_city"]:
+                clues["country"] = "Kazakhstan"
+                clues["country_code"] = "KZ"
                 clues["inferred_city"] = city_name
                 clues["anchor_lat"] = lat
                 clues["anchor_lon"] = lon
                 clues["confidence"] = 0.80
-            clues["matched_clues"].append(f"License Plate Region {reg} -> {city_name}")
+            clues["matched_clues"].append(f"KZ License Plate Region {reg} -> {city_name}")
 
-    # 4. БИН / ИИН (12 цифр)
+    # 4. Казахстан: БИН / ИИН (12 цифр)
     bin_match = re.search(r"\b(БИН|ИИН|BIN|IIN)[:\s]*([0-9]{12})\b", joined, re.IGNORECASE)
     if bin_match:
         clues["bin"] = bin_match.group(2)
         clues["matched_clues"].append(f"Kazakh Fiscal BIN: {clues['bin']}")
 
+    # 5. МЕЖДУНАРОДНЫЕ ТЕЛЕФОННЫЕ КОДЫ СТРАН (если страна ещё не зафиксирована с высокой уверенностью)
+    if not clues["country_code"] or clues["confidence"] < 0.85:
+        for p_code, (c_name, c_iso, c_lat, c_lon) in GLOBAL_COUNTRY_PHONE_CODES.items():
+            esc = re.escape(p_code)
+            pattern = rf"(?:^|[^\d])({esc})[\s\-\(]*\d{{2,4}}[\s\-\)]*\d+"
+            if re.search(pattern, joined):
+                clues["country"] = c_name
+                clues["country_code"] = c_iso
+                clues["phone_code"] = p_code
+                if not clues["anchor_lat"]:
+                    clues["anchor_lat"] = c_lat
+                    clues["anchor_lon"] = c_lon
+                    clues["confidence"] = 0.78
+                clues["matched_clues"].append(f"International Phone Prefix {p_code} -> {c_name} ({c_iso})")
+                break
+
+    # 6. НАЦИОНАЛЬНЫЕ ДОМЕННЫЕ ЗОНЫ (ccTLDs) НА БАННЕРАХ / ВЫВЕСКАХ (.de, .fr, .jp, .uk, .tr, .kz...)
+    for tld, (c_name, c_iso, c_lat, c_lon) in GLOBAL_CCTLDS.items():
+        pattern = rf"(?i)\b[a-z0-9\-\.]{{2,}}{re.escape(tld)}(?:[/\s\?]|$)"
+        if re.search(pattern, joined):
+            if not clues["country_code"]:
+                clues["country"] = c_name
+                clues["country_code"] = c_iso
+                if not clues["anchor_lat"]:
+                    clues["anchor_lat"] = c_lat
+                    clues["anchor_lon"] = c_lon
+                    clues["confidence"] = 0.75
+            clues["matched_clues"].append(f"ccTLD {tld} -> {c_name} ({c_iso})")
+            break
+
+    # 7. МИРОВЫЕ ВАЛЮТЫ (€, £, $, ¥, ₩, ₺, ₸, ₽, AED, CHF)
+    for curr_sym, (c_name, c_iso, c_lat, c_lon) in GLOBAL_CURRENCIES.items():
+        pattern = rf"(?:^|[^\w]){re.escape(curr_sym)}(?:[\s\d]|$)|(?:\d+[\s]*{re.escape(curr_sym)})"
+        if re.search(pattern, joined):
+            if not clues["country_code"]:
+                clues["country"] = c_name
+                clues["country_code"] = c_iso
+                if not clues["anchor_lat"]:
+                    clues["anchor_lat"] = c_lat
+                    clues["anchor_lon"] = c_lon
+                    clues["confidence"] = 0.65
+            clues["matched_clues"].append(f"Currency Symbol {curr_sym} -> {c_name} ({c_iso})")
+            break
+
     return clues
+
+
+def extract_kz_metadata_clues(texts: List[str]) -> Dict[str, Any]:
+    """Алиас для обратной совместимости."""
+    return extract_global_and_kz_clues(texts)
+
 
 
 def search_overpass_brand_cluster(
@@ -607,47 +826,56 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
             b64 = base64.b64encode(f.read()).decode("utf-8")
 
         prompt = (
-            "You are an expert OSINT geolocator specializing in Kazakhstan (Almaty, Astana, Shymkent, Burabay, Karaganda, city parks, streets, buildings) and CIS.\n"
-            "First, determine if the photo is taken INDOORS (inside a building, mall, cafe, office, room, station, airport) or OUTDOORS (street, park, nature, facade).\n\n"
-            "If INDOORS:\n"
-            "1. Inspect mall atrium architecture (e.g. MEGA Alma-Ata, MEGA Silk Way, Dostyk Plaza, Khan Shatyr, Esentai Mall, Forum), "
-            "storefront brand names, posters, signs, or receipts.\n"
-            "2. WINDOW VIEW ANALYSIS: If windows or balconies are visible, carefully inspect the view outside: "
-            "mountains (Zailiyskiy Alatau south of Almaty, Burabay granite rocks, flat steppe of Astana), "
-            "prominent towers (Esentai Tower, Almaty Towers, KazZhol, Abu Dhabi Plaza, Khan Shatyr, Baiterek, Kok-Tobe TV Tower).\n"
-            "3. DO NOT guess random coordinates if the room is generic or unidentifiable — set lat and lon to null if confidence is below 0.65.\n\n"
-            "ALMATY MOUNTAIN BEARING & SECTOR TRIANGULATION (CRITICAL FOR ALMATY & FOOTHILLS):\n"
-            "If analyzing a photo in Almaty, from a window/balcony, or with mountains visible in Kazakhstan:\n"
-            "1. Detect visibility of Zailiyskiy Alatau mountain ridge and/or Kok-Tobe TV Tower (the southern horizon of Almaty).\n"
-            "2. Determine shooting direction and angle towards the mountains (e.g. 'Looking South towards mountains', 'Looking South-East towards Kok-Tobe', 'Looking North away from mountains').\n"
-            "3. Determine the estimated city sector based on distance and perspective to the mountain ridge:\n"
-            "   - 'Верхняя часть / Медеу' (close towering slopes, foothills, Dostyk / Al-Farabi / Baganashyl / Medeu; lat ~43.215, lon ~76.945)\n"
-            "   - 'Центр' (mid-distance mountain ridge panorama, Abay / Satpayev / Panfilov / Arbat; lat ~43.245, lon ~76.930)\n"
-            "   - 'Нижняя часть' (distant low mountains over flat urban plains, Rayimbek / Sayakhat / Almaty-1; lat ~43.310, lon ~76.940)\n\n"
-            "If OUTDOORS:\n"
-            "Identify the exact landmark, park, street, building, or nature spot.\n\n"
+            "You are a world-class OSINT geolocator and professional GeoGuessr champion specializing in worldwide visual geolocation across all continents (Europe, Asia, Americas, Middle East, Africa, Oceania, CIS & Kazakhstan).\n"
+            "Analyze the image and extract key geographical, infrastructural, natural, and linguistic signatures:\n\n"
+            "1. SCENE CONTEXT & ENVIRONMENT:\n"
+            "- Determine if the photo is taken INDOORS (inside a building, mall, cafe, office, room, station, airport) or OUTDOORS (street, highway, park, nature, mountains, coast, architectural facade).\n"
+            "- If INDOORS: identify recognizable mall atrium architecture (MEGA, Dostyk Plaza, Khan Shatyr, Westfield, Galeries Lafayette, Dubai Mall, etc.), storefront names, airport terminal designs, signs, brands.\n"
+            "- If WINDOW/BALCONY: inspect outside landmarks (mountains, towers, skylines, water bodies).\n"
+            "- DO NOT guess random coordinates if indoor room is generic/unidentifiable — set lat and lon to null if confidence is below 0.65.\n\n"
+            "2. GLOBAL GEOGUESSR & ROAD/INFRASTRUCTURE SIGNATURES (CRITICAL):\n"
+            "- Driving side: Left-Hand Traffic (LHT: UK, Japan, Australia, New Zealand, South Africa, India, Thailand, Indonesia, Malaysia, etc.) vs Right-Hand Traffic (RHT: Europe, Americas, CIS/Kazakhstan, China, etc.).\n"
+            "- Road markings: white vs yellow dashed/solid center lines, outer shoulder lines, chevron arrows.\n"
+            "- Road bollards and reflectors: shape, colors (e.g. red/white, black/white, circular vs rectangular reflectors).\n"
+            "- Utility poles: concrete ladder/hole poles (France, Poland, Hungary, Romania), wooden poles, metal lattice, A-frames, step bolts, transformer shapes.\n"
+            "- Architecture & Roofing: European terracotta/slate tiles, American siding/shingles, Japanese kawara tiles, Soviet panel housing, Middle Eastern flat rooftops, tropical wooden stilts.\n"
+            "- Flora & Biome: pine/birch boreal forest, Mediterranean olive/cypress, tropical palm/eucalyptus, dry steppe/desert, tropical red soil vs dark chernozem.\n"
+            "- Language, scripts & country-code TLDs on banners/ads: Latin, Cyrillic, Greek, Arabic, Kanji/Kana (Japan), Hangul (Korea), Hanzi (China), Thai, Devanagari, Hebrew. Look for domain zones (.de, .fr, .jp, .uk, .tr, .ae, .us, .ca, .br, .au, .it, .es, .pl, .kz, .ru, etc.) and currencies ($, €, £, ¥, ₩, ₺, ₹, ₸, ₽, AED, CHF).\n"
+            "- Vehicle plates: EU blue strip, UK/NL yellow rear plates, long white plates, square Japanese/US plates, Kazakh 01-20 plate style.\n\n"
+            "3. TERRAIN BEARING & MOUNTAIN ORIENTATION:\n"
+            "- If mountains, coastline, lake, or major river are visible:\n"
+            "  * 'terrain_bearing': {'feature': 'mountains|sea|river|lake', 'direction': 'Looking South towards Alps / Coastline / Mountain Ridge', 'notes': 'perspective description'}.\n"
+            "- If in ALMATY or near Zailiyskiy Alatau:\n"
+            "  * 'almaty_mountain_bearing': visibility of ridge or Kok-Tobe, shooting angle, city sector ('Верхняя часть / Медеу', 'Центр', 'Нижняя часть').\n\n"
             "Return ONLY valid JSON matching this schema:\n"
             "{\n"
             '  "is_indoor": true/false,\n'
-            '  "scene_type": "mall|cafe|office|residential|station|airport|street|park|nature",\n'
+            '  "scene_type": "mall|cafe|office|residential|station|airport|street|highway|park|nature|coast",\n'
+            '  "country": "Country name (e.g. France, Japan, Turkey, Kazakhstan, United States)",\n'
+            '  "country_code": "ISO-2 code (e.g. FR, JP, TR, KZ, US, GB, DE)",\n'
+            '  "city": "City or region name or null",\n'
+            '  "place_name": "exact landmark name or null",\n'
             '  "confidence": 0.85,\n'
-            '  "place_name": "exact name or null",\n'
-            '  "city": "city or null",\n'
-            '  "country": "Kazakhstan",\n'
-            '  "osm_search_query": "search query for OpenStreetMap",\n'
-            '  "lat": 43.2389_or_null,\n'
-            '  "lon": 76.8897_or_null,\n'
+            '  "lat": 48.8584_or_null,\n'
+            '  "lon": 2.2945_or_null,\n'
             '  "radius_m": 30,\n'
-            '  "search_queries": ["identifiable brand, mall, landmark or window view"],\n'
+            '  "driving_side": "RHT" or "LHT",\n'
+            '  "osm_search_query": "search query for OpenStreetMap",\n'
+            '  "search_queries": ["identifiable brand, mall, landmark, road or window view"],\n'
             '  "detected_text": ["visible text"],\n'
+            '  "terrain_bearing": {\n'
+            '    "feature": "mountains|sea|river|lake|none",\n'
+            '    "direction": "direction description",\n'
+            '    "notes": "perspective description"\n'
+            '  },\n'
             '  "almaty_mountain_bearing": {\n'
             '    "mountain_visible": true/false,\n'
             '    "kok_tobe_visible": true/false,\n'
             '    "shooting_angle": "Looking South toward Zailiyskiy Alatau",\n'
-            '    "city_sector": "Верхняя часть / Медеу|Центр|Нижняя часть",\n'
+            '    "city_sector": "Верхняя часть / Медеу|Центр|Нижняя часть|null",\n'
             '    "sector_lat": 43.215_or_null,\n'
             '    "sector_lon": 76.945_or_null,\n'
-            '    "notes": "mountain distance and perspective description"\n'
+            '    "notes": "description"\n'
             '  },\n'
             '  "window_view": {\n'
             '    "has_window_view": true/false,\n'
@@ -667,7 +895,7 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
             "generationConfig": {"temperature": 0.1, "response_mime_type": "application/json"}
         }
 
-        models_to_try = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite"]
         last_err = ""
 
         for model_name in models_to_try:
@@ -740,17 +968,19 @@ def extract_text_from_photo(image_path: str, is_indoor: bool = False) -> List[st
     return found
 
 
-def geocode_in_kazakhstan(
+def geocode_osm_global(
     candidates: List[str],
     is_indoor: bool = False,
     city_lat: Optional[float] = None,
-    city_lon: Optional[float] = None
+    city_lon: Optional[float] = None,
+    country_code: Optional[str] = None,
+    region_mode: str = "global"
 ) -> Optional[Dict[str, Any]]:
-    """Ищет адрес, название объекта или ТРЦ по карте Казахстана (Nominatim + Overpass API)."""
-    headers = {"User-Agent": "GeoSleuthResearchKZ/3.2 (indoor-protected)"}
+    """Ищет адрес, название объекта или ТРЦ по карте (Nominatim + Overpass API) по всему миру или в режиме РК."""
+    headers = {"User-Agent": "GeoSleuthGlobalResearch/3.2 (worldwide-indoor-protected)"}
     queries: List[str] = []
     for c in candidates:
-        clean = re.sub(r"[^\w\s\-\.,№/а-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ]", " ", str(c)).strip()
+        clean = re.sub(r"[^\w\s\-\.,№/а-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺa-zA-Z0-9çÇşŞğĞıİöÖüÜéèàêëîïôûùñáíóú]", " ", str(c)).strip()
         clean = normalize_kz_address_query(clean)
         low = clean.lower()
         if len(clean) >= 3 and low not in INDOOR_OCR_STOPWORDS:
@@ -763,22 +993,28 @@ def geocode_in_kazakhstan(
 
     viewbox_params = {}
     if city_lat is not None and city_lon is not None:
-        deg = 20.0 / 111.32
+        deg = 25.0 / 111.32
         viewbox_params = {
             "viewbox": f"{city_lon - deg},{city_lat + deg},{city_lon + deg},{city_lat - deg}",
             "bounded": 0,
         }
 
+    c_code = (country_code or "").strip().upper()
+    if region_mode == "kz":
+        c_code = "KZ"
+
     for q in queries[:12]:
         try:
             params = {
                 "q": q,
-                "countrycodes": "kz",
                 "format": "jsonv2",
                 "limit": 3,
                 "addressdetails": 1,
                 **viewbox_params
             }
+            if c_code:
+                params["countrycodes"] = c_code.lower()
+
             r = requests.get(
                 "https://nominatim.openstreetmap.org/search",
                 params=params,
@@ -798,16 +1034,37 @@ def geocode_in_kazakhstan(
             pass
 
         if len(q) >= 4:
-            overpass_q = f"""
-            [out:json][timeout:8];
-            area["ISO3166-1"="KZ"]->.kz;
-            (
-              node["name"~"{q}",i](area.kz);
-              way["name"~"{q}",i](area.kz);
-              relation["name"~"{q}",i](area.kz);
-            );
-            out center 3;
-            """
+            if city_lat is not None and city_lon is not None:
+                overpass_q = f"""
+                [out:json][timeout:8];
+                (
+                  node["name"~"{q}",i](around:35000,{city_lat},{city_lon});
+                  way["name"~"{q}",i](around:35000,{city_lat},{city_lon});
+                  relation["name"~"{q}",i](around:35000,{city_lat},{city_lon});
+                );
+                out center 3;
+                """
+            elif c_code:
+                overpass_q = f"""
+                [out:json][timeout:8];
+                area["ISO3166-1"="{c_code}"]->.searchArea;
+                (
+                  node["name"~"{q}",i](area.searchArea);
+                  way["name"~"{q}",i](area.searchArea);
+                  relation["name"~"{q}",i](area.searchArea);
+                );
+                out center 3;
+                """
+            else:
+                overpass_q = f"""
+                [out:json][timeout:8];
+                (
+                  node["name"~"{q}",i];
+                  way["name"~"{q}",i];
+                  relation["name"~"{q}",i];
+                );
+                out center 3;
+                """
             try:
                 r = requests.post("https://overpass-api.de/api/interpreter", data={"data": overpass_q}, timeout=8)
                 if r.ok:
@@ -820,13 +1077,19 @@ def geocode_in_kazakhstan(
                             return {
                                 "lat": float(lat),
                                 "lon": float(lon),
-                                "name": f"{el.get('tags', {}).get('name', q)}, Казахстан",
+                                "name": el.get('tags', {}).get('name', q),
                                 "matched_query": q,
                                 "radius_m": 50 if is_indoor else 15,
                             }
             except Exception:
                 pass
     return None
+
+
+def geocode_in_kazakhstan(candidates: List[str], is_indoor: bool = False, city_lat: Optional[float] = None, city_lon: Optional[float] = None) -> Optional[Dict[str, Any]]:
+    """Алиас для обратной совместимости."""
+    return geocode_osm_global(candidates, is_indoor=is_indoor, city_lat=city_lat, city_lon=city_lon, country_code="KZ", region_mode="kz")
+
 
 
 def refine_dense_grid_gpu(
@@ -989,28 +1252,38 @@ def refine_dense_grid(
     return refine_dense_grid_cpu(geoclip_model, image_path, base_lat, base_lon, is_indoor)
 
 
-def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon: float) -> Dict[str, Any]:
+def locate_exact_spot(
+    geoclip_model,
+    image_path: str,
+    city_lat: Optional[float] = None,
+    city_lon: Optional[float] = None,
+    region_mode: str = "global"
+) -> Dict[str, Any]:
     """
-    Главный конвейер геолокации с поддержкой глубоких модулей:
-    1. OpenCV эвристика интерьера с защитой ночных уличных фото (detect_indoor_cv).
-    2. Gemini Vision v3.2 (детекция indoor/outdoor, окно/панорама гор, вывески, бренды).
-    3. Парсер казахстанских микро-признаков (индексы, телефонные коды, номера авто).
-    4. Пространственное пересечение брендов (Overpass API Brand Cluster -> точность 35м).
-    5. Верификация через Mapillary Street-View (при radius_m <= 150).
-    6. Алматинский горный пеленг (триангуляция секторов города).
-    7. Двухэтапная ультраплотная GPU-сетка GeoCLIP (точность до 15м).
+    Главный конвейер геолокации мирового уровня (Global Worldwide Geolocation):
+    1. Инициализация галереи GeoCLIP с поддержкой режима 'global' (весь мир) или 'kz' (Казахстан).
+    2. OpenCV эвристика интерьера с защитой ночных уличных фото (detect_indoor_cv).
+    3. Gemini Vision v3.2 GeoGuessr/OSINT (детекция страны, LHT/RHT, знаков, столбов, окно/панорама, вывески).
+    4. Универсальный парсер микро-признаков (международные телефонные коды, ccTLD, валюты + правила Казахстана).
+    5. Пространственное пересечение брендов (Overpass API Brand Cluster -> точность 35м по всему миру).
+    6. Адаптивный рельефный бустер: Алматинский горный пеленг (только для Алматы) / Terrain Bearing (для мира).
+    7. Двухэтапная ультраплотная GPU-сетка GeoCLIP (точность до 15м в любой точке планеты).
     """
     if geoclip_model is not None:
-        enrich_geoclip_gallery(geoclip_model)
+        enrich_geoclip_gallery(geoclip_model, region_mode=region_mode)
 
     # 0. Локальная эвристика интерьера с защитой ночной улицы
     cv_indoor = detect_indoor_cv(image_path)
     is_indoor = cv_indoor.get("is_indoor_heuristic", False)
     is_night_outdoor = cv_indoor.get("is_night_outdoor", False)
 
-    # 1. Gemini Vision v3.2 (определение места, вывесок, окна, проверка indoor/outdoor)
+    # 1. Gemini Vision v3.2 (детекция страны, города, сцены, LHT/RHT, terrain_bearing)
     vlm = analyze_with_gemini_vision(image_path)
     vlm_data = vlm.get("data", {}) if isinstance(vlm.get("data"), dict) else {}
+
+    detected_country = vlm_data.get("country")
+    detected_country_code = vlm_data.get("country_code")
+    detected_city = vlm_data.get("city")
 
     if vlm_data.get("is_indoor") is not None:
         if is_night_outdoor and not vlm_data.get("is_indoor"):
@@ -1018,22 +1291,49 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
         else:
             is_indoor = bool(vlm_data.get("is_indoor"))
 
-    # Извлекаем OCR текст заранее
+    # 2. Извлекаем OCR текст и микро-признаки (мировые + Казахстан)
     ocr_texts = extract_text_from_photo(image_path, is_indoor=is_indoor)
     all_texts = ocr_texts + vlm_data.get("detected_text", [])
+    clues = extract_global_and_kz_clues(all_texts)
 
-    # 2. Парсер казахстанских микро-признаков (индексы, автономера, коды телефонов)
-    kz_clues = extract_kz_metadata_clues(all_texts)
-    if kz_clues.get("anchor_lat") and kz_clues.get("anchor_lon"):
-        if not (40.0 <= city_lat <= 56.0 and 46.0 <= city_lon <= 88.0) or kz_clues.get("confidence", 0) >= 0.85:
-            city_lat = kz_clues["anchor_lat"]
-            city_lon = kz_clues["anchor_lon"]
+    if not detected_country and clues.get("country"):
+        detected_country = clues["country"]
+        detected_country_code = clues["country_code"]
+    if not detected_city and clues.get("inferred_city"):
+        detected_city = clues["inferred_city"]
 
-    # 3. Window View Analysis: если из окна видны горы или знаковые высотки
+    # 3. Динамический выбор базового якоря (city_lat, city_lon) БЕЗ сваливания в Алматы
+    if vlm.get("status") == "ok" and vlm_data.get("lat") and vlm_data.get("lon") and float(vlm_data.get("confidence", 0)) >= 0.65:
+        city_lat = float(vlm_data["lat"])
+        city_lon = float(vlm_data["lon"])
+    elif clues.get("anchor_lat") and clues.get("anchor_lon") and clues.get("confidence", 0) >= 0.70:
+        if city_lat is None or city_lon is None or (region_mode == "kz" and not (40.0 <= city_lat <= 56.0 and 46.0 <= city_lon <= 88.0)):
+            city_lat = clues["anchor_lat"]
+            city_lon = clues["anchor_lon"]
+    elif city_lat is None or city_lon is None:
+        if geoclip_model is not None and hasattr(geoclip_model, "predict"):
+            try:
+                preds_top, _ = geoclip_model.predict(image_path, top_k=1)
+                city_lat = float(preds_top[0][0])
+                city_lon = float(preds_top[0][1])
+            except Exception:
+                pass
+        if city_lat is None or city_lon is None:
+            city_lat = 43.2389 if region_mode == "kz" else 48.8584
+            city_lon = 76.8897 if region_mode == "kz" else 2.2945
+
+    # 4. Window View Analysis: если из окна видны горы или знаковые высотки
     window_view = vlm_data.get("window_view", {})
     if window_view.get("has_window_view") and window_view.get("window_landmarks"):
         window_queries = [str(lm) for lm in window_view["window_landmarks"] if lm]
-        win_hit = geocode_in_kazakhstan(window_queries, is_indoor=False, city_lat=city_lat, city_lon=city_lon)
+        win_hit = geocode_osm_global(
+            window_queries,
+            is_indoor=False,
+            city_lat=city_lat,
+            city_lon=city_lon,
+            country_code=detected_country_code,
+            region_mode=region_mode
+        )
         if win_hit:
             street_views = fetch_mapillary_street_view(win_hit["lat"], win_hit["lon"])
             return {
@@ -1041,6 +1341,9 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 "exact_lon": win_hit["lon"],
                 "radius_m": 75,
                 "is_indoor": is_indoor,
+                "country": detected_country,
+                "country_code": detected_country_code,
+                "city": detected_city,
                 "matched_label": f"Вид из окна на {win_hit['name']}",
                 "method": f"Window View Landmark: «{win_hit['matched_query']}»",
                 "street_view_matches": street_views,
@@ -1048,12 +1351,12 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                     "gemini_vision": vlm_data,
                     "window_view": window_view,
                     "osm_refined": win_hit,
-                    "kz_clues": kz_clues,
+                    "clues": clues,
                     "cv_indoor": cv_indoor
                 }
             }
 
-    # 4. Пространственное пересечение брендов (Overpass API Brand Cluster -> 35м)
+    # 5. Пространственное пересечение брендов (Overpass API Brand Cluster -> 35м) по всему миру
     if is_indoor:
         brand_candidates = []
         for b in vlm_data.get("search_queries", []) + ocr_texts + vlm_data.get("detected_text", []):
@@ -1068,6 +1371,9 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 "exact_lon": brand_cluster["lon"],
                 "radius_m": 35,
                 "is_indoor": True,
+                "country": detected_country,
+                "country_code": detected_country_code,
+                "city": detected_city,
                 "scene_type": vlm_data.get("scene_type", "mall"),
                 "matched_label": brand_cluster["name"],
                 "method": "Indoor Brand Cluster (Overpass)",
@@ -1075,23 +1381,24 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 "diagnostics": {
                     "brand_cluster": brand_cluster,
                     "gemini_vision": vlm_data,
-                    "kz_clues": kz_clues,
+                    "clues": clues,
                     "cv_indoor": cv_indoor
                 }
             }
 
-    # 4b. Горный пеленг для Алматы
-    mountain_bearing = vlm_data.get("almaty_mountain_bearing", {})
-    sector_name = mountain_bearing.get("city_sector") if isinstance(mountain_bearing, dict) else None
-    has_mountain = bool(mountain_bearing.get("mountain_visible") or mountain_bearing.get("kok_tobe_visible")) if isinstance(mountain_bearing, dict) else False
+    # 6. Адаптивный рельефный бустер: Алматинский горный пеленг (только для окрестностей Алматы)
+    almaty_mountain = vlm_data.get("almaty_mountain_bearing", {})
+    general_terrain = vlm_data.get("terrain_bearing", {})
+
     is_almaty_area = (
-        (43.10 <= city_lat <= 43.45 and 76.70 <= city_lon <= 77.15)
-        or (vlm_data.get("city") and "almaty" in str(vlm_data.get("city")).lower())
-        or has_mountain
+        (43.00 <= city_lat <= 43.55 and 76.60 <= city_lon <= 77.25)
+        or (detected_city and "almaty" in str(detected_city).lower())
+        or (region_mode == "kz" and 43.0 <= city_lat <= 43.6)
     )
 
     almaty_sector_applied = None
-    if is_almaty_area and sector_name:
+    if is_almaty_area and isinstance(almaty_mountain, dict) and almaty_mountain.get("city_sector"):
+        sector_name = almaty_mountain.get("city_sector")
         s_low = str(sector_name).lower()
         if "верхн" in s_low or "медеу" in s_low or "самал" in s_low or "аль-фараби" in s_low:
             almaty_sector_applied = "Верхняя часть / Медеу"
@@ -1110,7 +1417,7 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 city_lat = sector_lat
                 city_lon = sector_lon
 
-    # 5. Прямой результат Gemini Vision с высокой уверенностью
+    # 7. Прямой результат Gemini Vision с высокой уверенностью
     if vlm.get("status") == "ok" and vlm_data.get("lat") and vlm_data.get("lon"):
         v_lat, v_lon = float(vlm_data["lat"]), float(vlm_data["lon"])
         osm_q = [
@@ -1119,11 +1426,19 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
             + vlm_data.get("detected_text", [])
             if q and str(q).lower() not in INDOOR_OCR_STOPWORDS
         ]
-        osm_hit = geocode_in_kazakhstan(osm_q, is_indoor=is_indoor, city_lat=v_lat, city_lon=v_lon)
+        osm_hit = geocode_osm_global(
+            osm_q,
+            is_indoor=is_indoor,
+            city_lat=v_lat,
+            city_lon=v_lon,
+            country_code=detected_country_code,
+            region_mode=region_mode
+        )
         if osm_hit:
             v_lat, v_lon = osm_hit["lat"], osm_hit["lon"]
 
-        label = f"{vlm_data.get('place_name', '')}, {vlm_data.get('city', 'Kazakhstan')}".strip(", ")
+        c_name = detected_country or "World"
+        label = f"{vlm_data.get('place_name', '')}, {vlm_data.get('city', c_name)}".strip(", ")
         rad = int(vlm_data.get("radius_m", 50 if is_indoor else 15))
         street_views = fetch_mapillary_street_view(v_lat, v_lon) if rad <= 150 else []
         return {
@@ -1131,26 +1446,35 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
             "exact_lon": v_lon,
             "radius_m": rad,
             "is_indoor": is_indoor,
+            "country": detected_country,
+            "country_code": detected_country_code,
+            "city": detected_city,
             "scene_type": vlm_data.get("scene_type", "indoor" if is_indoor else "outdoor"),
             "matched_label": label,
             "method": f"Gemini Vision + OSM: {label}",
             "street_view_matches": street_views,
             "diagnostics": {
                 "gemini_vision": vlm_data,
-                "mountain_bearing": mountain_bearing,
+                "country": detected_country,
+                "country_code": detected_country_code,
+                "city": detected_city,
+                "terrain_bearing": general_terrain,
+                "almaty_mountain_bearing": almaty_mountain,
                 "osm_refined": osm_hit,
-                "kz_clues": kz_clues,
+                "clues": clues,
                 "cv_indoor": cv_indoor
             }
         }
 
-    # 6. Поиск известных ТРЦ/аэропортов/станций по названиям брендов
+    # 8. Поиск известных ТРЦ/аэропортов/станций по названиям брендов
     if is_indoor and vlm_data.get("search_queries"):
-        indoor_osm_hit = geocode_in_kazakhstan(
+        indoor_osm_hit = geocode_osm_global(
             vlm_data.get("search_queries"),
             is_indoor=True,
             city_lat=city_lat,
-            city_lon=city_lon
+            city_lon=city_lon,
+            country_code=detected_country_code,
+            region_mode=region_mode
         )
         if indoor_osm_hit:
             street_views = fetch_mapillary_street_view(indoor_osm_hit["lat"], indoor_osm_hit["lon"])
@@ -1159,6 +1483,9 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 "exact_lon": indoor_osm_hit["lon"],
                 "radius_m": 50,
                 "is_indoor": True,
+                "country": detected_country,
+                "country_code": detected_country_code,
+                "city": detected_city,
                 "scene_type": vlm_data.get("scene_type", "indoor"),
                 "matched_label": indoor_osm_hit["name"],
                 "method": f"Indoor Landmark Search: «{indoor_osm_hit['matched_query']}»",
@@ -1166,13 +1493,20 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
                 "diagnostics": {
                     "gemini_vision": vlm_data,
                     "matched_poi": indoor_osm_hit,
-                    "kz_clues": kz_clues,
+                    "clues": clues,
                     "cv_indoor": cv_indoor
                 }
             }
 
-    # 7. Локальный OCR поиск по вывескам/табличкам
-    ocr_hit = geocode_in_kazakhstan(ocr_texts, is_indoor=is_indoor, city_lat=city_lat, city_lon=city_lon)
+    # 9. Локальный OCR поиск по вывескам/табличкам
+    ocr_hit = geocode_osm_global(
+        ocr_texts,
+        is_indoor=is_indoor,
+        city_lat=city_lat,
+        city_lon=city_lon,
+        country_code=detected_country_code,
+        region_mode=region_mode
+    )
     if ocr_hit:
         street_views = fetch_mapillary_street_view(ocr_hit["lat"], ocr_hit["lon"])
         return {
@@ -1180,22 +1514,29 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
             "exact_lon": ocr_hit["lon"],
             "radius_m": 50 if is_indoor else 15,
             "is_indoor": is_indoor,
+            "country": detected_country,
+            "country_code": detected_country_code,
+            "city": detected_city,
             "matched_label": ocr_hit["name"],
             "method": f"OCR Text/Address Match: «{ocr_hit['matched_query']}»",
             "street_view_matches": street_views,
             "diagnostics": {
                 "ocr_texts": ocr_texts,
                 "matched_place": ocr_hit,
-                "kz_clues": kz_clues,
+                "clues": clues,
                 "is_indoor": is_indoor,
                 "gemini_status": vlm
             }
         }
 
-    # 8. GeoCLIP доводка с защитой от ошибок на интерьерах
+    # 10. GeoCLIP доводка с ультраплотной сеткой на GPU
     grid_res = refine_dense_grid(geoclip_model, image_path, city_lat, city_lon, is_indoor=is_indoor)
 
-    # Формируем итоговый вердикт
+    # Динамическое именование метода с указанием страны
+    country_display = detected_country or (clues.get("country") if clues else None)
+    if not country_display or str(country_display).lower() in ("null", "none", "unknown"):
+        country_display = "Global"
+
     if is_indoor:
         method_name = "Indoor Scene Detected (City Anchor)"
         warning_msg = grid_res.get("warning", "Снимок внутри помещения: уличный радиус заблокирован.")
@@ -1209,7 +1550,7 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
         warning_msg = None
         street_views = fetch_mapillary_street_view(grid_res.get("lat", city_lat), grid_res.get("lon", city_lon))
     else:
-        method_name = "Kazakhstan Outdoor Grid (15m)"
+        method_name = f"{country_display} Outdoor GPU Grid (15m)"
         warning_msg = None
         street_views = fetch_mapillary_street_view(grid_res.get("lat", city_lat), grid_res.get("lon", city_lon))
 
@@ -1218,17 +1559,25 @@ def locate_exact_spot(geoclip_model, image_path: str, city_lat: float, city_lon:
         "exact_lon": grid_res.get("lon", city_lon),
         "radius_m": grid_res.get("radius_m", 2500 if is_indoor else 15),
         "is_indoor": is_indoor,
+        "country": detected_country,
+        "country_code": detected_country_code,
+        "city": detected_city,
         "matched_label": None,
         "method": method_name,
         "warning": warning_msg,
         "street_view_matches": street_views,
         "diagnostics": {
+            "country": detected_country,
+            "country_code": detected_country_code,
+            "city": detected_city,
             "is_indoor": is_indoor,
             "cv_indoor": cv_indoor,
-            "kz_clues": kz_clues,
+            "clues": clues,
             "gemini_status": vlm,
-            "mountain_bearing": mountain_bearing,
+            "terrain_bearing": general_terrain,
+            "almaty_mountain_bearing": almaty_mountain,
             "ocr_texts": ocr_texts,
             "dense_grid": grid_res,
         },
     }
+

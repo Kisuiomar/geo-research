@@ -28,10 +28,11 @@ from web.modules.kz_engine import (
 from web.modules.exact_locator import (
     locate_exact_spot, refine_dense_grid_gpu, refine_dense_grid,
     extract_multiscale_image_embedding, enrich_geoclip_gallery,
-    lock_geoclip_to_kazakhstan, detect_indoor_cv,
+    set_geoclip_region, lock_geoclip_to_kazakhstan, detect_indoor_cv,
     search_overpass_brand_cluster, fetch_mapillary_street_view,
     analyze_with_gemini_vision, extract_text_from_photo,
-    extract_kz_metadata_clues, get_device,
+    extract_global_and_kz_clues, extract_kz_metadata_clues,
+    geocode_osm_global, get_device,
     INDOOR_OCR_STOPWORDS
 )
 from web.modules import model

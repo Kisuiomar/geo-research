@@ -46,11 +46,11 @@ def _ensure_loaded() -> None:
 
             _loaded = True
             try:
-                from web.modules.exact_locator import lock_geoclip_to_kazakhstan
-                lock_geoclip_to_kazakhstan(_model)
-                logger.info("GeoCLIP gallery locked to Kazakhstan grid")
+                from web.modules.exact_locator import enrich_geoclip_gallery
+                enrich_geoclip_gallery(_model, region_mode="global")
+                logger.info("GeoCLIP gallery enriched with worldwide dataset + Kazakhstan hubs")
             except Exception:
-                logger.exception("Failed to lock GeoCLIP gallery on load")
+                logger.exception("Failed to enrich GeoCLIP gallery on load")
             logger.info("GeoCLIP loaded and ready")
         except Exception:
             logger.exception("Failed to load GeoCLIP")
@@ -67,20 +67,25 @@ def unload() -> None:
             torch.cuda.empty_cache()
     logger.info("GeoCLIP model unloaded")
 
-def predict(image_bytes: bytes, top_k: int = 5) -> List[Dict[str, Any]]:
-    """Выполняет инференс GeoCLIP для фото, возвращая топ-К предсказаний."""
+def predict(image_bytes_or_path, top_k: int = 5, region_mode: str = "global") -> List[Dict[str, Any]]:
+    """Выполняет инференс GeoCLIP для фото, возвращая топ-К предсказаний по всему миру или в режиме KZ."""
     _ensure_loaded()
     if _model is None:
         return []
 
     try:
-        if isinstance(image_bytes, (bytes, bytearray)):
-            img_input = BytesIO(image_bytes)
+        from web.modules.exact_locator import set_geoclip_region
+        set_geoclip_region(_model, region_mode=region_mode)
+    except Exception:
+        pass
+
+    try:
+        if isinstance(image_bytes_or_path, (bytes, bytearray)):
+            img_input = BytesIO(image_bytes_or_path)
         else:
-            img_input = image_bytes
+            img_input = image_bytes_or_path
 
         top_pred_lat_lon, top_prob = _model.predict(img_input, top_k=top_k)
-
 
         results = []
         for (lat, lon), prob in zip(top_pred_lat_lon, top_prob):
@@ -94,3 +99,4 @@ def predict(image_bytes: bytes, top_k: int = 5) -> List[Dict[str, Any]]:
     except Exception as e:
         logger.exception("Error during GeoCLIP prediction: %s", e)
         return []
+

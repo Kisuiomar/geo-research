@@ -23,14 +23,15 @@ from web.modules import (
     fetch_mapillary_street_view,
     locate_exact_spot,
     enrich_geoclip_gallery,
+    set_geoclip_region,
     lock_geoclip_to_kazakhstan,
     INDOOR_OCR_STOPWORDS
 )
 
 def run_tests():
-    print("=" * 60)
-    print("🔬 GEO-RESEARCH CASCADE VERIFICATION TEST SUITE")
-    print("=" * 60)
+    print("=" * 70)
+    print("🌍 GEO-RESEARCH WORLDWIDE (GLOBAL + KZ BOOSTER) TEST SUITE")
+    print("=" * 70)
 
     print("\n--- TEST 1: Device & CUDA Verification ---")
     device = get_device()
@@ -44,10 +45,23 @@ def run_tests():
     except Exception as e:
         print(f"Torch check error: {e}")
 
-    print("\n--- TEST 2: Gallery Enrichment (Kazakhstan Key Hubs) ---")
+    print("\n--- TEST 2: Worldwide Gallery Enrichment (>100 000 points) ---")
     m = model.get_model()
-    enrich_geoclip_gallery(m)
-    print("GeoCLIP model initialized and Kazakhstan gallery locked successfully!")
+    # Check default global gallery size
+    set_geoclip_region(m, "global")
+    gallery_pts = len(m.gps_gallery)
+    print(f"Global GeoCLIP gallery points on GPU: {gallery_pts:,}")
+    assert gallery_pts > 100000, f"Expected global gallery > 100,000 points, got {gallery_pts}"
+    print("✔ Global worldwide gallery (>100k points) validated on GPU!")
+
+    # Check KZ mode switching
+    set_geoclip_region(m, "kz")
+    kz_pts = len(m.gps_gallery)
+    print(f"Kazakhstan focused gallery points: {kz_pts:,}")
+    assert kz_pts > 1000, f"Expected KZ gallery > 1,000 points, got {kz_pts}"
+    # Switch back to global as default
+    set_geoclip_region(m, "global")
+    print("✔ Dynamic switching between 'global' and 'kz' modes validated!")
 
     print("\n--- TEST 3: Multi-Scale Image Embedding (50% full, 25% center, 25% horizon) ---")
     test_img = Image.new("RGB", (640, 480), color=(110, 145, 190))
@@ -55,51 +69,73 @@ def run_tests():
     print(f"Embedding shape: {emb.shape}, device: {emb.device}, norm: {float(emb.norm()):.4f}")
     assert emb.shape == (1, 512), f"Expected (1, 512), got {emb.shape}"
 
-    print("\n--- TEST 4: Two-Stage Dense Grid (Pass 1: 5000m @ 50m, Pass 2: 300m @ 10m) ---")
-    temp_img_path = ROOT_DIR / "dummy_test_outdoor.jpg"
+    print("\n--- TEST 4: Global Precision Refinement (Paris: 48.8584, 2.2945) ---")
+    temp_img_path = ROOT_DIR / "dummy_test_global.jpg"
     test_img.save(temp_img_path)
-    grid_res = refine_dense_grid(m, str(temp_img_path), 43.2389, 76.8897, is_indoor=False)
-    print(f"Dense Grid Result: status={grid_res.get('status')}, radius={grid_res.get('radius_m')}m, device={grid_res.get('device')}")
+    paris_lat, paris_lon = 48.8584, 2.2945
+    grid_paris = refine_dense_grid(m, str(temp_img_path), paris_lat, paris_lon, is_indoor=False)
+    print(f"Paris Dense Grid Result: lat={grid_paris.get('lat')}, lon={grid_paris.get('lon')}, status={grid_paris.get('status')}")
+    # Verify coordinates did NOT fall back to Almaty (43.2, 76.8)
+    assert abs(grid_paris["lat"] - paris_lat) < 0.2, f"Grid dragged away from Paris! {grid_paris['lat']}"
+    assert abs(grid_paris["lon"] - paris_lon) < 0.2, f"Grid dragged away from Paris! {grid_paris['lon']}"
+    print("✔ Global grid in Paris stayed within target city boundaries (NO ALMATY FALLBACK)!")
 
-    print("\n--- TEST 5: Indoor CV Heuristic & Stop-Words ---")
+    print("\n--- TEST 5: Global Overpass Brand Cluster (Paris: Carrefour + Starbucks) ---")
+    paris_cluster = search_overpass_brand_cluster(["Carrefour", "Starbucks"], 48.8566, 2.3522, radius_m=8000, cluster_radius_m=150)
+    print(f"Paris Brand Cluster Result: {paris_cluster}")
+    if paris_cluster:
+        print(f"  ✔ Found global cluster: {paris_cluster.get('name')} | CEP: ±{paris_cluster.get('radius_m')}m")
+
+    print("\n--- TEST 6: Multilingual Indoor Stop-Words (7 Languages) ---")
     cv_res = detect_indoor_cv(str(temp_img_path))
     print(f"Indoor CV on synthetic: {cv_res}")
+    # RU
     assert "касса" in INDOOR_OCR_STOPWORDS
+    # KZ
     assert "шығу" in INDOOR_OCR_STOPWORDS
+    # EN
     assert "exit" in INDOOR_OCR_STOPWORDS
+    # ES
+    assert "salida" in INDOOR_OCR_STOPWORDS
+    # FR
+    assert "sortie" in INDOOR_OCR_STOPWORDS
+    # DE
+    assert "ausgang" in INDOOR_OCR_STOPWORDS
+    # TR
+    assert "çıkış" in INDOOR_OCR_STOPWORDS
+    print("✔ Multilingual indoor stop-words (RU, KZ, EN, ES, FR, DE, TR) validated!")
 
-    print("\n--- TEST 6: Overpass Brand Cluster (120m threshold -> 35m) ---")
-    # Test Almaty cluster (Magnum / KFC / Zara)
-    cluster = search_overpass_brand_cluster(["Magnum", "KFC"], 43.2030, 76.8920, radius_m=5000, cluster_radius_m=150)
-    print(f"Brand Cluster Result: {cluster}")
-    if cluster:
-        print(f"Cluster Found: {cluster.get('name')} | CEP: ±{cluster.get('radius_m')}m | Method: {cluster.get('method')}")
+    print("\n--- TEST 7: Kazakhstan Regional Booster (Almaty Grid & Mountain Bearing) ---")
+    almaty_lat, almaty_lon = 43.2389, 76.8897
+    grid_kz = refine_dense_grid(m, str(temp_img_path), almaty_lat, almaty_lon, is_indoor=False)
+    print(f"Almaty Dense Grid Result: lat={grid_kz.get('lat')}, lon={grid_kz.get('lon')}, status={grid_kz.get('status')}")
+    assert abs(grid_kz["lat"] - almaty_lat) < 0.2, "Almaty grid drifted unexpectedly"
+    print("✔ Kazakhstan regional outdoor grid validated!")
 
-    print("\n--- TEST 7: Mapillary Street-Level Verification ---")
-    street_views = fetch_mapillary_street_view(43.2389, 76.8897, radius_m=100, limit=2)
-    print(f"Mapillary matches near Almaty center: {len(street_views)}")
-    for sv in street_views[:2]:
-        print(f"  • ID {sv.get('id')} | Coord: {sv.get('lat'):.4f}, {sv.get('lon'):.4f} | Thumb: {bool(sv.get('thumb_url'))}")
+    print("\n--- TEST 8: Full End-to-End locate_exact_spot() in Global Mode ---")
+    spot_global = locate_exact_spot(m, str(temp_img_path), city_lat=paris_lat, city_lon=paris_lon, region_mode="global")
+    print(f"Global Spot Method: {spot_global.get('method')}")
+    print(f"Coordinates: {spot_global.get('exact_lat')}, {spot_global.get('exact_lon')}")
+    print(f"CEP Radius: ±{spot_global.get('radius_m')} м")
+    print(f"Country: {spot_global.get('country')}, City: {spot_global.get('city')}")
+    assert abs(spot_global["exact_lat"] - paris_lat) < 0.2
+    assert "Outdoor" in spot_global.get("method", "") or "Anchor" in spot_global.get("method", "")
+    print("✔ Full end-to-end locate_exact_spot() global pipeline passed!")
 
-    print("\n--- TEST 8: Full End-to-End locate_exact_spot() Cascade ---")
-    real_photo = ROOT_DIR / "photo_1.jpg"
-    if not real_photo.exists():
-        real_photo = temp_img_path
-    
-    spot = locate_exact_spot(m, str(real_photo), 43.2389, 76.8897)
-    print(f"Exact Spot Method: {spot.get('method')}")
-    print(f"Coordinates: {spot.get('exact_lat')}, {spot.get('exact_lon')}")
-    print(f"CEP Radius: ±{spot.get('radius_m')} м")
-    print(f"Is Indoor: {spot.get('is_indoor')}")
-    diag = spot.get("diagnostics", {})
-    print(f"Diagnostics: {list(diag.keys())}")
+    print("\n--- TEST 9: Full End-to-End locate_exact_spot() in Kazakhstan Mode ---")
+    spot_kz = locate_exact_spot(m, str(temp_img_path), city_lat=almaty_lat, city_lon=almaty_lon, region_mode="kz")
+    print(f"Kazakhstan Spot Method: {spot_kz.get('method')}")
+    print(f"Coordinates: {spot_kz.get('exact_lat')}, {spot_kz.get('exact_lon')}")
+    print(f"CEP Radius: ±{spot_kz.get('radius_m')} м")
+    assert abs(spot_kz["exact_lat"] - almaty_lat) < 0.2
+    print("✔ Full end-to-end locate_exact_spot() Kazakhstan mode passed!")
 
     if temp_img_path.exists():
         temp_img_path.unlink()
 
-    print("\n" + "=" * 60)
-    print("🎉 ALL CASCADE MODULES PASSED VERIFICATION!")
-    print("=" * 60)
+    print("\n" + "=" * 70)
+    print("🎉 ALL WORLDWIDE + KAZAKHSTAN TEST SUITES PASSED (100% SUCCESS)!")
+    print("=" * 70)
 
 if __name__ == "__main__":
     run_tests()

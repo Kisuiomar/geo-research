@@ -1,5 +1,468 @@
 [
   {
+    "id": "case-7a45a8a7",
+    "title": "IMG-20250409-WA0016.jpeg",
+    "country": "Не определено",
+    "region": "Требуется уточнение (Координаты не верифицированы)",
+    "target_name": "Неопознанный объект",
+    "target_lat": 51.14379119873047,
+    "target_lon": 71.40580749511719,
+    "camera_name": "Точка съёмки не определена",
+    "camera_lat": 51.143491198730466,
+    "camera_lon": 71.40550749511719,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 15,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с текстовой подсказкой.",
+    "main_photo": "/static/uploads/7a45a8a7.jpeg",
+    "clues": [
+      "Файл: IMG-20250409-WA0016.jpeg",
+      "Размер: 3026 КБ",
+      "Модель камеры: M2102J20SG",
+      "Дата съёмки: 2025:04:09 09:20:13"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_7a45a8a7/7a45a8a7_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/evidence_case-7a45a8a7.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Крупный открытый водоём / бирюзовое горное озеро",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Крупный открытый водоём / бирюзовое горное озеро",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Крупный открытый водоём / бирюзовое горное озеро",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Крупный открытый водоём / бирюзовое горное озеро.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.261,
+        "green_score": 0.0,
+        "ochre_score": 0.002,
+        "white_score": 0.0,
+        "granite_score": 0.255,
+        "primary_biome": "Крупный открытый водоём / бирюзовое горное озеро"
+      }
+    },
+    "kazakh_detected": false,
+    "twogis_url": "https://2gis.kz/geo/71.405807,51.143791",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.405807%2C51.143791&z=16&pt=71.405807,51.143791",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.143791,71.405807",
+    "is_indoor": false,
+    "scene_type": "outdoor",
+    "method": "Kazakhstan Outdoor Grid (15m)",
+    "warning": null,
+    "exact_details": {
+      "exact_lat": 51.14379119873047,
+      "exact_lon": 71.40580749511719,
+      "radius_m": 15,
+      "is_indoor": false,
+      "matched_label": null,
+      "method": "Kazakhstan Outdoor Grid (15m)",
+      "warning": null,
+      "street_view_matches": [],
+      "diagnostics": {
+        "is_indoor": false,
+        "cv_indoor": {
+          "is_indoor_heuristic": false,
+          "indoor_prob": 0.15,
+          "sky_ratio": 0.9594,
+          "is_night_outdoor": false,
+          "top_mean_v": 206.3,
+          "top_edge_density": 0.0213
+        },
+        "kz_clues": {
+          "postal_code": null,
+          "phone_code": null,
+          "plate_region": null,
+          "bin": null,
+          "inferred_city": null,
+          "anchor_lat": null,
+          "anchor_lon": null,
+          "confidence": 0.0,
+          "matched_clues": []
+        },
+        "gemini_status": {
+          "status": "error",
+          "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+        },
+        "mountain_bearing": {},
+        "ocr_texts": [],
+        "dense_grid": {
+          "status": "ok",
+          "lat": 51.14379119873047,
+          "lon": 71.40580749511719,
+          "score": 0.4369,
+          "radius_m": 15,
+          "device": "cuda"
+        }
+      }
+    },
+    "street_view_matches": [],
+    "diagnostics": {
+      "is_indoor": false,
+      "cv_indoor": {
+        "is_indoor_heuristic": false,
+        "indoor_prob": 0.15,
+        "sky_ratio": 0.9594,
+        "is_night_outdoor": false,
+        "top_mean_v": 206.3,
+        "top_edge_density": 0.0213
+      },
+      "kz_clues": {
+        "postal_code": null,
+        "phone_code": null,
+        "plate_region": null,
+        "bin": null,
+        "inferred_city": null,
+        "anchor_lat": null,
+        "anchor_lon": null,
+        "confidence": 0.0,
+        "matched_clues": []
+      },
+      "gemini_status": {
+        "status": "error",
+        "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+      },
+      "mountain_bearing": {},
+      "ocr_texts": [],
+      "dense_grid": {
+        "status": "ok",
+        "lat": 51.14379119873047,
+        "lon": 71.40580749511719,
+        "score": 0.4369,
+        "radius_m": 15,
+        "device": "cuda"
+      }
+    },
+    "evidence_sheet_url": "/static/uploads/evidence_case-7a45a8a7.jpg"
+  },
+  {
+    "id": "case-5e260e35",
+    "title": "photo_2_2026-10-09_12-21-06.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение (Координаты не верифицированы)",
+    "target_name": "Неопознанный объект",
+    "target_lat": 51.169392,
+    "target_lon": 71.449074,
+    "camera_name": "Точка съёмки не определена",
+    "camera_lat": 51.169092,
+    "camera_lon": 71.448774,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 2500,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с текстовой подсказкой.",
+    "main_photo": "/static/uploads/5e260e35.jpg",
+    "clues": [
+      "Файл: photo_2_2026-10-09_12-21-06.jpg",
+      "Размер: 406 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_5e260e35/5e260e35_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/evidence_case-5e260e35.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [
+        {
+          "category": "biome",
+          "icon": "🌲",
+          "title": "Природный биом и палитра",
+          "value": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+          "confidence": "HIGH"
+        }
+      ],
+      "top_clue": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)",
+      "strategy_summary": "По цветовой гамме и текстуре сцена классифицирована как: Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп).",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.005,
+        "green_score": 0.047,
+        "ochre_score": 0.196,
+        "white_score": 0.09,
+        "granite_score": 0.06,
+        "primary_biome": "Каньон из красного песчаника / аридный рельеф (Чарын, Кызылкуп)"
+      }
+    },
+    "kazakh_detected": false,
+    "twogis_url": "https://2gis.kz/geo/71.449074,51.169392",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.449074%2C51.169392&z=16&pt=71.449074,51.169392",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.169392,71.449074",
+    "is_indoor": true,
+    "scene_type": "indoor",
+    "method": "Indoor Scene Detected (City Anchor)",
+    "warning": "Снимок внутри помещения: уличная сетка отключена.",
+    "exact_details": {
+      "exact_lat": 51.169392,
+      "exact_lon": 71.449074,
+      "radius_m": 2500,
+      "is_indoor": true,
+      "matched_label": null,
+      "method": "Indoor Scene Detected (City Anchor)",
+      "warning": "Снимок внутри помещения: уличная сетка отключена.",
+      "street_view_matches": [],
+      "diagnostics": {
+        "is_indoor": true,
+        "cv_indoor": {
+          "is_indoor_heuristic": true,
+          "indoor_prob": 0.75,
+          "sky_ratio": 0.0077,
+          "is_night_outdoor": false,
+          "top_mean_v": 122.3,
+          "top_edge_density": 0.1512
+        },
+        "kz_clues": {
+          "postal_code": null,
+          "phone_code": null,
+          "plate_region": null,
+          "bin": null,
+          "inferred_city": null,
+          "anchor_lat": null,
+          "anchor_lon": null,
+          "confidence": 0.0,
+          "matched_clues": []
+        },
+        "gemini_status": {
+          "status": "error",
+          "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+        },
+        "mountain_bearing": {},
+        "ocr_texts": [],
+        "dense_grid": {
+          "status": "skipped_indoor",
+          "lat": 51.169392,
+          "lon": 71.449074,
+          "radius_m": 2500,
+          "warning": "Снимок внутри помещения: уличная сетка отключена."
+        }
+      }
+    },
+    "street_view_matches": [],
+    "diagnostics": {
+      "is_indoor": true,
+      "cv_indoor": {
+        "is_indoor_heuristic": true,
+        "indoor_prob": 0.75,
+        "sky_ratio": 0.0077,
+        "is_night_outdoor": false,
+        "top_mean_v": 122.3,
+        "top_edge_density": 0.1512
+      },
+      "kz_clues": {
+        "postal_code": null,
+        "phone_code": null,
+        "plate_region": null,
+        "bin": null,
+        "inferred_city": null,
+        "anchor_lat": null,
+        "anchor_lon": null,
+        "confidence": 0.0,
+        "matched_clues": []
+      },
+      "gemini_status": {
+        "status": "error",
+        "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+      },
+      "mountain_bearing": {},
+      "ocr_texts": [],
+      "dense_grid": {
+        "status": "skipped_indoor",
+        "lat": 51.169392,
+        "lon": 71.449074,
+        "radius_m": 2500,
+        "warning": "Снимок внутри помещения: уличная сетка отключена."
+      }
+    },
+    "evidence_sheet_url": "/static/uploads/evidence_case-5e260e35.jpg"
+  },
+  {
+    "id": "case-16889b4d",
+    "title": "IMG_8733.jpg",
+    "country": "Не определено",
+    "region": "Требуется уточнение (Координаты не верифицированы)",
+    "target_name": "Неопознанный объект",
+    "target_lat": 51.128517150878906,
+    "target_lon": 71.41325378417969,
+    "camera_name": "Точка съёмки не определена",
+    "camera_lat": 51.1282171508789,
+    "camera_lon": 71.41295378417969,
+    "bearing_deg": 45,
+    "distance_m": 45,
+    "error_radius_m": 15,
+    "confidence": "UNVERIFIED",
+    "description": "Автоматический ансамблевый поиск не выявил однозначного ориентира. Вы можете указать координаты вручную или повторить поиск с текстовой подсказкой.",
+    "main_photo": "/static/uploads/16889b4d.jpg",
+    "clues": [
+      "Файл: IMG_8733.jpg",
+      "Размер: 12 КБ"
+    ],
+    "evidence_photos": [
+      {
+        "url": "/static/uploads/rev_16889b4d/16889b4d_focal_crop.jpg",
+        "title": "Запуск 2: Фокальный центральный кроп (70%)",
+        "type": "Focal Crop Extraction",
+        "desc": "Изолированная центральная область для исключения шума фона."
+      },
+      {
+        "url": "/static/uploads/evidence_case-16889b4d.jpg",
+        "title": "Форензическое досье (Evidence Sheet)",
+        "type": "OSINT Сводка",
+        "desc": "Сводный форензический постер дела для печати, скачивания и отчёта."
+      }
+    ],
+    "ocr_lines": [],
+    "ocr_keywords": [],
+    "ai_analysis": {
+      "scene_type": "Общий ландшафт",
+      "kazakh_detected": false,
+      "kazakh_letters": [],
+      "kz_terms": [],
+      "regions": [],
+      "anchors": [],
+      "top_clue": "Визуальные совпадения",
+      "strategy_summary": "Многофакторный ансамблевый поиск с приоритетом территории Казахстана.",
+      "recommended_candidates": [],
+      "palette": {
+        "cyan_score": 0.053,
+        "green_score": 0.0,
+        "ochre_score": 0.013,
+        "white_score": 0.032,
+        "granite_score": 0.046,
+        "primary_biome": "Не определено"
+      }
+    },
+    "kazakh_detected": false,
+    "twogis_url": "https://2gis.kz/geo/71.413254,51.128517",
+    "yandex_maps_url": "https://yandex.kz/maps/?ll=71.413254%2C51.128517&z=16&pt=71.413254,51.128517",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=51.128517,71.413254",
+    "is_indoor": false,
+    "scene_type": "outdoor",
+    "method": "Kazakhstan Outdoor Grid (15m)",
+    "warning": null,
+    "exact_details": {
+      "exact_lat": 51.128517150878906,
+      "exact_lon": 71.41325378417969,
+      "radius_m": 15,
+      "is_indoor": false,
+      "matched_label": null,
+      "method": "Kazakhstan Outdoor Grid (15m)",
+      "warning": null,
+      "street_view_matches": [],
+      "diagnostics": {
+        "is_indoor": false,
+        "cv_indoor": {
+          "is_indoor_heuristic": false,
+          "indoor_prob": 0.15,
+          "sky_ratio": 0.2682,
+          "is_night_outdoor": false,
+          "top_mean_v": 83.7,
+          "top_edge_density": 0.0194
+        },
+        "kz_clues": {
+          "postal_code": null,
+          "phone_code": null,
+          "plate_region": null,
+          "bin": null,
+          "inferred_city": null,
+          "anchor_lat": null,
+          "anchor_lon": null,
+          "confidence": 0.0,
+          "matched_clues": []
+        },
+        "gemini_status": {
+          "status": "error",
+          "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+        },
+        "mountain_bearing": {},
+        "ocr_texts": [],
+        "dense_grid": {
+          "status": "ok",
+          "lat": 51.128517150878906,
+          "lon": 71.41325378417969,
+          "score": 0.2833,
+          "radius_m": 15,
+          "device": "cuda"
+        }
+      }
+    },
+    "street_view_matches": [],
+    "diagnostics": {
+      "is_indoor": false,
+      "cv_indoor": {
+        "is_indoor_heuristic": false,
+        "indoor_prob": 0.15,
+        "sky_ratio": 0.2682,
+        "is_night_outdoor": false,
+        "top_mean_v": 83.7,
+        "top_edge_density": 0.0194
+      },
+      "kz_clues": {
+        "postal_code": null,
+        "phone_code": null,
+        "plate_region": null,
+        "bin": null,
+        "inferred_city": null,
+        "anchor_lat": null,
+        "anchor_lon": null,
+        "confidence": 0.0,
+        "matched_clues": []
+      },
+      "gemini_status": {
+        "status": "error",
+        "error": "HTTP 404: {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemin"
+      },
+      "mountain_bearing": {},
+      "ocr_texts": [],
+      "dense_grid": {
+        "status": "ok",
+        "lat": 51.128517150878906,
+        "lon": 71.41325378417969,
+        "score": 0.2833,
+        "radius_m": 15,
+        "device": "cuda"
+      }
+    },
+    "evidence_sheet_url": "/static/uploads/evidence_case-16889b4d.jpg"
+  },
+  {
     "id": "case-a1b74d69",
     "title": "Главная республиканская мечеть Астаны",
     "country": "Казахстан",

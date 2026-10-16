@@ -1348,13 +1348,19 @@ async def _run_5pass_pipeline_internal(
     saved_path: Path,
     orig_filename: str,
     hint: Optional[str] = None,
-    target_case_id: Optional[str] = None
+    target_case_id: Optional[str] = None,
+    region_mode: str = "global"
 ):
     job = scan_jobs[job_id]
     job["status"] = "running"
     
     rev_out = UPLOAD_DIR / f"rev_{job_id}"
     rev_out.mkdir(exist_ok=True)
+
+    if region_mode == "kz":
+        job["logs"].append("🇰🇿 [Режим поиска]: Принудительный региональный фокус: Только Казахстан.")
+    else:
+        job["logs"].append("🌍 [Режим поиска]: Global Worldwide Geolocation (Весь мир с авто-бустером Казахстана).")
 
     exif = extract_exif(saved_path)
     all_detected_texts = [orig_filename]
@@ -1914,7 +1920,8 @@ async def _run_5pass_pipeline_internal(
             geoclip_m,
             str(saved_path),
             matched_target["lat"],
-            matched_target["lon"]
+            matched_target["lon"],
+            region_mode=region_mode
         )
     except Exception as ex:
         job["logs"].append(f"⚠️ Инфо каскада exact_locator: {ex}")
@@ -1926,6 +1933,8 @@ async def _run_5pass_pipeline_internal(
         ex_method = exact_details.get("method")
         ex_indoor = exact_details.get("is_indoor", False)
         ex_label = exact_details.get("matched_label")
+        ex_country = exact_details.get("country")
+        ex_city = exact_details.get("city")
         ex_street = exact_details.get("street_view_matches", [])
 
         if ex_lat is not None and ex_lon is not None:
@@ -1937,6 +1946,10 @@ async def _run_5pass_pipeline_internal(
         if ex_label:
             matched_target["target_name"] = ex_label
             matched_target["title"] = ex_label
+        if ex_country:
+            matched_target["country"] = ex_country
+        if ex_city:
+            matched_target["region"] = ex_city
 
         job["logs"].append(f"✅ [Точность повышена]: Метод «{ex_method}», CEP: ±{ex_radius}м, Indoor: {ex_indoor}")
         
@@ -1962,11 +1975,21 @@ async def _run_5pass_pipeline_internal(
         5 if (exif["has_gps"] or "Landmark" in confidence) else (100000 if "UNVERIFIED" in confidence else 25)
     )
 
+    detected_country = exact_details.get("country") if exact_details else None
+    detected_country_code = exact_details.get("country_code") if exact_details else None
+    detected_city = exact_details.get("city") if exact_details else None
+
+    final_country = detected_country or matched_target.get("country") or ("Казахстан" if region_mode == "kz" else "Весь мир")
+    final_region = detected_city or matched_target.get("region") or "Не определено"
+
     new_case = {
         "id": case_id,
         "title": matched_target["title"],
-        "country": matched_target["country"],
-        "region": matched_target["region"],
+        "country": final_country,
+        "country_code": detected_country_code,
+        "region": final_region,
+        "city": detected_city,
+        "region_mode": region_mode,
         "target_name": matched_target["target_name"],
         "target_lat": tgt_lat,
         "target_lon": tgt_lon,
@@ -2020,7 +2043,10 @@ async def _run_5pass_pipeline_internal(
             if c["id"] == target_case_id:
                 c["title"] = new_case["title"]
                 c["country"] = new_case["country"]
+                c["country_code"] = new_case.get("country_code")
                 c["region"] = new_case["region"]
+                c["city"] = new_case.get("city")
+                c["region_mode"] = new_case.get("region_mode", "global")
                 c["target_name"] = new_case["target_name"]
                 c["target_lat"] = new_case["target_lat"]
                 c["target_lon"] = new_case["target_lon"]
@@ -2069,10 +2095,11 @@ async def run_5pass_pipeline(
     saved_path: Path,
     orig_filename: str,
     hint: Optional[str] = None,
-    target_case_id: Optional[str] = None
+    target_case_id: Optional[str] = None,
+    region_mode: str = "global"
 ):
     try:
-        await _run_5pass_pipeline_internal(job_id, saved_path, orig_filename, hint, target_case_id)
+        await _run_5pass_pipeline_internal(job_id, saved_path, orig_filename, hint, target_case_id, region_mode)
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -2089,7 +2116,8 @@ def get_cases():
 @app.post("/api/scan")
 async def start_scan_job(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    region_mode: Optional[str] = Form("global")
 ):
     job_id = uuid.uuid4().hex[:8]
     ext = Path(file.filename).suffix or ".jpg"
@@ -2108,14 +2136,15 @@ async def start_scan_job(
         "case": None
     }
 
-    background_tasks.add_task(run_5pass_pipeline, job_id, saved_path, file.filename)
+    background_tasks.add_task(run_5pass_pipeline, job_id, saved_path, file.filename, None, None, region_mode or "global")
     return {"job_id": job_id}
 
 @app.post("/api/cases/{case_id}/rescan")
 async def rescan_case(
     case_id: str,
     background_tasks: BackgroundTasks,
-    hint: Optional[str] = Form(None)
+    hint: Optional[str] = Form(None),
+    region_mode: Optional[str] = Form("global")
 ):
     cases = load_cases()
     target_case = next((c for c in cases if c["id"] == case_id), None)
@@ -2136,7 +2165,7 @@ async def rescan_case(
         "case": None
     }
 
-    background_tasks.add_task(run_5pass_pipeline, job_id, photo_path, target_case["title"], hint, case_id)
+    background_tasks.add_task(run_5pass_pipeline, job_id, photo_path, target_case["title"], hint, case_id, region_mode or "global")
     return {"job_id": job_id}
 
 @app.get("/api/scan/{job_id}")
@@ -2160,6 +2189,7 @@ async def upload_photo(
     bearing_deg: Optional[float] = Form(None),
     distance_m: Optional[float] = Form(None),
     description: Optional[str] = Form(None),
+    region_mode: Optional[str] = Form("global")
 ):
     case_id = f"case-{uuid.uuid4().hex[:8]}"
     ext = Path(file.filename).suffix or ".jpg"
@@ -2188,6 +2218,7 @@ async def upload_photo(
         "title": final_title,
         "country": country,
         "region": region,
+        "region_mode": region_mode or "global",
         "target_name": final_target,
         "target_lat": target_lat if target_lat is not None else 53.087433,
         "target_lon": target_lon if target_lon is not None else 70.252005,
@@ -2617,7 +2648,8 @@ def api_system_status():
 @app.post("/api/predict")
 async def api_predict(
     file: UploadFile = File(...),
-    top_k: int = 5
+    top_k: int = 5,
+    region_mode: Optional[str] = Form("global")
 ):
     """Прямой инференс GeoCLIP + каскада exact_locator для быстрой проверки точности."""
     ext = Path(file.filename).suffix or ".jpg"
@@ -2628,10 +2660,11 @@ async def api_predict(
         f.write(content)
 
     try:
-        predictions = model.predict(content, top_k=top_k)
-        city_lat = predictions[0]["lat"] if predictions else 43.2389
-        city_lon = predictions[0]["lon"] if predictions else 76.8897
-        exact_details = locate_exact_spot(model.get_model(), str(temp_path), city_lat, city_lon)
+        active_region = region_mode or "global"
+        predictions = model.predict(content, top_k=top_k, region_mode=active_region)
+        city_lat = predictions[0]["lat"] if predictions else None
+        city_lon = predictions[0]["lon"] if predictions else None
+        exact_details = locate_exact_spot(model.get_model(), str(temp_path), city_lat, city_lon, region_mode=active_region)
         
         if exact_details and "exact_lat" in exact_details and "exact_lon" in exact_details:
             if predictions:
@@ -2644,9 +2677,13 @@ async def api_predict(
             "status": "ok",
             "predictions": predictions,
             "exact_details": exact_details,
+            "country": exact_details.get("country") if exact_details else None,
+            "country_code": exact_details.get("country_code") if exact_details else None,
+            "city": exact_details.get("city") if exact_details else None,
             "is_indoor": exact_details.get("is_indoor", False) if exact_details else False,
             "method": exact_details.get("method") if exact_details else "GeoCLIP",
             "radius_m": exact_details.get("radius_m", 15) if exact_details else 2500,
+            "region_mode": active_region,
         }
     finally:
         if temp_path.exists():
@@ -2656,7 +2693,7 @@ async def api_predict(
                 pass
 
 @app.post("/api/cases/{case_id}/exact-refine")
-async def api_case_exact_refine(case_id: str):
+async def api_case_exact_refine(case_id: str, region_mode: Optional[str] = Form("global")):
     """Запускает exact_locator для уже существующего кейса."""
     cases = load_cases()
     c = next((item for item in cases if item["id"] == case_id), None)
@@ -2669,8 +2706,9 @@ async def api_case_exact_refine(case_id: str):
 
     base_lat = c.get("target_lat") or c.get("camera_lat") or 43.2389
     base_lon = c.get("target_lon") or c.get("camera_lon") or 76.8897
+    active_region = region_mode or c.get("region_mode") or "global"
 
-    exact_details = locate_exact_spot(model.get_model(), str(photo_path), base_lat, base_lon)
+    exact_details = locate_exact_spot(model.get_model(), str(photo_path), base_lat, base_lon, region_mode=active_region)
     if exact_details:
         if exact_details.get("exact_lat") and exact_details.get("exact_lon"):
             c["target_lat"] = exact_details["exact_lat"]
@@ -2684,6 +2722,13 @@ async def api_case_exact_refine(case_id: str):
         if exact_details.get("matched_label"):
             c["target_name"] = exact_details["matched_label"]
 
+        if exact_details.get("country"):
+            c["country"] = exact_details["country"]
+            c["country_code"] = exact_details.get("country_code")
+        if exact_details.get("city"):
+            c["region"] = exact_details["city"]
+            c["city"] = exact_details["city"]
+
         if exact_details.get("radius_m"):
             c["error_radius_m"] = exact_details["radius_m"]
 
@@ -2692,6 +2737,7 @@ async def api_case_exact_refine(case_id: str):
         c["method"] = exact_details.get("method", "Exact Spot Refinement")
         c["warning"] = exact_details.get("warning")
         c["exact_details"] = exact_details
+        c["region_mode"] = active_region
         c["street_view_matches"] = exact_details.get("street_view_matches", [])
         c["diagnostics"] = exact_details.get("diagnostics", {})
 

@@ -27,6 +27,100 @@ let mapMarkers = {
 
 let isPickingOnMap = false;
 
+let currentRegionMode = 'global';
+
+function getActiveRegionMode() {
+  return currentRegionMode || 'global';
+}
+
+function setActiveRegionMode(mode) {
+  currentRegionMode = mode === 'kz' ? 'kz' : 'global';
+  
+  // Sync Hero labels & radios
+  const heroGlobal = document.getElementById('heroRegionGlobalLabel');
+  const heroKz = document.getElementById('heroRegionKzLabel');
+  if (heroGlobal && heroKz) {
+    if (currentRegionMode === 'global') {
+      heroGlobal.classList.add('active');
+      heroGlobal.style.background = '#2563eb';
+      heroGlobal.style.color = '#ffffff';
+      heroGlobal.style.boxShadow = '0 0 12px rgba(37,99,235,0.5)';
+      heroKz.classList.remove('active');
+      heroKz.style.background = 'transparent';
+      heroKz.style.color = '#94a3b8';
+      heroKz.style.boxShadow = 'none';
+      const rad = heroGlobal.querySelector('input');
+      if (rad) rad.checked = true;
+    } else {
+      heroKz.classList.add('active');
+      heroKz.style.background = '#0ea5e9';
+      heroKz.style.color = '#ffffff';
+      heroKz.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)';
+      heroGlobal.classList.remove('active');
+      heroGlobal.style.background = 'transparent';
+      heroGlobal.style.color = '#94a3b8';
+      heroGlobal.style.boxShadow = 'none';
+      const rad = heroKz.querySelector('input');
+      if (rad) rad.checked = true;
+    }
+  }
+
+  // Sync Modal labels & radios
+  const modalGlobal = document.getElementById('modalRegionGlobalLabel');
+  const modalKz = document.getElementById('modalRegionKzLabel');
+  if (modalGlobal && modalKz) {
+    if (currentRegionMode === 'global') {
+      modalGlobal.classList.add('active');
+      modalGlobal.style.background = '#2563eb';
+      modalGlobal.style.color = '#ffffff';
+      modalKz.classList.remove('active');
+      modalKz.style.background = 'transparent';
+      modalKz.style.color = '#94a3b8';
+      const rad = modalGlobal.querySelector('input');
+      if (rad) rad.checked = true;
+    } else {
+      modalKz.classList.add('active');
+      modalKz.style.background = '#0ea5e9';
+      modalKz.style.color = '#ffffff';
+      modalGlobal.classList.remove('active');
+      modalGlobal.style.background = 'transparent';
+      modalGlobal.style.color = '#94a3b8';
+      const rad = modalKz.querySelector('input');
+      if (rad) rad.checked = true;
+    }
+  }
+}
+
+function getCountryFlag(countryCode, countryName) {
+  if (countryCode && typeof countryCode === 'string' && countryCode.trim().length === 2) {
+    const code = countryCode.trim().toUpperCase();
+    try {
+      const flag = String.fromCodePoint(...[...code].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+      return `${flag} ${code}`;
+    } catch (e) {
+      return `🏳️ ${code}`;
+    }
+  }
+  const low = (countryName || '').toLowerCase();
+  if (low.includes('казахстан') || low.includes('kazakhstan') || low === 'kz') return '🇰🇿 KZ';
+  if (low.includes('франция') || low.includes('france') || low === 'fr') return '🇫🇷 FR';
+  if (low.includes('япония') || low.includes('japan') || low === 'jp') return '🇯🇵 JP';
+  if (low.includes('сша') || low.includes('united states') || low.includes('usa') || low === 'us') return '🇺🇸 US';
+  if (low.includes('турция') || low.includes('turkey') || low === 'tr') return '🇹🇷 TR';
+  if (low.includes('великобритания') || low.includes('united kingdom') || low === 'gb' || low === 'uk') return '🇬🇧 GB';
+  if (low.includes('германия') || low.includes('germany') || low === 'de') return '🇩🇪 DE';
+  if (low.includes('италия') || low.includes('italy') || low === 'it') return '🇮🇹 IT';
+  if (low.includes('испания') || low.includes('spain') || low === 'es') return '🇪🇸 ES';
+  if (low.includes('оаэ') || low.includes('uae') || low === 'ae') return '🇦🇪 AE';
+  if (low.includes('вьетнам') || low.includes('vietnam') || low === 'vn') return '🇻🇳 VN';
+  if (low.includes('узбекистан') || low === 'uz') return '🇺🇿 UZ';
+  if (low.includes('кыргызстан') || low === 'kg') return '🇰🇬 KG';
+  if (low.includes('россия') || low.includes('russia') || low === 'ru') return '🇷🇺 RU';
+  if (low.includes('китай') || low.includes('china') || low === 'cn') return '🇨🇳 CN';
+  if (low.includes('корея') || low.includes('korea') || low === 'kr') return '🇰🇷 KR';
+  return '🌍 World';
+}
+
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
@@ -269,17 +363,20 @@ function renderHomeShowcase(searchQuery = currentShowcaseSearch, filterTag = cur
       ${c.warning ? `<div class="showcase-warning" style="font-size: 11px; color: #fbbf24; background: rgba(245, 158, 11, 0.12); border-left: 2px solid #f59e0b; padding: 4px 6px; margin: 4px 0; border-radius: 2px;">⚠️ ${c.warning}</div>` : ''}
     `;
 
+    const flagBadge = getCountryFlag(c.country_code, c.country);
+    const locationDisplay = [c.city, c.region].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(', ') || c.country || 'Локация';
+
     card.innerHTML = `
       <div class="showcase-image-wrap">
         <img src="${c.main_photo}" alt="${c.title}" class="showcase-image" loading="lazy">
         <div class="showcase-badges">
-          <span class="country-badge">${c.country}</span>
+          <span class="country-badge">${flagBadge} ${escapeHtml(c.country || 'Global')}</span>
           ${isIndoorBadge}
           <span class="confidence-badge">${c.confidence}</span>
         </div>
       </div>
       <div class="showcase-body">
-        <div class="showcase-location">${c.region}</div>
+        <div class="showcase-location">${escapeHtml(locationDisplay)}</div>
         <h3 class="showcase-title">${c.title}</h3>
         ${precisionBar}
         <p class="showcase-desc">${c.description}</p>
@@ -339,13 +436,15 @@ function selectCase(caseId, navigateToMap = true) {
 }
 
 function updateSidebar(c) {
-  document.getElementById('caseCountry').textContent = c.country || 'ЛОКАЦИЯ';
+  const flagText = getCountryFlag(c.country_code, c.country);
+  document.getElementById('caseCountry').innerHTML = `${flagText} &bull; ${escapeHtml(c.country || 'ЛОКАЦИЯ')}`;
   const confEl = document.getElementById('caseConfidence');
   if (confEl) {
     confEl.innerHTML = `${escapeHtml(c.confidence || 'ВЕРИФИЦИРОВАНО')} ${c.is_indoor ? '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;margin-left:5px;">🏠 INDOOR</span>' : ''}`;
   }
   document.getElementById('caseTitle').textContent = c.title;
-  document.getElementById('caseRegion').textContent = c.region || '';
+  const locDetail = [c.city, c.region].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' &bull; ') || '';
+  document.getElementById('caseRegion').innerHTML = escapeHtml(locDetail);
 
   // Precision & Method Bar
   let precisionBox = document.getElementById('sidebarPrecisionBox');
@@ -666,6 +765,17 @@ function setupEventListeners() {
   // Hero Dropzone & CTA buttons
   const heroDropzone = document.getElementById('heroDropzone');
   const heroFileInput = document.getElementById('heroFileInput');
+
+  // Region Mode Switchers (Hero & Modal)
+  const heroGlobal = document.getElementById('heroRegionGlobalLabel');
+  const heroKz = document.getElementById('heroRegionKzLabel');
+  if (heroGlobal) heroGlobal.addEventListener('click', (e) => { e.preventDefault(); setActiveRegionMode('global'); });
+  if (heroKz) heroKz.addEventListener('click', (e) => { e.preventDefault(); setActiveRegionMode('kz'); });
+
+  const modalGlobal = document.getElementById('modalRegionGlobalLabel');
+  const modalKz = document.getElementById('modalRegionKzLabel');
+  if (modalGlobal) modalGlobal.addEventListener('click', (e) => { e.preventDefault(); setActiveRegionMode('global'); });
+  if (modalKz) modalKz.addEventListener('click', (e) => { e.preventDefault(); setActiveRegionMode('kz'); });
 
   heroDropzone.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -1111,6 +1221,7 @@ function setupEventListeners() {
     submitBtn.innerHTML = '<span>⏳ Загрузка и анализ...</span>';
 
     const formData = new FormData(e.target);
+    formData.append('region_mode', getActiveRegionMode());
 
     try {
       const res = await fetch('/api/upload', {
@@ -1293,6 +1404,7 @@ async function startAutoScan(file) {
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('region_mode', getActiveRegionMode());
 
   try {
     const res = await fetch('/api/scan', {
@@ -2067,6 +2179,7 @@ async function trigger5PassRescan(caseId, hint = '') {
     if (hint) {
       formData.append('hint', hint);
     }
+    formData.append('region_mode', getActiveRegionMode());
 
     const res = await fetch(`/api/cases/${caseId}/rescan`, {
       method: 'POST',
