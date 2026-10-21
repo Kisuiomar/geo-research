@@ -1,5 +1,6 @@
 import os
 import sys
+import math
 import uuid
 import json
 import re
@@ -63,7 +64,7 @@ from web.modules import (
     parse_exif_timestamp, interpolate_from_timeline,
     KAZAKHSTAN_REGIONS, KAZAKHSTAN_LANDMARKS_GAZETTEER, KZ_KNOWLEDGE_CATEGORIES,
     generate_kz_first_answer, evaluate_ubinam_confidence_ladder,
-    mine_kazakh_signboards, validate_kazakh_iin_bin,
+    mine_kazakh_signboards,
     calculate_kz_distance_matrix, inject_gps_exif,
     locate_exact_spot, refine_dense_grid_gpu, refine_dense_grid,
     extract_multiscale_image_embedding, enrich_geoclip_gallery,
@@ -73,10 +74,40 @@ from web.modules import (
     extract_kz_metadata_clues, get_device,
     verify_and_geocode_landmark, preprocess_clean_internet_image,
     visual_memory, semantic_sanity_check, search_ocr_osm,
-    model
+    model, detect_table_qr_codes, search_2gis_venue_candidates,
+    analyze_menu_and_prices, cluster_mall_brands, lookup_kz_bus_routes,
+    through_the_window_mirror_process, detect_indoor_infrastructure_markers,
+    analyze_venue_with_vlm, VENUE_DETECTIVE_VLM_PROMPT
 )
 
-app = FastAPI(title="GeoSleuth Intelligence Hub", version="2.0.0")
+tags_metadata = [
+    {
+        "name": "Integration v1 (External Systems)",
+        "description": "Публичный стандартизированный REST API v1 для интеграции в другие веб-проекты, боты, CRM, микросервисы и мобильные приложения.",
+    },
+    {
+        "name": "GeoJSON & GIS Export",
+        "description": "Потоки данных GeoJSON (RFC 7946) для QGIS, ArcGIS, Mapbox, Leaflet, Google Earth.",
+    },
+    {
+        "name": "Cases & Investigations",
+        "description": "Управление базой расследований и верифицированных локаций.",
+    },
+    {
+        "name": "Analysis & Computer Vision",
+        "description": "Модели компьютерного зрения GeoCLIP, ELA, OCR и точный ансамблевый поиск.",
+    },
+]
+
+app = FastAPI(
+    title="GeoSleuth Intelligence Hub API",
+    description="OSINT & Computer Vision Geolocation API для интеграции с внешними системами, QGIS, мобильными и веб-приложениями.",
+    version="2.1.0",
+    openapi_tags=tags_metadata,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -2360,6 +2391,472 @@ async def generate_satellite(
 
     return {"status": "ok", "url": url, "meta": res}
 
+
+def generate_circle_polygon(center_lat: float, center_lon: float, radius_m: float, points: int = 48) -> List[List[float]]:
+    """Генерирует геодезический полигон круга радиусом radius_m вокруг (lat, lon) в формате [lon, lat]."""
+    coords = []
+    r_earth = 6378137.0
+    lat_rad = math.radians(center_lat)
+    lon_rad = math.radians(center_lon)
+    d_div_r = max(5.0, float(radius_m)) / r_earth
+
+    for i in range(points + 1):
+        bearing = math.radians(360.0 * i / points)
+        pt_lat = math.asin(math.sin(lat_rad) * math.cos(d_div_r) + math.cos(lat_rad) * math.sin(d_div_r) * math.cos(bearing))
+        pt_lon = lon_rad + math.atan2(math.sin(bearing) * math.sin(d_div_r) * math.cos(lat_rad), math.cos(d_div_r) - math.sin(lat_rad) * math.sin(pt_lat))
+        coords.append([round(math.degrees(pt_lon), 6), round(math.degrees(pt_lat), 6)])
+    return coords
+
+
+def build_case_geojson_features(c: Dict[str, Any]) -> List[Dict[str, Any]]:
+    features = []
+    case_id = str(c.get("id", "case"))
+    tgt_lat = float(c.get("target_lat") or c.get("lat") or 0.0)
+    tgt_lon = float(c.get("target_lon") or c.get("lon") or 0.0)
+    cam_lat = float(c.get("camera_lat") or 0.0)
+    cam_lon = float(c.get("camera_lon") or 0.0)
+    err_radius = float(c.get("error_radius_m") or c.get("radius_m") or 15.0)
+
+    # 1. Target landmark point
+    if tgt_lat != 0.0 or tgt_lon != 0.0:
+        features.append({
+            "type": "Feature",
+            "id": f"{case_id}_target",
+            "properties": {
+                "role": "target",
+                "case_id": case_id,
+                "title": c.get("title", "Объект"),
+                "target_name": c.get("target_name") or c.get("title", ""),
+                "country": c.get("country", ""),
+                "country_code": c.get("country_code", ""),
+                "region": c.get("region", ""),
+                "city": c.get("city", ""),
+                "latitude": tgt_lat,
+                "longitude": tgt_lon,
+                "error_radius_m": err_radius,
+                "confidence": c.get("confidence", "VERIFIED"),
+                "method": c.get("method", "Exact Locator"),
+                "is_indoor": bool(c.get("is_indoor", False)),
+                "main_photo": c.get("main_photo", ""),
+                "description": c.get("description", ""),
+                "bearing_deg": c.get("bearing_deg"),
+                "distance_m": c.get("distance_m"),
+                "marker-color": "#06b6d4",
+                "marker-symbol": "monument"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [round(tgt_lon, 6), round(tgt_lat, 6)]
+            }
+        })
+
+        # 2. CEP Accuracy circle polygon buffer
+        if err_radius > 0:
+            ring = generate_circle_polygon(tgt_lat, tgt_lon, err_radius)
+            features.append({
+                "type": "Feature",
+                "id": f"{case_id}_accuracy_buffer",
+                "properties": {
+                    "role": "accuracy_buffer",
+                    "case_id": case_id,
+                    "title": f"Зона точности CEP (±{int(err_radius)} м)",
+                    "error_radius_m": err_radius,
+                    "confidence": c.get("confidence", ""),
+                    "fill": "#06b6d4",
+                    "fill-opacity": 0.2,
+                    "stroke": "#06b6d4",
+                    "stroke-width": 2
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [ring]
+                }
+            })
+
+    # 3. Camera location point
+    if cam_lat != 0.0 or cam_lon != 0.0:
+        features.append({
+            "type": "Feature",
+            "id": f"{case_id}_camera",
+            "properties": {
+                "role": "camera",
+                "case_id": case_id,
+                "title": c.get("camera_name", "Точка съёмки"),
+                "latitude": cam_lat,
+                "longitude": cam_lon,
+                "bearing_deg": c.get("bearing_deg", 0),
+                "distance_m": c.get("distance_m", 0),
+                "marker-color": "#f59e0b",
+                "marker-symbol": "camera"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [round(cam_lon, 6), round(cam_lat, 6)]
+            }
+        })
+
+        # 4. Line of sight
+        if tgt_lat != 0.0 or tgt_lon != 0.0:
+            features.append({
+                "type": "Feature",
+                "id": f"{case_id}_line_of_sight",
+                "properties": {
+                    "role": "line_of_sight",
+                    "case_id": case_id,
+                    "title": "Линия визирования (Line of Sight)",
+                    "bearing_deg": c.get("bearing_deg", 0),
+                    "distance_m": c.get("distance_m", 0),
+                    "stroke": "#f59e0b",
+                    "stroke-width": 2,
+                    "stroke-dasharray": "5, 5"
+                },
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [round(cam_lon, 6), round(cam_lat, 6)],
+                        [round(tgt_lon, 6), round(tgt_lat, 6)]
+                    ]
+                }
+            })
+
+    return features
+
+
+@app.get("/api/cases/geojson")
+@app.get("/api/geojson")
+def export_all_geojson(download: Optional[Any] = None):
+    cases = load_cases()
+    all_features = []
+    for c in cases:
+        all_features.extend(build_case_geojson_features(c))
+
+    geojson_data = {
+        "type": "FeatureCollection",
+        "generator": "GeoSleuth Intelligence Hub v2.0",
+        "crs": {
+            "type": "name",
+            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}
+        },
+        "total_cases": len(cases),
+        "features": all_features
+    }
+
+    content = json.dumps(geojson_data, ensure_ascii=False, indent=2)
+    headers = {"Content-Type": "application/geo+json; charset=utf-8"}
+    is_dl = bool(download) or str(download).lower() in ("1", "true", "yes")
+    if is_dl:
+        headers["Content-Disposition"] = 'attachment; filename="geosleuth_all_cases.geojson"'
+    return Response(content=content, media_type="application/geo+json", headers=headers)
+
+
+@app.get("/api/cases/{case_id}/geojson")
+def export_geojson(case_id: str, download: Optional[Any] = None):
+    cases = load_cases()
+    c = next((x for x in cases if x["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    features = build_case_geojson_features(c)
+    geojson_data = {
+        "type": "FeatureCollection",
+        "generator": "GeoSleuth Intelligence Hub v2.0",
+        "crs": {
+            "type": "name",
+            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}
+        },
+        "case_id": case_id,
+        "features": features
+    }
+
+    content = json.dumps(geojson_data, ensure_ascii=False, indent=2)
+    headers = {"Content-Type": "application/geo+json; charset=utf-8"}
+    is_dl = bool(download) or str(download).lower() in ("1", "true", "yes")
+    if is_dl:
+        safe_title = re.sub(r'[\/:*?"<>|]', '_', str(c.get("title", case_id)))[:40].strip() or case_id
+        safe_ascii = re.sub(r'[^\w\-_]', '_', case_id)
+        encoded_title = urllib.parse.quote(safe_title)
+        headers["Content-Disposition"] = f'attachment; filename="{safe_ascii}.geojson"; filename*=UTF-8\'\'{encoded_title}.geojson'
+    return Response(content=content, media_type="application/geo+json", headers=headers)
+
+
+# -------------------------------------------------------------------------
+# REST API v1 for External Integrations (Bots, CRM, Web GIS, Microservices)
+# -------------------------------------------------------------------------
+
+@app.get(
+    "/api/v1/health",
+    tags=["Integration v1 (External Systems)"],
+    summary="Статус сервиса и метаданные API"
+)
+def api_v1_health():
+    cases = load_cases()
+    return {
+        "status": "healthy",
+        "service": "GeoSleuth Intelligence Hub",
+        "version": "2.1.0",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "total_cases": len(cases),
+        "docs_url": "/docs",
+        "openapi_url": "/openapi.json"
+    }
+
+
+@app.get(
+    "/api/v1/geojson",
+    tags=["Integration v1 (External Systems)"],
+    summary="Поток GeoJSON (RFC 7946) для QGIS, ArcGIS, Mapbox, Leaflet"
+)
+def api_v1_geojson(
+    country: Optional[str] = None,
+    limit: Optional[int] = None,
+    download: Optional[Any] = None
+):
+    cases = load_cases()
+    if country and country.strip():
+        low_c = country.strip().lower()
+        cases = [c for c in cases if low_c in str(c.get("country", "")).lower()]
+    if limit and limit > 0:
+        cases = cases[:limit]
+
+    all_features = []
+    for c in cases:
+        all_features.extend(build_case_geojson_features(c))
+
+    geojson_data = {
+        "type": "FeatureCollection",
+        "generator": "GeoSleuth Intelligence Hub v2.1 (REST API v1)",
+        "crs": {
+            "type": "name",
+            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}
+        },
+        "total_cases": len(cases),
+        "features": all_features
+    }
+    content = json.dumps(geojson_data, ensure_ascii=False, indent=2)
+    headers = {"Content-Type": "application/geo+json; charset=utf-8"}
+    is_dl = bool(download) or str(download).lower() in ("1", "true", "yes")
+    if is_dl:
+        headers["Content-Disposition"] = 'attachment; filename="geosleuth_all_cases.geojson"'
+    return Response(content=content, media_type="application/geo+json", headers=headers)
+
+
+@app.get(
+    "/api/v1/cases",
+    tags=["Integration v1 (External Systems)"],
+    summary="Список расследований с поиском и пагинацией"
+)
+def api_v1_get_cases(
+    q: Optional[str] = None,
+    country: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0
+):
+    cases = load_cases()
+    if q and q.strip():
+        low_q = q.strip().lower()
+        cases = [
+            c for c in cases
+            if low_q in str(c.get("title", "")).lower()
+            or low_q in str(c.get("country", "")).lower()
+            or low_q in str(c.get("city", "")).lower()
+            or low_q in str(c.get("target_name", "")).lower()
+        ]
+    if country and country.strip():
+        low_c = country.strip().lower()
+        cases = [c for c in cases if low_c in str(c.get("country", "")).lower()]
+
+    total = len(cases)
+    paginated = cases[offset : offset + limit]
+    return {
+        "status": "success",
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "items": paginated
+    }
+
+
+@app.get(
+    "/api/v1/cases/{case_id}",
+    tags=["Integration v1 (External Systems)"],
+    summary="Получить полное досье расследования по ID"
+)
+def api_v1_get_case_detail(case_id: str):
+    cases = load_cases()
+    c = next((x for x in cases if x["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail=f"Расследование с ID '{case_id}' не найдено")
+    return {"status": "success", "case": c}
+
+
+@app.get(
+    "/api/v1/cases/{case_id}/geojson",
+    tags=["Integration v1 (External Systems)"],
+    summary="Получить GeoJSON отдельного расследования"
+)
+def api_v1_get_case_geojson(case_id: str, download: Optional[Any] = None):
+    return export_geojson(case_id=case_id, download=download)
+
+
+@app.post(
+    "/api/v1/locate",
+    tags=["Integration v1 (External Systems)"],
+    summary="Определение геопозиции по фото (файл или URL) для Telegram-ботов и микросервисов"
+)
+async def api_v1_locate_photo(
+    file: Optional[UploadFile] = File(None, description="Файл фото (multipart/form-data)"),
+    image_url: Optional[str] = Form(None, description="Либо прямая ссылка на изображение в интернете (HTTP/HTTPS)"),
+    region_mode: Optional[str] = Form("global", description="Региональный режим: 'global' (весь мир) или 'kz' (Казахстан)"),
+    hint: Optional[str] = Form(None, description="Опциональная текстовая подсказка (топоним, надпись, ориентир)")
+):
+    """
+    Принимает изображение (файл или URL), извлекает EXIF GPS, прогоняет через каскад нейросетей GeoCLIP
+    и базу ориентиров, возвращая координаты, точность (CEP) и готовый объект GeoJSON.
+    """
+    if not file and not image_url:
+        raise HTTPException(status_code=400, detail="Необходимо предоставить либо файл 'file', либо ссылку 'image_url'")
+
+    content = b""
+    orig_name = "photo.jpg"
+    if file:
+        orig_name = file.filename or "upload.jpg"
+        content = await file.read()
+    elif image_url:
+        try:
+            parsed = urllib.parse.urlparse(image_url)
+            orig_name = Path(parsed.path).name or "web_photo.jpg"
+            req = urllib.request.Request(
+                image_url,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) GeoSleuth/2.1"}
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                content = resp.read()
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Не удалось загрузить изображение по URL: {e}")
+
+    if not content or len(content) < 100:
+        raise HTTPException(status_code=400, detail="Файл изображения пуст или повреждён")
+
+    job_id = uuid.uuid4().hex[:8]
+    ext = Path(orig_name).suffix or ".jpg"
+    temp_path = UPLOAD_DIR / f"api_locate_{job_id}{ext}"
+    with open(temp_path, "wb") as f:
+        f.write(content)
+
+    try:
+        active_region = (region_mode or "global").lower().strip()
+        
+        # 1. Check EXIF GPS
+        exif = extract_exif(temp_path)
+        has_gps = bool(exif.get("has_gps"))
+        final_lat = exif.get("lat")
+        final_lon = exif.get("lon")
+        method = "EXIF Hardware GPS"
+        confidence = "VERIFIED_HARDWARE_EXIF"
+        radius_m = 5.0
+        target_name = orig_name
+        country = "Не определено"
+        country_code = None
+        region = ""
+        city = ""
+
+        # 2. If no EXIF GPS, run Neural Model & Exact Locator
+        if not has_gps or final_lat is None or final_lon is None:
+            predictions = model.predict(content, top_k=5, region_mode=active_region)
+            city_lat = predictions[0]["lat"] if predictions else None
+            city_lon = predictions[0]["lon"] if predictions else None
+            
+            exact_details = locate_exact_spot(
+                model.get_model(), str(temp_path), city_lat, city_lon, region_mode=active_region
+            )
+
+            if exact_details and "exact_lat" in exact_details and "exact_lon" in exact_details:
+                final_lat = float(exact_details["exact_lat"])
+                final_lon = float(exact_details["exact_lon"])
+                target_name = exact_details.get("matched_label") or (predictions[0]["name"] if predictions else orig_name)
+                country = exact_details.get("country") or (predictions[0].get("country") if predictions else ("Казахстан" if active_region == "kz" else "Не определено"))
+                country_code = exact_details.get("country_code")
+                city = exact_details.get("city") or ""
+                region = city or exact_details.get("region") or ""
+                confidence = exact_details.get("confidence") or "HIGH"
+                method = exact_details.get("method") or "Exact Landmark Locator"
+                radius_m = float(exact_details.get("radius_m") or 25.0)
+            elif predictions:
+                p0 = predictions[0]
+                final_lat = float(p0["lat"])
+                final_lon = float(p0["lon"])
+                target_name = p0.get("name") or orig_name
+                country = p0.get("country") or ("Казахстан" if active_region == "kz" else "Весь мир")
+                confidence = "MEDIUM_GEOCLIP"
+                method = "GeoCLIP Neural Embedding"
+                radius_m = 2500.0
+            else:
+                final_lat = 51.169392
+                final_lon = 71.449074
+                confidence = "LOW_FALLBACK"
+                method = "Default Regional Fallback"
+                radius_m = 50000.0
+
+        synth_case = {
+            "id": f"api-{job_id}",
+            "title": target_name,
+            "target_name": target_name,
+            "target_lat": final_lat,
+            "target_lon": final_lon,
+            "camera_lat": final_lat - 0.0003,
+            "camera_lon": final_lon - 0.0003,
+            "bearing_deg": 45,
+            "distance_m": 35,
+            "error_radius_m": radius_m,
+            "confidence": confidence,
+            "country": country,
+            "country_code": country_code,
+            "region": region,
+            "city": city,
+            "method": method,
+            "main_photo": f"/static/uploads/{temp_path.name}"
+        }
+
+        geojson_features = build_case_geojson_features(synth_case)
+        geojson_doc = {
+            "type": "FeatureCollection",
+            "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}},
+            "features": geojson_features
+        }
+
+        return {
+            "status": "success",
+            "job_id": job_id,
+            "coordinates": {
+                "lat": round(final_lat, 6),
+                "lon": round(final_lon, 6)
+            },
+            "location": {
+                "title": target_name,
+                "country": country,
+                "country_code": country_code,
+                "region": region,
+                "city": city
+            },
+            "confidence": confidence,
+            "error_radius_m": radius_m,
+            "method": method,
+            "maps": {
+                "google": f"https://www.google.com/maps/search/?api=1&query={final_lat:.6f},{final_lon:.6f}",
+                "yandex": f"https://yandex.kz/maps/?ll={final_lon:.6f}%2C{final_lat:.6f}&z=16&pt={final_lon:.6f},{final_lat:.6f}",
+                "twogis": f"https://2gis.kz/geo/{final_lon:.6f},{final_lat:.6f}"
+            },
+            "geojson": geojson_doc,
+            "diagnostics": {
+                "has_gps_exif": has_gps,
+                "region_mode": active_region,
+                "input_type": "file" if file else "image_url"
+            }
+        }
+    finally:
+        pass
+
+
 @app.delete("/api/cases/{case_id}")
 def delete_case(case_id: str):
     cases = load_cases()
@@ -2509,61 +3006,6 @@ def export_kml(case_id: str):
 </kml>"""
     return Response(content=kml, media_type="application/vnd.google-earth.kml+xml", headers={"Content-Disposition": f'attachment; filename="{case_id}.kml"'})
 
-@app.get("/api/cases/{case_id}/geojson")
-def export_geojson(case_id: str):
-    cases = load_cases()
-    c = next((x for x in cases if x["id"] == case_id), None)
-    if not c:
-        raise HTTPException(status_code=404, detail="Case not found")
-        
-    cam_lat, cam_lon = c.get("camera_lat", 0), c.get("camera_lon", 0)
-    tgt_lat, tgt_lon = c.get("target_lat", 0), c.get("target_lon", 0)
-    
-    return {
-        "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "properties": {
-                    "role": "camera",
-                    "title": "Точка съёмки",
-                    "bearing_deg": c.get("bearing_deg", 0),
-                    "distance_m": c.get("distance_m", 0)
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [cam_lon, cam_lat]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "role": "target",
-                    "title": c.get("title", ""),
-                    "country": c.get("country", ""),
-                    "confidence": c.get("confidence", "")
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [tgt_lon, tgt_lat]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "role": "line_of_sight",
-                    "title": "Линия прямой видимости"
-                },
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": [
-                        [cam_lon, cam_lat],
-                        [tgt_lon, tgt_lat]
-                    ]
-                }
-            }
-        ]
-    }
 
 @app.post("/api/cases/{case_id}/ela")
 def run_ela_analysis(case_id: str):
@@ -3123,9 +3565,6 @@ class FirstAnswerRequest(BaseModel):
 class SignboardRequest(BaseModel):
     text: str
 
-class IinBinRequest(BaseModel):
-    code: str
-
 @app.get("/api/kz/regions")
 def api_kz_regions():
     """Returns all 20 Kazakhstan regions with full administrative & visual signatures."""
@@ -3173,11 +3612,6 @@ def api_case_ubinam_ladder(case_id: str):
 def api_kz_mine_signboards(req: SignboardRequest):
     """Mines Kazakh signboards for street names, institutions, and generates 2GIS/Yandex queries."""
     return mine_kazakh_signboards(req.text)
-
-@app.post("/api/kz/validate-iin-bin")
-def api_kz_validate_iin_bin(req: IinBinRequest):
-    """Validates 12-digit IIN/BIN with official control algorithm and provides registry links."""
-    return validate_kazakh_iin_bin(req.code)
 
 @app.get("/api/cases/{case_id}/distance-matrix")
 def api_case_distance_matrix(case_id: str):
@@ -3232,6 +3666,216 @@ def api_case_geotag_exif(case_id: str):
         "filename": out_filename,
         "download_url": f"/static/uploads/{out_filename}"
     }
+
+
+class ConfirmVenueRequest(BaseModel):
+    venue_id: str
+    name: str
+    branch: Optional[str] = None
+    city: str
+    address: str
+    lat: float
+    lon: float
+    twogis_url: Optional[str] = None
+    rating: Optional[float] = None
+    notes: Optional[str] = None
+
+
+@app.post("/api/cases/{case_id}/venue-hunt")
+def venue_hunt(case_id: str, query: Optional[str] = None, city: Optional[str] = None):
+    cases = load_cases()
+    c = next((item for item in cases if item["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+
+    # Find main photo path
+    main_photo = c.get("main_photo", "")
+    photo_file = None
+    if main_photo:
+        clean_rel = main_photo.replace("/static/", "")
+        p1 = STATIC_DIR / clean_rel
+        if p1.exists():
+            photo_file = p1
+        else:
+            p2 = UPLOAD_DIR / Path(clean_rel).name
+            if p2.exists():
+                photo_file = p2
+
+    qr_results = []
+    if photo_file and photo_file.exists():
+        qr_results = detect_table_qr_codes(photo_file)
+
+    # Inferred query if not specified
+    search_query = query or ""
+    if not search_query:
+        # Check if QR found a Wi-Fi ssid or inferred venue name
+        for qr in qr_results:
+            if qr.get("parsed_venue") and qr["parsed_venue"].get("inferred_name"):
+                search_query = qr["parsed_venue"]["inferred_name"]
+                break
+        # Fallback to case title or keywords
+        if not search_query:
+            t = c.get("target_name") or c.get("title") or ""
+            search_query = t
+
+    search_city = city or c.get("city") or "Астана"
+    user_lat = c.get("target_lat") or c.get("camera_lat")
+    user_lon = c.get("target_lon") or c.get("camera_lon")
+
+    candidates = search_2gis_venue_candidates(
+        query=search_query,
+        city=search_city,
+        user_lat=user_lat,
+        user_lon=user_lon
+    )
+
+    return {
+        "status": "ok",
+        "case_id": case_id,
+        "query_used": search_query,
+        "city_used": search_city,
+        "qr_codes": qr_results,
+        "candidates": candidates
+    }
+
+
+@app.post("/api/cases/{case_id}/confirm-venue")
+def confirm_venue(case_id: str, payload: ConfirmVenueRequest):
+    cases = load_cases()
+    target_case = None
+    for item in cases:
+        if item["id"] == case_id:
+            target_case = item
+            break
+    if not target_case:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+
+    target_case["target_lat"] = round(payload.lat, 6)
+    target_case["target_lon"] = round(payload.lon, 6)
+    target_case["camera_lat"] = round(payload.lat, 6)
+    target_case["camera_lon"] = round(payload.lon, 6)
+    
+    venue_display = f"{payload.name}"
+    if payload.branch:
+        venue_display += f" ({payload.branch})"
+    target_case["target_name"] = venue_display
+    target_case["city"] = payload.city
+    target_case["confidence"] = "VERIFIED_2GIS_VENUE"
+    target_case["error_radius_m"] = 5
+    if payload.twogis_url:
+        target_case["twogis_url"] = payload.twogis_url
+
+    clues = target_case.setdefault("clues", [])
+    confirm_clue = f"🏢 Верифицировано по 2ГИС: {payload.name}, {payload.city}, {payload.address} (±5м)"
+    if confirm_clue not in clues:
+        clues.insert(0, confirm_clue)
+
+    save_cases(cases)
+    return {
+        "status": "ok",
+        "message": f"Филиал {payload.name} успешно верифицирован и зафиксирован",
+        "case": target_case
+    }
+
+
+class MenuTriangulateRequest(BaseModel):
+    text: str
+
+
+class MallClusterRequest(BaseModel):
+    brands: List[str]
+    city: Optional[str] = None
+
+
+class BusRouteRequest(BaseModel):
+    query: str
+    city: Optional[str] = None
+
+
+@app.post("/api/venue/menu-triangulate")
+def api_venue_menu_triangulate(req: MenuTriangulateRequest):
+    """Gastronomic & Price Triangulation from menu/receipt OCR text."""
+    return analyze_menu_and_prices(req.text)
+
+
+@app.post("/api/venue/mall-cluster")
+def api_venue_mall_cluster(req: MallClusterRequest):
+    """Triangulates exact shopping mall / food court from multiple co-occurring brands."""
+    return cluster_mall_brands(req.brands, req.city)
+
+
+@app.post("/api/venue/bus-routes")
+def api_venue_bus_routes(req: BusRouteRequest):
+    """Cross-references bus route numbers seen through the window with city transit corridors."""
+    return lookup_kz_bus_routes(req.query, req.city)
+
+
+@app.post("/api/cases/{case_id}/mirror-reflection")
+def api_case_mirror_reflection(case_id: str):
+    """Performs through-the-window mirror reflection flip and CLAHE enhancement to read reverse text."""
+    cases = load_cases()
+    c = next((item for item in cases if item["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+    main_photo = c.get("main_photo", "")
+    if not main_photo:
+        raise HTTPException(status_code=400, detail="У дела нет главного фото")
+    clean_rel = main_photo.replace("/static/", "")
+    source_path = STATIC_DIR / clean_rel
+    if not source_path.exists():
+        source_path = UPLOAD_DIR / Path(clean_rel).name
+        if not source_path.exists():
+            raise HTTPException(status_code=404, detail="Файл изображения не найден")
+    return through_the_window_mirror_process(source_path, UPLOAD_DIR)
+
+
+@app.post("/api/cases/{case_id}/indoor-markers")
+def api_case_indoor_markers(case_id: str):
+    """Detects sockets, exit signs (ГОСТ vs US), and acquiring stickers (Kaspi/Halyk/Mir)."""
+    cases = load_cases()
+    c = next((item for item in cases if item["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+    ocr_lines = c.get("ocr_lines", [])
+    ocr_text = " ".join(ocr_lines)
+    main_photo = c.get("main_photo", "")
+    source_path = None
+    if main_photo:
+        clean_rel = main_photo.replace("/static/", "")
+        p1 = STATIC_DIR / clean_rel
+        if p1.exists():
+            source_path = p1
+        else:
+            p2 = UPLOAD_DIR / Path(clean_rel).name
+            if p2.exists():
+                source_path = p2
+    return detect_indoor_infrastructure_markers(source_path, ocr_text)
+
+
+@app.post("/api/cases/{case_id}/venue-vlm-detective")
+def api_case_venue_vlm_detective(case_id: str):
+    """Specialized Gemini Vision VLM Prompt «Venue Detective» for interior architecture deconstruction."""
+    cases = load_cases()
+    c = next((item for item in cases if item["id"] == case_id), None)
+    if not c:
+        raise HTTPException(status_code=404, detail="Дело не найдено")
+    ocr_lines = c.get("ocr_lines", [])
+    ocr_text = " ".join(ocr_lines)
+    main_photo = c.get("main_photo", "")
+    source_path = None
+    if main_photo:
+        clean_rel = main_photo.replace("/static/", "")
+        p1 = STATIC_DIR / clean_rel
+        if p1.exists():
+            source_path = p1
+        else:
+            p2 = UPLOAD_DIR / Path(clean_rel).name
+            if p2.exists():
+                source_path = p2
+    if not source_path or not source_path.exists():
+        raise HTTPException(status_code=404, detail="Файл изображения не найден")
+    return analyze_venue_with_vlm(source_path, ocr_text)
+
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

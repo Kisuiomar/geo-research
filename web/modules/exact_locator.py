@@ -200,6 +200,17 @@ class LocalVisualMemory:
                     with open(cases_p, "r", encoding="utf-8") as f:
                         cases_data = json.load(f)
                     for c in cases_data:
+                        if c.get("confidence") == "UNVERIFIED":
+                            continue
+                        if c.get("country") in ("Не определено", None):
+                            continue
+                        c_name = str(c.get("target_name") or c.get("title") or "").strip()
+                        if c_name in ("Global", "Неопознанный объект", ""):
+                            continue
+                        c_lat = float(c.get("target_lat") or c.get("camera_lat") or 0.0)
+                        c_lon = float(c.get("target_lon") or c.get("camera_lon") or 0.0)
+                        if abs(c_lat - 51.169392) < 0.0001 and abs(c_lon - 71.449074) < 0.0001:
+                            continue
                         mp = c.get("main_photo", "")
                         lat = c.get("target_lat") or c.get("camera_lat")
                         lon = c.get("target_lon") or c.get("camera_lon")
@@ -214,9 +225,9 @@ class LocalVisualMemory:
                                         "dhash": dh,
                                         "lat": float(lat),
                                         "lon": float(lon),
-                                        "name": c.get("target_name") or c.get("camera_name", "Verified Case"),
-                                        "city": "Астана" if "astana" in str(c).lower() or "астана" in str(c).lower() else "Алматы",
-                                        "country": "Kazakhstan",
+                                        "name": c_name or c.get("camera_name", "Verified Case"),
+                                        "city": c.get("city") or ("Астана" if "astana" in str(c).lower() or "астана" in str(c).lower() else "Алматы"),
+                                        "country": c.get("country") or "Kazakhstan",
                                         "confidence": 0.99,
                                         "timestamp": time.time(),
                                         "embedding": None
@@ -258,6 +269,13 @@ class LocalVisualMemory:
                     for entry in reversed(self.entries):
                         if not _is_region_allowed(entry.get("lat", 0.0), entry.get("lon", 0.0)):
                             continue
+                        e_name = str(entry.get("name", "")).strip()
+                        if e_name in ("Global", "Неопознанный объект", ""):
+                            continue
+                        if entry.get("country") in ("Не определено", None):
+                            continue
+                        if abs(float(entry.get("lat", 0)) - 51.169392) < 0.0001 and abs(float(entry.get("lon", 0)) - 71.449074) < 0.0001:
+                            continue
                         e_hash = entry.get("dhash")
                         if e_hash:
                             h_dist = bin(q_int ^ int(e_hash, 16)).count("1")
@@ -290,6 +308,13 @@ class LocalVisualMemory:
                     best_entry = None
                     for entry in reversed(self.entries):
                         if not _is_region_allowed(entry.get("lat", 0.0), entry.get("lon", 0.0)):
+                            continue
+                        e_name = str(entry.get("name", "")).strip()
+                        if e_name in ("Global", "Неопознанный объект", ""):
+                            continue
+                        if entry.get("country") in ("Не определено", None):
+                            continue
+                        if abs(float(entry.get("lat", 0)) - 51.169392) < 0.0001 and abs(float(entry.get("lon", 0)) - 71.449074) < 0.0001:
                             continue
                         stored_emb = entry.get("embedding")
                         if stored_emb and len(stored_emb) == 512:
@@ -325,6 +350,14 @@ class LocalVisualMemory:
         country: Optional[str] = None,
         city: Optional[str] = None
     ):
+        name_clean = (name or "").strip()
+        if name_clean in ("Global", "Неопознанный объект", ""):
+            return
+        if country in ("Не определено", None):
+            return
+        if abs(float(lat) - 51.169392) < 0.0001 and abs(float(lon) - 71.449074) < 0.0001:
+            return
+
         with self._lock:
             emb_list = None
             if emb_vector is not None:
@@ -1139,6 +1172,15 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
         cache_key.replace("cleaned_", ""),
         cache_key.replace("screenshot_", "")
     ]
+    dh_key = None
+    try:
+        tmp_im = Image.open(image_path)
+        dh_key = compute_image_dhash(tmp_im)
+        if dh_key and dh_key not in alt_keys:
+            alt_keys.append(dh_key)
+    except Exception:
+        pass
+
     if vlm_cache_file.exists():
         try:
             with open(vlm_cache_file, "r", encoding="utf-8") as f:
@@ -1266,6 +1308,8 @@ def analyze_with_gemini_vision(image_path: str) -> Dict[str, Any]:
                                         with open(vlm_cache_file, "r", encoding="utf-8") as vf:
                                             vcache = json.load(vf)
                                     vcache[cache_key] = data
+                                    if dh_key:
+                                        vcache[dh_key] = data
                                     with open(vlm_cache_file, "w", encoding="utf-8") as vf:
                                         json.dump(vcache, vf, indent=2)
                                 except Exception:
@@ -1334,9 +1378,11 @@ def verify_and_geocode_landmark(
 
     low_clean = clean_name.lower()
     for gz in KAZAKHSTAN_LANDMARKS_GAZETTEER:
-        gz_name = gz.get("name", "").lower()
+        raw_name = gz.get("name")
+        gz_name = str(raw_name).lower() if raw_name is not None else ""
         gz_clean = re.sub(r'[\(\)\[\]«»"\'\?!\*]', ' ', gz_name).lower()
-        gz_tags = [t.lower() for t in gz.get("tags", [])]
+        raw_tags = gz.get("tags")
+        gz_tags = [str(t).lower() for t in raw_tags] if isinstance(raw_tags, (list, tuple)) else []
 
         tag_match = any(tag in low_clean for tag in gz_tags)
         name_match = (gz_clean in low_clean) or (low_clean in gz_clean)
@@ -1350,15 +1396,20 @@ def verify_and_geocode_landmark(
                 or any(t in low_clean for t in ["золотое яблоко", "байтерек", "медеу", "хан шатыр", "бао", "жумбактас", "mega silk way", "silk way"])
             )
             if is_kz_target:
+                raw_lat = gz.get("lat")
+                raw_lon = gz.get("lon")
+                gz_lat_val = float(raw_lat) if isinstance(raw_lat, (int, float, str)) else 0.0
+                gz_lon_val = float(raw_lon) if isinstance(raw_lon, (int, float, str)) else 0.0
+                display_name = str(raw_name or "")
                 return {
                     "verified": True,
-                    "lat": float(gz["lat"]),
-                    "lon": float(gz["lon"]),
-                    "name": gz["name"],
+                    "lat": gz_lat_val,
+                    "lon": gz_lon_val,
+                    "name": display_name,
                     "source": "Kazakhstan Landmark Gazetteer",
                     "radius_m": 20,
                     "confidence": 0.99,
-                    "method": f"Verified Landmark Geocode (KZ Gazetteer): {gz['name']}"
+                    "method": f"Verified Landmark Geocode (KZ Gazetteer): {display_name}"
                 }
 
     queries = []
@@ -1580,7 +1631,7 @@ def extract_text_from_photo(image_path: str, is_indoor: bool = False) -> List[st
         seen = set()
         for crop in crops:
             for item in reader.readtext(crop, detail=1, paragraph=True):
-                txt = item[1].strip() if len(item) > 1 else ""
+                txt = str(item[1]).strip() if (isinstance(item, (list, tuple)) and len(item) > 1) else ""
                 txt = re.sub(r"[^\w\s\-\.,№/а-яА-ЯёЁәіңғүұқөһӘІҢҒҮҰҚӨҺ]", " ", txt)
                 txt = re.sub(r"\s+", " ", txt).strip()
                 low = txt.lower()
@@ -1794,7 +1845,7 @@ def refine_dense_grid_gpu(
         t_pts1 = torch.tensor(pts1, dtype=torch.float32, device=device)
 
         with torch.no_grad():
-            loc_emb1 = loc_enc(t_pts1)
+            loc_emb1: Any = loc_enc(t_pts1)
             loc_emb1 = loc_emb1 / loc_emb1.norm(dim=-1, keepdim=True)
             scores1 = (img_emb @ loc_emb1.T).squeeze(0)
             best_idx1 = int(torch.argmax(scores1).item())
@@ -1817,7 +1868,7 @@ def refine_dense_grid_gpu(
             # Проход 2: микро-сетка 300 м с шагом 10 м (итоговая точность radius_m: 15)
             pts2 = _build_grid(mid_lat, mid_lon, radius_m=300, step_m=10)
             t_pts2 = torch.tensor(pts2, dtype=torch.float32, device=device)
-            loc_emb2 = loc_enc(t_pts2)
+            loc_emb2: Any = loc_enc(t_pts2)
             loc_emb2 = loc_emb2 / loc_emb2.norm(dim=-1, keepdim=True)
             scores2 = (img_emb @ loc_emb2.T).squeeze(0)
             best_idx2 = int(torch.argmax(scores2).item())
@@ -1868,7 +1919,7 @@ def refine_dense_grid_cpu(
             loc_enc: Any = getattr(model_obj, "location_encoder", getattr(model_obj, "gps_encoder", None))
             if loc_enc is None or not callable(loc_enc):
                 return {"status": "skipped", "lat": base_lat, "lon": base_lon, "radius_m": 250}
-            loc_emb = loc_enc(t)
+            loc_emb: Any = loc_enc(t)
             loc_emb = loc_emb / loc_emb.norm(dim=-1, keepdim=True)
             scores = (img_emb @ loc_emb.T).squeeze(0)
             idx = int(torch.argmax(scores).item())
@@ -2207,7 +2258,7 @@ def locate_exact_spot(
     # 9. Поиск известных ТРЦ/аэропортов/станций по названиям брендов
     if is_indoor and vlm_data.get("search_queries"):
         indoor_osm_hit = geocode_osm_global(
-            vlm_data.get("search_queries"),
+            vlm_data.get("search_queries") or [],
             is_indoor=True,
             city_lat=city_lat,
             city_lon=city_lon,

@@ -23,7 +23,7 @@ from web.modules.temporal_cluster import parse_exif_timestamp, interpolate_from_
 from web.modules.kz_engine import (
     KAZAKHSTAN_REGIONS, KAZAKHSTAN_LANDMARKS_GAZETTEER, KZ_KNOWLEDGE_CATEGORIES,
     generate_kz_first_answer, evaluate_ubinam_confidence_ladder,
-    mine_kazakh_signboards, validate_kazakh_iin_bin,
+    mine_kazakh_signboards,
     calculate_kz_distance_matrix, inject_gps_exif
 )
 from web.modules.exact_locator import (
@@ -40,3 +40,10 @@ from web.modules.exact_locator import (
     INDOOR_OCR_STOPWORDS
 )
 from web.modules import model
+from web.modules.venue_matcher_2gis import detect_table_qr_codes, search_2gis_venue_candidates
+from web.modules.venue_intel import (
+    analyze_menu_and_prices, cluster_mall_brands,
+    lookup_kz_bus_routes, through_the_window_mirror_process,
+    detect_indoor_infrastructure_markers, analyze_venue_with_vlm,
+    VENUE_DETECTIVE_VLM_PROMPT
+)

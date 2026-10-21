@@ -376,7 +376,8 @@ def run_benchmark():
 
     # Verification: must detect is_indoor = True, scene_type = indoor, no outdoor hallucination
     is_indoor_detected = loc10.get("is_indoor") == True or loc10.get("scene_type") == "indoor"
-    pass10 = is_indoor_detected and (loc10.get("radius_m") >= 2000 or "Indoor" in str(loc10.get("method")))
+    rad10 = loc10.get("radius_m")
+    pass10 = is_indoor_detected and ((rad10 is not None and float(rad10) >= 2000) or "Indoor" in str(loc10.get("method")))
     results.append({
         "test": 10,
         "name": "Indoor Room (CV & Scene Type Indoor)",

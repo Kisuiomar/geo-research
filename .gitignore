@@ -40,3 +40,6 @@ dist/
 # Environment variables
 .env
 
+# Temporary scratch scripts
+scratch_*.py
+

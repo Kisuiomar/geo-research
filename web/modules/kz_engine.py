@@ -545,7 +545,7 @@ def evaluate_ubinam_confidence_ladder(case_data: dict) -> dict:
         "error_radius_m": error_radius,
         "tiers": tiers,
         "missing_evidence": missing_evidence,
-        "overall_score": sum(t["confidence"] for t in tiers) / len(tiers)
+        "overall_score": sum(float(t["confidence"]) for t in tiers) / len(tiers)
     }
 
 # -----------------------------------------------------------------------------
@@ -608,76 +608,6 @@ def mine_kazakh_signboards(text: str) -> dict:
     return mined
 
 # -----------------------------------------------------------------------------
-# 6. SpyBrain Entity Verification: IIN / BIN & Carrier Intelligence
-# -----------------------------------------------------------------------------
-def validate_kazakh_iin_bin(code: str) -> dict:
-    """Validates 12-digit Kazakhstan IIN or BIN with official control checksum algorithm."""
-    clean = re.sub(r'\D', '', code)
-    if len(clean) != 12:
-        return {"valid": False, "error": "ИИН/БИН должен содержать ровно 12 цифр"}
-        
-    digits = [int(c) for c in clean]
-    
-    # Checksum pass 1: weights 1..11
-    w1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1]
-    s1 = sum(d * w for d, w in zip(digits[:11], w1))
-    c1 = s1 % 11
-    
-    if c1 == 10:
-        # Checksum pass 2: weights 3..14
-        w2 = [3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2]
-        s2 = sum(d * w for d, w in zip(digits[:11], w2))
-        c1 = s2 % 11
-        if c1 == 10:
-            c1 = 0
-            
-    is_valid = (c1 == digits[11])
-    
-    # Decode IIN (Individual)
-    # 7th digit represents century and gender:
-    # 1: 19th cent male, 2: 19th cent female
-    # 3: 20th cent male, 4: 20th cent female
-    # 5: 21st cent male, 6: 21st cent female
-    d7 = digits[6]
-    yy = int(clean[0:2])
-    mm = int(clean[2:4])
-    dd = int(clean[4:6])
-    
-    entity_type = "ИИН (Физическое лицо)"
-    details = {}
-    
-    if d7 in [1, 2]:
-        full_year = 1800 + yy
-        gender = "Мужской" if d7 == 1 else "Женский"
-    elif d7 in [3, 4]:
-        full_year = 1900 + yy
-        gender = "Мужской" if d7 == 3 else "Женский"
-    elif d7 in [5, 6]:
-        full_year = 2000 + yy
-        gender = "Мужской" if d7 == 5 else "Женский"
-    else:
-        # Likely a BIN (Legal Entity)
-        entity_type = "БИН (Юридическое лицо / Организация)"
-        full_year = 2000 + yy if yy < 50 else 1900 + yy
-        gender = "Не применимо (Юр. лицо)"
-        
-    details["birth_or_reg_date"] = f"{dd:02d}.{mm:02d}.{full_year}"
-    details["gender"] = gender
-    details["checksum_match"] = is_valid
-    
-    # Legal registry query links
-    details["egov_url"] = f"https://stat.gov.kz/juridical/search/?bin={clean}"
-    details["kompra_url"] = f"https://kompra.kz/search?query={clean}"
-    details["adata_url"] = f"https://adata.kz/company/{clean}"
-
-    return {
-        "code": clean,
-        "valid": is_valid,
-        "entity_type": entity_type,
-        "details": details
-    }
-
-# -----------------------------------------------------------------------------
 # 7. FindMyPhoto Geotagging & Distance Matrix
 # -----------------------------------------------------------------------------
 def calculate_kz_distance_matrix(lat: float, lon: float) -> dict:
@@ -699,13 +629,17 @@ def calculate_kz_distance_matrix(lat: float, lon: float) -> dict:
     
     landmark_distances = []
     for lm in KAZAKHSTAN_LANDMARKS_GAZETTEER:
-        dist = haversine_distance(lat, lon, lm["lat"], lm["lon"])
+        lm_lat = lm.get("lat")
+        lm_lon = lm.get("lon")
+        lat2 = float(lm_lat) if isinstance(lm_lat, (int, float, str)) else 0.0
+        lon2 = float(lm_lon) if isinstance(lm_lon, (int, float, str)) else 0.0
+        dist = haversine_distance(lat, lon, lat2, lon2)
         landmark_distances.append({
             "name": lm["name"],
             "city": lm["city"],
             "distance_km": round(dist / 1000.0, 1),
-            "lat": lm["lat"],
-            "lon": lm["lon"]
+            "lat": lat2,
+            "lon": lon2
         })
     landmark_distances.sort(key=lambda x: x["distance_km"])
     
@@ -719,13 +653,13 @@ def calculate_kz_distance_matrix(lat: float, lon: float) -> dict:
 def inject_gps_exif(source_image_path: Path, dest_image_path: Path, lat: float, lon: float, altitude_m: float = 0.0) -> bool:
     """Embeds GPS coordinates into JPEG EXIF data and saves to dest_image_path."""
     try:
-        import piexif
+        import piexif  # type: ignore[import-not-found]
         
         def _to_deg_min_sec(value: float):
             val_abs = abs(value)
             deg = int(val_abs)
             min_val = int((val_abs - deg) * 60)
-            sec_val = int(round(((val_abs - deg) * 60 - min_val) * 60 * 100))
+            sec_val = round(((val_abs - deg) * 60 - min_val) * 60 * 100)
             return ((deg, 1), (min_val, 1), (sec_val, 100))
 
         lat_deg = _to_deg_min_sec(lat)

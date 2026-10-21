@@ -51,21 +51,6 @@
           </svg>
           <span>Интерактивная карта</span>
         </button>
-        <button class="nav-tab" id="tabRadar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 2a10 10 0 0 1 10 10"></path>
-            <circle cx="12" cy="12" r="2"></circle>
-          </svg>
-          <span>📡 Радар SpyBrain</span>
-        </button>
-        <button class="nav-tab" id="tabKnowledge">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-          </svg>
-          <span>🇰🇿 База знаний РК</span>
-        </button>
       </nav>
 
       <div class="live-status">
@@ -89,15 +74,6 @@
         <span>🔄 5 запусков поиска</span>
       </button>
 
-      <button class="btn btn-secondary" id="btnToggleRoute" style="display: none;" title="Показать сквозной маршрут всех расследований">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="6" cy="19" r="3"></circle>
-          <path d="M9 19h8.5a4.5 4.5 0 0 0 0-9H5"></path>
-          <circle cx="18" cy="5" r="3"></circle>
-        </svg>
-        <span>📍 Маршрут</span>
-      </button>
-
       <button class="btn btn-secondary" id="btnToggleLayers" style="display: none;" title="Переключить подложку карты">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -105,37 +81,12 @@
           <polyline points="2 12 12 17 22 12"></polyline>
         </svg>
         <span id="layerName">Спутник</span>
-      </button>
-
-      <button class="btn btn-secondary btn-wayback" id="btnOpenWaybackModal" title="Спутниковый архив Esri Wayback (2014–2026): 197 исторических снимков">
-        <span>🛰️ Wayback 2014–2026</span>
-      </button>
-
-      <button class="btn btn-secondary btn-inspector" id="btnOpenInspectorModal" title="OSINT Инспектор: геокодер телефонов, автокоды регионов РК, правила движения">
-        <span>🔍 OSINT Инструменты</span>
-      </button>
-
-      <button class="btn btn-secondary" id="btnOpenOsintGuide" title="Справочник OSINT-мета признаков (дороги, столбы, знаки)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      <button class="btn btn-secondary" id="btnOpenApiModal" title="REST API & Документация для интеграции в другие проекты">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
-        <span>📚 Шпаргалка</span>
-      </button>
-
-      <button class="btn btn-secondary" id="btnOpenOpsecModal" title="OPSEC Санитайзер: проверка утечек и очистка EXIF">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        <span>🛡️ Очистка EXIF</span>
-      </button>
-
-      <button class="btn btn-icon btn-secondary" id="btnToggleSound" title="Звуки радара (Вкл/Выкл)">
-        <span>🔊</span>
-      </button>
-
-      <button class="btn btn-icon btn-secondary" id="btnOpenShortcuts" title="Горячие клавиши (?)">
-        <span>⌨️</span>
+        <span>🔌 API / Интеграция</span>
       </button>
 
       <button class="btn btn-primary" id="btnOpenUploadModal">
@@ -455,6 +406,9 @@
         <div class="case-meta-top">
           <span class="country-badge" id="caseCountry">--</span>
           <span class="confidence-badge" id="caseConfidence">--</span>
+          <button class="btn btn-xs btn-outline-danger" id="btnCloseActiveCase" title="Закрыть текущую вкладку расследования" style="margin-left: auto; display: inline-flex; align-items: center; gap: 4px; border-radius: 12px; padding: 2px 8px; font-size: 11px;">
+            <span>✕ Закрыть</span>
+          </button>
         </div>
         <h2 class="case-title" id="caseTitle">Загрузка данных...</h2>
         <div class="case-location-row" id="caseRegion">--</div>
@@ -600,6 +554,9 @@
             <button class="btn btn-sm btn-secondary" id="btnExportGeoJson" title="Экспорт в GIS (.geojson)">
               <span>🗺️ GeoJSON</span>
             </button>
+            <button class="btn btn-sm btn-secondary" id="btnCaseApiDocs" title="REST API v1 документация и примеры интеграции">
+              <span>🔌 API</span>
+            </button>
             <button class="btn btn-sm btn-secondary" id="btnOpenElaModal" title="Криминалистический ELA-анализ артефактов сжатия и ретуши">
               <span>🔬 ELA</span>
             </button>
@@ -610,6 +567,9 @@
             <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-2gis" id="btnOpenIn2Gis" title="Открыть объект в 2ГИС Казахстан">
               <span>📍 2ГИС РК</span>
             </a>
+            <button class="btn btn-sm btn-2gis" id="btnOpen2GisVenueModal" title="Сверка интерьера с базой заведений и фото 2ГИС + QR столика">
+              <span>🏢 2ГИС Сверка</span>
+            </button>
             <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnOpenInYandexMaps" title="Открыть в Яндекс.Картах">
               <span>🟡 Яндекс</span>
             </a>
@@ -1041,20 +1001,52 @@
 
         <!-- Right: Multi-Tool Intelligence Station -->
         <div class="radar-tools-card">
-          <!-- Tool 1: IIN / BIN Validator -->
+          <!-- Tool 1: Gastronomic & Price Triangulation (Menu Analysis) -->
           <div class="radar-tool-box">
             <div class="radar-tool-header">
-              <span class="tool-icon">🪪</span>
+              <span class="tool-icon">🍲</span>
               <div>
-                <h4>Валидатор и Декодер ИИН / БИН Казахстана</h4>
-                <p>Проверка контрольной суммы по 11-значному алгоритму, извлечение даты рождения/регистрации и пола</p>
+                <h4>Гастрономическая и ценовая триангуляция (Анализ меню)</h4>
+                <p>Детекция валюты (₸, ₽, $), ценовых категорий (столовая / кафе / ресторан) и национальных блюд РК и мира</p>
               </div>
             </div>
             <div class="radar-tool-input-row">
-              <input type="text" id="radarIinInput" placeholder="Введите 12-значный ИИН или БИН (например: 920514301254)..." class="form-input mono" maxlength="12">
-              <button class="btn btn-primary" id="btnValidateIin">Проверить</button>
+              <input type="text" id="radarMenuInput" placeholder="Текст меню или чека (напр. Бешбармак 3800 ₸, Куырдак, Капучино 1200 тг)..." class="form-input">
+              <button class="btn btn-primary" id="btnRadarAnalyzeMenu">Триангуляция</button>
             </div>
-            <div class="radar-tool-result" id="radarIinResult" style="display: none;"></div>
+            <div class="radar-tool-result" id="radarMenuResult" style="display: none;"></div>
+          </div>
+
+          <!-- Tool 1b: Mall Brand Co-occurrence Clusterer -->
+          <div class="radar-tool-box">
+            <div class="radar-tool-header">
+              <span class="tool-icon">🏬</span>
+              <div>
+                <h4>Кластеризация брендов в ТРЦ (Brand Co-occurrence)</h4>
+                <p>Вычисление точного ТРЦ по совместному нахождению 2+ брендов (Zara, CoffeeBoom, Золотое Яблоко, Marwin)</p>
+              </div>
+            </div>
+            <div class="radar-tool-input-row">
+              <input type="text" id="radarMallInput" placeholder="Бренды через запятую (например: Zara, CoffeeBoom, Marwin, Золотое Яблоко)..." class="form-input">
+              <button class="btn btn-primary" id="btnRadarClusterMall">Найти ТРЦ</button>
+            </div>
+            <div class="radar-tool-result" id="radarMallResult" style="display: none;"></div>
+          </div>
+
+          <!-- Tool 1c: Through-the-Window Bus Route Triangulation -->
+          <div class="radar-tool-box">
+            <div class="radar-tool-header">
+              <span class="tool-icon">🚌</span>
+              <div>
+                <h4>Through-the-Window OSINT: Городские автобусы РК</h4>
+                <p>Пробивка номера маршрута за окном (CityBus / Astra Plat / Оңай) по транспортным артериям</p>
+              </div>
+            </div>
+            <div class="radar-tool-input-row">
+              <input type="text" id="radarBusInput" placeholder="Номер автобуса за окном (напр. Автобус 10, 12, 32, 47)..." class="form-input">
+              <button class="btn btn-primary" id="btnRadarLookupBus">Маршрут</button>
+            </div>
+            <div class="radar-tool-result" id="radarBusResult" style="display: none;"></div>
           </div>
 
           <!-- Tool 2: KZ Phone Operator & City Lookup -->
@@ -1886,6 +1878,129 @@
     </div>
   </div>
 
+  <!-- GeoJSON API & Export Modal -->
+  <div class="modal-backdrop" id="geojsonModal" style="display: none;">
+    <div class="modal-card modal-lg" style="max-width: 800px; width: 95%;">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge">🗺️</div>
+          <div>
+            <h2>GeoJSON API & Экспорт</h2>
+            <p>Стандарт геоданных RFC 7946 для QGIS, ArcGIS, Mapbox, Leaflet и geojson.io</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseGeoJsonModal">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 20px;">
+        <!-- Top Toolbar: Mode Switcher & Action Buttons -->
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px;">
+          <div class="segmented-control" style="display: inline-flex; background: rgba(15,23,42,0.7); border: 1px solid var(--bg-card-border); border-radius: 20px; padding: 2px;">
+            <button class="btn btn-xs btn-primary active" id="btnGeoJsonScopeCurrent" style="border-radius: 18px; padding: 4px 12px;">Текущий объект</button>
+            <button class="btn btn-xs btn-secondary" id="btnGeoJsonScopeAll" style="border-radius: 18px; padding: 4px 12px; background: transparent; border: none;">Все расследования базы</button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn btn-sm btn-primary" id="btnDownloadGeoJsonFile">
+              <span>📥 Скачать .geojson</span>
+            </button>
+            <button class="btn btn-sm btn-secondary" id="btnCopyGeoJsonClipboard">
+              <span>📋 Скопировать JSON</span>
+            </button>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" id="btnOpenGeoJsonIo">
+              <span>🌐 geojson.io</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- API Endpoint Info Box -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--bg-card-border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-family: monospace; font-size: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span style="background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 11px;">GET</span>
+            <span id="geoJsonEndpointUrl" style="color: var(--accent-cyan);">/api/cases/{id}/geojson</span>
+          </div>
+          <button class="btn btn-xs btn-outline" id="btnCopyApiUrl" style="font-size: 11px; padding: 3px 10px;">Копировать URL</button>
+        </div>
+
+        <!-- GeoJSON Code Block Preview -->
+        <div style="position: relative;">
+          <pre id="geoJsonPreviewBox" style="background: #020617; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 14px; max-height: 380px; overflow-y: auto; color: #e2e8f0; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-break: break-all;"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Integration & Documentation Modal -->
+  <div class="modal-backdrop" id="apiDocsModal" style="display: none;">
+    <div class="modal-card modal-lg" style="max-width: 860px; width: 95%;">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(14, 165, 233, 0.15); border-color: rgba(14, 165, 233, 0.4);">🔌</div>
+          <div>
+            <h2>REST API v1 & Подключение к проектам</h2>
+            <p>Интеграция поиска геолокации по фото, базы расследований и GeoJSON в сторонние боты, CRM, сайты и ГИС</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseApiDocsModal">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 20px;">
+        <!-- Quick Action Hub: Swagger, ReDoc, OpenAPI -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 16px;">
+          <a href="/docs" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; cursor: pointer;">
+              <div>
+                <div style="font-weight: 600; color: #38bdf8; font-size: 13px;">📖 Swagger UI</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Интерактивная песочница /docs</div>
+              </div>
+              <span style="font-size: 16px;">↗</span>
+            </div>
+          </a>
+
+          <a href="/redoc" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; cursor: pointer;">
+              <div>
+                <div style="font-weight: 600; color: #c084fc; font-size: 13px;">📑 ReDoc Spec</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Документация разработчика /redoc</div>
+              </div>
+              <span style="font-size: 16px;">↗</span>
+            </div>
+          </a>
+
+          <a href="/openapi.json" target="_blank" download="openapi.json" style="text-decoration: none; color: inherit;">
+            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; cursor: pointer;">
+              <div>
+                <div style="font-weight: 600; color: #4ade80; font-size: 13px;">📦 openapi.json</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Импорт в Postman / Codegen</div>
+              </div>
+              <span style="font-size: 16px;">📥</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Language Snippet Tabs -->
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px;">
+          <div class="segmented-control" id="apiSnippetTabs" style="display: inline-flex; background: rgba(15,23,42,0.7); border: 1px solid var(--bg-card-border); border-radius: 20px; padding: 2px;">
+            <button class="btn btn-xs btn-primary active" data-tab="python" style="border-radius: 18px; padding: 4px 12px;">Python (requests)</button>
+            <button class="btn btn-xs btn-secondary" data-tab="js" style="border-radius: 18px; padding: 4px 12px; background: transparent; border: none;">JavaScript / Node</button>
+            <button class="btn btn-xs btn-secondary" data-tab="curl" style="border-radius: 18px; padding: 4px 12px; background: transparent; border: none;">cURL (CLI)</button>
+            <button class="btn btn-xs btn-secondary" data-tab="qgis" style="border-radius: 18px; padding: 4px 12px; background: transparent; border: none;">QGIS / Web GIS</button>
+            <button class="btn btn-xs btn-secondary" data-tab="endpoints" style="border-radius: 18px; padding: 4px 12px; background: transparent; border: none;">Все эндпоинты</button>
+          </div>
+
+          <button class="btn btn-sm btn-secondary" id="btnCopyApiSnippet">
+            <span>📋 Скопировать пример</span>
+          </button>
+        </div>
+
+        <!-- Snippet Content Area -->
+        <div style="position: relative;">
+          <pre id="apiSnippetContent" style="background: #020617; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 14px; max-height: 380px; overflow-y: auto; color: #e2e8f0; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-break: break-all;"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Keyboard Shortcuts Modal -->
   <div class="modal-backdrop" id="shortcutsModal" style="display: none;">
     <div class="modal-card modal-sm">
@@ -2224,6 +2339,92 @@
             <span>📥 Скачать изображение (.jpg)</span>
           </a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2GIS Venue & Interior Comparison Modal -->
+  <div class="modal-backdrop" id="twogisVenueModal" style="display: none;">
+    <div class="modal-card modal-extra-wide" style="max-width: 1200px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="rescan-title-wrap">
+          <div class="rescan-icon-badge" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">🏢</div>
+          <div>
+            <h2>Сверка интерьера с 2ГИС и локализация заведений</h2>
+            <p>Детекция QR-кодов столиков (Wi-Fi/Kaspi), сопоставление люстр, мебели и интерьеров с каталогом филиалов</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnClose2GisVenueModal">&times;</button>
+      </div>
+
+      <div class="twogis-modal-body" style="overflow-y: auto; padding: 16px; flex: 1;">
+        <!-- Specialized Venue Intelligence Sub-Tools -->
+        <div class="twogis-tools-nav" style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
+          <button class="btn btn-xs btn-2gis" id="btnTab2GisBranches" style="font-weight: 700;">🏢 2ГИС Филиалы</button>
+          <button class="btn btn-xs btn-secondary" id="btnRunVlmDetective" title="Запуск архитектурного деконструирования интерьера">🧠 VLM-Детектив (Gemini)</button>
+          <button class="btn btn-xs btn-secondary" id="btnRunMirrorFlip" title="Чтение отражений на витринах и стеклах бокалов">🪞 Зеркало (Window Mirror)</button>
+          <button class="btn btn-xs btn-secondary" id="btnRunIndoorMarkers" title="Детекция типов розеток, знаков Шығу/Exit и Kaspi">🔌 Розетки & Вывески</button>
+        </div>
+
+        <!-- Venue Forensic Special Report Banner (collapsible) -->
+        <div id="venueSpecialReportBox" style="display: none; margin-bottom: 14px;"></div>
+
+        <!-- Search & Filter Controls -->
+        <div class="twogis-search-bar" id="twogisSearchBarRow" style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+          <input type="text" id="twogisSearchQuery" class="form-input" style="flex: 2; min-width: 200px;" placeholder="Поиск сети или заведения (CoffeeBoom, Marrone Rosso, Lanzhou, Paul...)">
+          <select id="twogisSearchCity" class="form-input" style="flex: 1; min-width: 140px;">
+            <option value="Астана" selected>Астана</option>
+            <option value="Алматы">Алматы</option>
+            <option value="Шымкент">Шымкент</option>
+            <option value="Караганда">Караганда</option>
+            <option value="Актобе">Актобе</option>
+          </select>
+          <button id="btnTwogisSearch" class="btn btn-2gis" style="padding: 0 18px; cursor: pointer;">
+            <span>🔍 Сканировать и найти филиалы</span>
+          </button>
+        </div>
+
+        <!-- QR Code Alert Section -->
+        <div id="twogisQrBadgeContainer" style="margin-bottom: 14px;"></div>
+
+        <!-- Split Screen Comparison -->
+        <div class="twogis-split-layout" style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 18px;">
+          <!-- Left: Investigation Photo -->
+          <div class="twogis-left-col" style="background: var(--bg-surface, #1e293b); border: 1px solid var(--border-color, #334155); border-radius: 10px; padding: 12px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; font-size: 0.85rem; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px;">📸 Фото расследования (Улики)</span>
+              <span id="twogisCaseTitleBadge" style="font-size: 0.75rem; color: var(--text-dim, #94a3b8);">Дело</span>
+            </div>
+            <div class="twogis-img-preview-box" style="position: relative; border-radius: 8px; overflow: hidden; background: #000; min-height: 260px; max-height: 380px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.08);">
+              <img id="twogisInvestigationImg" src="" alt="Фото дела" style="max-width: 100%; max-height: 380px; object-fit: contain; cursor: zoom-in;">
+            </div>
+            <div style="margin-top: 10px; font-size: 0.78rem; color: var(--text-dim, #94a3b8); line-height: 1.4;" id="twogisInvestigationClues">
+              <strong>Анализ интерьера:</strong> обратите внимание на форму светильников, раскладку плитки, цвет обивки стульев и вид из окон.
+            </div>
+          </div>
+
+          <!-- Right: 2GIS Branches & Interior Photos -->
+          <div class="twogis-right-col" style="background: var(--bg-surface, #1e293b); border: 1px solid var(--border-color, #334155); border-radius: 10px; padding: 12px; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; font-size: 0.85rem; color: #4ade80; text-transform: uppercase; letter-spacing: 0.5px;">🏢 Филиалы 2ГИС и фото интерьеров</span>
+              <span id="twogisResultsCount" style="font-size: 0.75rem; color: #94a3b8;">0 найдено</span>
+            </div>
+            
+            <div id="twogisCandidatesList" style="overflow-y: auto; max-height: 480px; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;">
+              <div style="text-align: center; padding: 40px 10px; color: var(--text-dim, #94a3b8);">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🏢</div>
+                <div>Нажмите «Сканировать и найти филиалы» для запуска сопоставления интерьера с 2ГИС</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding: 12px 18px; border-top: 1px solid var(--border-color, #334155); display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6);">
+        <span style="font-size: 0.78rem; color: #94a3b8;">
+          🎯 Подтверждение фиксирует координаты заведения в деле с радиусом точности ±5м.
+        </span>
+        <button class="btn btn-secondary btn-sm" id="btnCancel2GisVenueModal">Закрыть</button>
       </div>
     </div>
   </div>

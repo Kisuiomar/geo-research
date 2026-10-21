@@ -86,5 +86,1530 @@
     "is_indoor": true,
     "scene_type": "indoor",
     "confidence": 0.85
+  },
+  "6f09393bfcf82b2f": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "country_code": "FR",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 48.85837,
+    "lon": 2.294481
+  },
+  "e8b5bda7.jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "country_code": "FR",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 48.85837,
+    "lon": 2.294481
+  },
+  "2cd57305.jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "country_code": "FR",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 48.85837,
+    "lon": 2.294481
+  },
+  "images (2).jpg": {
+    "place_name": "Eiffel Tower",
+    "city": "Paris",
+    "country": "France",
+    "country_code": "FR",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 48.85837,
+    "lon": 2.294481
+  },
+  "0f8ecc793317fea7": {
+    "place_name": "\u0414\u0432\u043e\u0440\u0435\u0446 \u043c\u0438\u0440\u0430 \u0438 \u0441\u043e\u0433\u043b\u0430\u0441\u0438\u044f (\u041f\u0438\u0440\u0430\u043c\u0438\u0434\u0430)",
+    "city": "\u0410\u0441\u0442\u0430\u043d\u0430",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 51.122778,
+    "lon": 71.463611
+  },
+  "ca6d715a.jpg": {
+    "place_name": "\u0414\u0432\u043e\u0440\u0435\u0446 \u043c\u0438\u0440\u0430 \u0438 \u0441\u043e\u0433\u043b\u0430\u0441\u0438\u044f (\u041f\u0438\u0440\u0430\u043c\u0438\u0434\u0430)",
+    "city": "\u0410\u0441\u0442\u0430\u043d\u0430",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 51.122778,
+    "lon": 71.463611
+  },
+  "a848cd0a3d2a5b00589e722b0edb0030.jpg": {
+    "place_name": "\u0414\u0432\u043e\u0440\u0435\u0446 \u043c\u0438\u0440\u0430 \u0438 \u0441\u043e\u0433\u043b\u0430\u0441\u0438\u044f (\u041f\u0438\u0440\u0430\u043c\u0438\u0434\u0430)",
+    "city": "\u0410\u0441\u0442\u0430\u043d\u0430",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "is_indoor": false,
+    "scene_type": "landmark",
+    "confidence": 0.99,
+    "lat": 51.122778,
+    "lon": 71.463611
+  },
+  "51f76736.jpg": {
+    "is_indoor": true,
+    "scene_type": "office",
+    "country": null,
+    "country_code": null,
+    "city": null,
+    "place_name": null,
+    "confidence": 0.0,
+    "lat": null,
+    "lon": null,
+    "radius_m": null,
+    "driving_side": null,
+    "osm_search_query": null,
+    "search_queries": [],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": null,
+      "notes": "No terrain features visible in this generic illustration."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Not applicable."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No window view present."
+    }
+  },
+  "c404200671712b23": {
+    "is_indoor": true,
+    "scene_type": "office",
+    "country": null,
+    "country_code": null,
+    "city": null,
+    "place_name": null,
+    "confidence": 0.0,
+    "lat": null,
+    "lon": null,
+    "radius_m": null,
+    "driving_side": null,
+    "osm_search_query": null,
+    "search_queries": [],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": null,
+      "notes": "No terrain features visible in this generic illustration."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Not applicable."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No window view present."
+    }
+  },
+  "fc3b5d46.jpg": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Nur Alem Future Energy Museum",
+    "confidence": 0.99,
+    "lat": 51.0894,
+    "lon": 71.4148,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Nur Alem Future Energy Museum, Astana, Kazakhstan",
+    "search_queries": [
+      "Nur Alem Sphere Astana",
+      "EXPO 2017 Kazakhstan sphere building",
+      "glass sphere building Astana"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East towards the sphere",
+      "notes": "The photo is taken from the plaza area of the EXPO 2017 site."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "This location is in Astana, not Almaty; no mountains are visible in this steppe region."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor ground-level perspective."
+    }
+  },
+  "8fe973b4b17276f9": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Nur Alem Future Energy Museum",
+    "confidence": 0.99,
+    "lat": 51.0894,
+    "lon": 71.4148,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Nur Alem Future Energy Museum, Astana, Kazakhstan",
+    "search_queries": [
+      "Nur Alem Sphere Astana",
+      "EXPO 2017 Kazakhstan sphere building",
+      "glass sphere building Astana"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East towards the sphere",
+      "notes": "The photo is taken from the plaza area of the EXPO 2017 site."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "This location is in Astana, not Almaty; no mountains are visible in this steppe region."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor ground-level perspective."
+    }
+  },
+  "7b6dd930.jpg": {
+    "is_indoor": false,
+    "scene_type": "park",
+    "country": "Vietnam",
+    "country_code": "VN",
+    "city": "Da Nang",
+    "place_name": "Golden Bridge (C\u1ea7u V\u00e0ng), Ba Na Hills",
+    "confidence": 1.0,
+    "lat": 15.995,
+    "lon": 107.9968,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Golden Bridge, Ba Na Hills, Da Nang, Vietnam",
+    "search_queries": [
+      "Golden Bridge Vietnam giant hands",
+      "C\u1ea7u V\u00e0ng Ba Na Hills Da Nang",
+      "Sun World Ba Na Hills bridge"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking East/Northeast towards the Da Nang coastline",
+      "notes": "The bridge is located at an altitude of 1,414m in the Truong Son Mountains, with the South China Sea visible in the far distance."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "ffc73c66c94b7c46": {
+    "is_indoor": false,
+    "scene_type": "park",
+    "country": "Vietnam",
+    "country_code": "VN",
+    "city": "Da Nang",
+    "place_name": "Golden Bridge (C\u1ea7u V\u00e0ng), Ba Na Hills",
+    "confidence": 1.0,
+    "lat": 15.995,
+    "lon": 107.9968,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Golden Bridge, Ba Na Hills, Da Nang, Vietnam",
+    "search_queries": [
+      "Golden Bridge Vietnam giant hands",
+      "C\u1ea7u V\u00e0ng Ba Na Hills Da Nang",
+      "Sun World Ba Na Hills bridge"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking East/Northeast towards the Da Nang coastline",
+      "notes": "The bridge is located at an altitude of 1,414m in the Truong Son Mountains, with the South China Sea visible in the far distance."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "df2120bf.jpg": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": null,
+    "confidence": 0.55,
+    "lat": null,
+    "lon": null,
+    "radius_m": 10000,
+    "driving_side": "RHT",
+    "osm_search_query": "restaurants in Almaty, Kazakhstan",
+    "search_queries": [
+      "Lanzhou noodle house Almaty interior",
+      "restaurant with red uniforms and black pendant lights Almaty",
+      "industrial style cafe Almaty Kazakhstan"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": null,
+      "notes": "Indoor scene with no external visibility."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken inside a restaurant; no mountains are visible to determine orientation."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No windows are visible in the frame."
+    }
+  },
+  "219d9d9d950f4bcb": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": null,
+    "confidence": 0.55,
+    "lat": null,
+    "lon": null,
+    "radius_m": 10000,
+    "driving_side": "RHT",
+    "osm_search_query": "restaurants in Almaty, Kazakhstan",
+    "search_queries": [
+      "Lanzhou noodle house Almaty interior",
+      "restaurant with red uniforms and black pendant lights Almaty",
+      "industrial style cafe Almaty Kazakhstan"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": null,
+      "notes": "Indoor scene with no external visibility."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken inside a restaurant; no mountains are visible to determine orientation."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No windows are visible in the frame."
+    }
+  },
+  "7c21e0f9.jpg": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "United States",
+    "country_code": "US",
+    "city": "San Francisco",
+    "place_name": "San Francisco Armory",
+    "confidence": 0.99,
+    "lat": 37.7688,
+    "lon": -122.4201,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "San Francisco Armory",
+    "search_queries": [
+      "San Francisco Armory building",
+      "1800 Mission St San Francisco",
+      "building with leather pride and rainbow flags San Francisco"
+    ],
+    "detected_text": [
+      "STOP"
+    ],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking East/Southeast",
+      "notes": "Hills in the background are likely Potrero Hill or the East Bay hills across the water."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "080888c227173bf8": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "United States",
+    "country_code": "US",
+    "city": "San Francisco",
+    "place_name": "San Francisco Armory",
+    "confidence": 0.99,
+    "lat": 37.7688,
+    "lon": -122.4201,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "San Francisco Armory",
+    "search_queries": [
+      "San Francisco Armory building",
+      "1800 Mission St San Francisco",
+      "building with leather pride and rainbow flags San Francisco"
+    ],
+    "detected_text": [
+      "STOP"
+    ],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking East/Southeast",
+      "notes": "Hills in the background are likely Potrero Hill or the East Bay hills across the water."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "b042bb61.jpg": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Lanzhou (\u041b\u0430\u043d\u044c\u0447\u0436\u043e\u0443) Noodle Restaurant",
+    "confidence": 0.95,
+    "lat": 43.2551,
+    "lon": 76.9431,
+    "radius_m": 2000,
+    "driving_side": "RHT",
+    "osm_search_query": "amenity=restaurant name=Lanzhou city=Almaty",
+    "search_queries": [
+      "Lanzhou noodle restaurant Almaty mural",
+      "\u041b\u0430\u043d\u044c\u0447\u0436\u043e\u0443 \u043a\u0430\u0444\u0435 \u0410\u043b\u043c\u0430\u0442\u044b \u0438\u043d\u0442\u0435\u0440\u044c\u0435\u0440",
+      "2GIS Lanzhou Almaty"
+    ],
+    "detected_text": [
+      "\u9762",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "The mural depicts a mountain range resembling the Zailiyskiy Alatau, but no real terrain is visible."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Indoor scene. The mural on the wall is a signature decor of the Lanzhou restaurant chain in Almaty, depicting the process of making hand-pulled noodles against a backdrop of local mountains."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No window view is visible in the image."
+    }
+  },
+  "b4c6e266c2f13b13": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Lanzhou (\u041b\u0430\u043d\u044c\u0447\u0436\u043e\u0443) Noodle Restaurant",
+    "confidence": 0.95,
+    "lat": 43.2551,
+    "lon": 76.9431,
+    "radius_m": 2000,
+    "driving_side": "RHT",
+    "osm_search_query": "amenity=restaurant name=Lanzhou city=Almaty",
+    "search_queries": [
+      "Lanzhou noodle restaurant Almaty mural",
+      "\u041b\u0430\u043d\u044c\u0447\u0436\u043e\u0443 \u043a\u0430\u0444\u0435 \u0410\u043b\u043c\u0430\u0442\u044b \u0438\u043d\u0442\u0435\u0440\u044c\u0435\u0440",
+      "2GIS Lanzhou Almaty"
+    ],
+    "detected_text": [
+      "\u9762",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "The mural depicts a mountain range resembling the Zailiyskiy Alatau, but no real terrain is visible."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Indoor scene. The mural on the wall is a signature decor of the Lanzhou restaurant chain in Almaty, depicting the process of making hand-pulled noodles against a backdrop of local mountains."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "No window view is visible in the image."
+    }
+  },
+  "686b3286.jpg": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Netherlands",
+    "country_code": "NL",
+    "city": "Amsterdam",
+    "place_name": "Coffeeshop Amsterdam (formerly Dampkring 2)",
+    "confidence": 0.95,
+    "lat": 52.37944,
+    "lon": 4.89148,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Coffeeshop Amsterdam, Haarlemmerstraat 44, Amsterdam",
+    "search_queries": [
+      "Coffeeshop Amsterdam Haarlemmerstraat interior",
+      "Amsterdam XXX coffeeshop logo sweatshirt",
+      "Haarlemmerstraat 44 Amsterdam"
+    ],
+    "detected_text": [
+      "AMSTERDAM",
+      "XXX",
+      "COFFEESHOP",
+      "AK-47"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "Indoor scene in a dense urban area"
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": true,
+      "window_landmarks": [
+        "Haarlemmerstraat"
+      ],
+      "azimuth_deg": 340,
+      "notes": "The window in the background looks out onto the Haarlemmerstraat street."
+    }
+  },
+  "0397876743cbd3c0": {
+    "is_indoor": true,
+    "scene_type": "cafe",
+    "country": "Netherlands",
+    "country_code": "NL",
+    "city": "Amsterdam",
+    "place_name": "Coffeeshop Amsterdam (formerly Dampkring 2)",
+    "confidence": 0.95,
+    "lat": 52.37944,
+    "lon": 4.89148,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Coffeeshop Amsterdam, Haarlemmerstraat 44, Amsterdam",
+    "search_queries": [
+      "Coffeeshop Amsterdam Haarlemmerstraat interior",
+      "Amsterdam XXX coffeeshop logo sweatshirt",
+      "Haarlemmerstraat 44 Amsterdam"
+    ],
+    "detected_text": [
+      "AMSTERDAM",
+      "XXX",
+      "COFFEESHOP",
+      "AK-47"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "Indoor scene in a dense urban area"
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": true,
+      "window_landmarks": [
+        "Haarlemmerstraat"
+      ],
+      "azimuth_deg": 340,
+      "notes": "The window in the background looks out onto the Haarlemmerstraat street."
+    }
+  },
+  "d1bd85e8.png": {
+    "is_indoor": true,
+    "scene_type": "shop",
+    "country": "Ireland",
+    "country_code": "IE",
+    "city": "Dublin",
+    "place_name": "Guinness themed souvenir shop",
+    "confidence": 0.75,
+    "lat": 53.3498,
+    "lon": -6.2603,
+    "radius_m": 2000,
+    "driving_side": "LHT",
+    "osm_search_query": "souvenir shop Dublin Guinness",
+    "search_queries": [
+      "Guinness merchandise shop Dublin interior",
+      "Carroll's Irish Gifts Dublin interior",
+      "Guinness Storehouse gift shop"
+    ],
+    "detected_text": [
+      "GUINNESS",
+      "DUBLIN",
+      "ESTD 1759"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "Indoor scene with no visible external terrain features."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": true,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Window in the background shows silhouettes of bottles and glasses, typical of an Irish pub or themed shop facade."
+    }
+  },
+  "8d11f43ff6ee756b": {
+    "is_indoor": true,
+    "scene_type": "shop",
+    "country": "Ireland",
+    "country_code": "IE",
+    "city": "Dublin",
+    "place_name": "Guinness themed souvenir shop",
+    "confidence": 0.75,
+    "lat": 53.3498,
+    "lon": -6.2603,
+    "radius_m": 2000,
+    "driving_side": "LHT",
+    "osm_search_query": "souvenir shop Dublin Guinness",
+    "search_queries": [
+      "Guinness merchandise shop Dublin interior",
+      "Carroll's Irish Gifts Dublin interior",
+      "Guinness Storehouse gift shop"
+    ],
+    "detected_text": [
+      "GUINNESS",
+      "DUBLIN",
+      "ESTD 1759"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "none",
+      "notes": "Indoor scene with no visible external terrain features."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": null
+    },
+    "window_view": {
+      "has_window_view": true,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Window in the background shows silhouettes of bottles and glasses, typical of an Irish pub or themed shop facade."
+    }
+  },
+  "7b4fcf62.jpeg": {
+    "is_indoor": false,
+    "scene_type": "mall",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Keruen Shopping Mall",
+    "confidence": 0.98,
+    "lat": 51.1283,
+    "lon": 71.4355,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Keruen Shopping Mall, Dostyk Street, Astana",
+    "search_queries": [
+      "Keruen mall Astana",
+      "Navat restaurant Keruen Astana",
+      "Keruen mall logo"
+    ],
+    "detected_text": [
+      "keruen",
+      "NAVAT",
+      "P",
+      "50M"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East towards the mall facade",
+      "notes": "The photo is taken from the parking area/street level near the intersection of Dostyk and Turkistan streets."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "This location is in Astana (Central/Northern Kazakhstan), which is a flat steppe region; no mountains are visible."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor street-level perspective."
+    }
+  },
+  "d9998b8f0e0e0c0e": {
+    "is_indoor": false,
+    "scene_type": "mall",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Keruen Shopping Mall",
+    "confidence": 0.98,
+    "lat": 51.1283,
+    "lon": 71.4355,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Keruen Shopping Mall, Dostyk Street, Astana",
+    "search_queries": [
+      "Keruen mall Astana",
+      "Navat restaurant Keruen Astana",
+      "Keruen mall logo"
+    ],
+    "detected_text": [
+      "keruen",
+      "NAVAT",
+      "P",
+      "50M"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East towards the mall facade",
+      "notes": "The photo is taken from the parking area/street level near the intersection of Dostyk and Turkistan streets."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "This location is in Astana (Central/Northern Kazakhstan), which is a flat steppe region; no mountains are visible."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor street-level perspective."
+    }
+  },
+  "5513813b.jpg": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Astana city parking lot",
+    "confidence": 0.98,
+    "lat": 51.1282,
+    "lon": 71.4305,
+    "radius_m": 3000,
+    "driving_side": "RHT",
+    "osm_search_query": "Astana, Kazakhstan",
+    "search_queries": [
+      "Kazakhstan license plate 01 region",
+      "Astana modern brick residential architecture",
+      "724 AIG 01 plate",
+      "176 AGM 10 plate"
+    ],
+    "detected_text": [
+      "724 AIG 01",
+      "176 AGM 10",
+      "KZ",
+      "KIA",
+      "P"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Flat urban terrain",
+      "notes": "The scene is located in a flat steppe region typical of Astana, with no mountains visible."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken in Astana (region 01), not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor street-level view."
+    }
+  },
+  "f5e5a3b7e6eae0e0": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Astana city parking lot",
+    "confidence": 0.98,
+    "lat": 51.1282,
+    "lon": 71.4305,
+    "radius_m": 3000,
+    "driving_side": "RHT",
+    "osm_search_query": "Astana, Kazakhstan",
+    "search_queries": [
+      "Kazakhstan license plate 01 region",
+      "Astana modern brick residential architecture",
+      "724 AIG 01 plate",
+      "176 AGM 10 plate"
+    ],
+    "detected_text": [
+      "724 AIG 01",
+      "176 AGM 10",
+      "KZ",
+      "KIA",
+      "P"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Flat urban terrain",
+      "notes": "The scene is located in a flat steppe region typical of Astana, with no mountains visible."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken in Astana (region 01), not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor street-level view."
+    }
+  },
+  "3f27cef7.jpg": {
+    "is_indoor": false,
+    "scene_type": "airport",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Nursultan Nazarbayev International Airport (NQZ)",
+    "confidence": 0.98,
+    "lat": 51.0278,
+    "lon": 71.4635,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Nursultan Nazarbayev International Airport, Astana, Kazakhstan",
+    "search_queries": [
+      "Astana airport terminal 2 architecture",
+      "Kazakhstan license plate region 01",
+      "parking lot Nursultan Nazarbayev International Airport"
+    ],
+    "detected_text": [
+      "313 AJU 01",
+      "724 ATG 01",
+      "KIA"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking East towards the airport terminal",
+      "notes": "The terrain is flat, characteristic of the Kazakh steppe surrounding Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Location is in Astana, not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "2ce44b6a33c17899": {
+    "is_indoor": false,
+    "scene_type": "airport",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Nursultan Nazarbayev International Airport (NQZ)",
+    "confidence": 0.98,
+    "lat": 51.0278,
+    "lon": 71.4635,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Nursultan Nazarbayev International Airport, Astana, Kazakhstan",
+    "search_queries": [
+      "Astana airport terminal 2 architecture",
+      "Kazakhstan license plate region 01",
+      "parking lot Nursultan Nazarbayev International Airport"
+    ],
+    "detected_text": [
+      "313 AJU 01",
+      "724 ATG 01",
+      "KIA"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking East towards the airport terminal",
+      "notes": "The terrain is flat, characteristic of the Kazakh steppe surrounding Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "Location is in Astana, not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "2fcb773b.jpg": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Green Quarter Residential Complex",
+    "confidence": 0.85,
+    "lat": 51.1285,
+    "lon": 71.3985,
+    "radius_m": 150,
+    "driving_side": "RHT",
+    "osm_search_query": "Green Quarter Astana",
+    "search_queries": [
+      "Green Quarter Astana residential complex courtyard",
+      "BI Group Astana residential projects architecture",
+      "modern residential landscaping Astana"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "null",
+      "notes": "Flat urban terrain typical of the Kazakh steppe in Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "null",
+      "city_sector": "null",
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken in Astana, which is located in a flat steppe region, unlike Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor courtyard view."
+    }
+  },
+  "a1690b707ccd8f4e": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Green Quarter Residential Complex",
+    "confidence": 0.85,
+    "lat": 51.1285,
+    "lon": 71.3985,
+    "radius_m": 150,
+    "driving_side": "RHT",
+    "osm_search_query": "Green Quarter Astana",
+    "search_queries": [
+      "Green Quarter Astana residential complex courtyard",
+      "BI Group Astana residential projects architecture",
+      "modern residential landscaping Astana"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "null",
+      "notes": "Flat urban terrain typical of the Kazakh steppe in Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "null",
+      "city_sector": "null",
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The photo is taken in Astana, which is located in a flat steppe region, unlike Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "Outdoor courtyard view."
+    }
+  },
+  "850b1630.jpg": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Murtasynov Street 69",
+    "confidence": 0.98,
+    "lat": 43.3348,
+    "lon": 76.8645,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "Murtasynov Street 69, Almaty, Kazakhstan",
+    "search_queries": [
+      "\u0443\u043b\u0438\u0446\u0430 \u041c\u0443\u0440\u0442\u0430\u0441\u044b\u043d\u043e\u0432\u0430 69 \u0410\u043b\u043c\u0430\u0442\u044b",
+      "Murtasynov street 69 Almaty",
+      "Almaty street sign QR code"
+    ],
+    "detected_text": [
+      "69",
+      "\u041c\u04b0\u0420\u0422\u0410\u0421\u042b\u041d\u041e\u0412",
+      "\u041a\u04e8\u0428\u0415\u0421\u0406",
+      "\u0423\u041b\u0418\u0426\u0410",
+      "STREET"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking towards the house facade",
+      "notes": "The photo is taken in a residential area (Karasu microdistrict) in the northern part of Almaty."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-West",
+      "city_sector": "\u041d\u0438\u0436\u043d\u044f\u044f \u0447\u0430\u0441\u0442\u044c",
+      "sector_lat": 43.3348,
+      "sector_lon": 76.8645,
+      "notes": "The location is in the Karasu microdistrict, which is in the 'lower' (northern) part of Almaty, far from the Trans-Ili Alatau mountains."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "e06e70e3c0c4d062": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Murtasynov Street 69",
+    "confidence": 0.98,
+    "lat": 43.3348,
+    "lon": 76.8645,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "Murtasynov Street 69, Almaty, Kazakhstan",
+    "search_queries": [
+      "\u0443\u043b\u0438\u0446\u0430 \u041c\u0443\u0440\u0442\u0430\u0441\u044b\u043d\u043e\u0432\u0430 69 \u0410\u043b\u043c\u0430\u0442\u044b",
+      "Murtasynov street 69 Almaty",
+      "Almaty street sign QR code"
+    ],
+    "detected_text": [
+      "69",
+      "\u041c\u04b0\u0420\u0422\u0410\u0421\u042b\u041d\u041e\u0412",
+      "\u041a\u04e8\u0428\u0415\u0421\u0406",
+      "\u0423\u041b\u0418\u0426\u0410",
+      "STREET"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking towards the house facade",
+      "notes": "The photo is taken in a residential area (Karasu microdistrict) in the northern part of Almaty."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-West",
+      "city_sector": "\u041d\u0438\u0436\u043d\u044f\u044f \u0447\u0430\u0441\u0442\u044c",
+      "sector_lat": 43.3348,
+      "sector_lon": 76.8645,
+      "notes": "The location is in the Karasu microdistrict, which is in the 'lower' (northern) part of Almaty, far from the Trans-Ili Alatau mountains."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "0a896d13.jpg": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Karaotkel 58",
+    "confidence": 0.98,
+    "lat": 51.14442,
+    "lon": 71.41254,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Karaotkel 58, Astana, Kazakhstan",
+    "search_queries": [
+      "Karaotkel 58 Astana",
+      "\u041a\u0430\u0440\u0430\u043e\u0442\u043a\u0435\u043b\u044c 58 \u0410\u0441\u0442\u0430\u043d\u0430",
+      "Astana street sign QR code"
+    ],
+    "detected_text": [
+      "\u041a\u0430\u0440\u0430\u043e\u0442\u043a\u0435\u043b\u044c 58",
+      "Karaotkel 58"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking towards the building facade",
+      "notes": "Flat urban terrain typical of the Kazakh steppe in Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The location is in Astana, not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "This is an exterior shot of a building facade."
+    }
+  },
+  "b8f1b7b7bfed3421": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Astana",
+    "place_name": "Karaotkel 58",
+    "confidence": 0.98,
+    "lat": 51.14442,
+    "lon": 71.41254,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Karaotkel 58, Astana, Kazakhstan",
+    "search_queries": [
+      "Karaotkel 58 Astana",
+      "\u041a\u0430\u0440\u0430\u043e\u0442\u043a\u0435\u043b\u044c 58 \u0410\u0441\u0442\u0430\u043d\u0430",
+      "Astana street sign QR code"
+    ],
+    "detected_text": [
+      "\u041a\u0430\u0440\u0430\u043e\u0442\u043a\u0435\u043b\u044c 58",
+      "Karaotkel 58"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking towards the building facade",
+      "notes": "Flat urban terrain typical of the Kazakh steppe in Astana."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": null,
+      "city_sector": null,
+      "sector_lat": null,
+      "sector_lon": null,
+      "notes": "The location is in Astana, not Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "This is an exterior shot of a building facade."
+    }
+  },
+  "e869036e.jpg": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Ospanova Street, 39",
+    "confidence": 0.98,
+    "lat": 43.20412,
+    "lon": 76.96545,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Ospanova Street 39, Almaty, Kazakhstan",
+    "search_queries": [
+      "Almaty Ospanova 39 residential building",
+      "\u041e\u0441\u043f\u0430\u043d\u043e\u0432\u0430 39 \u0410\u043b\u043c\u0430\u0442\u044b 2GIS",
+      "modern brick apartment building Almaty curved balconies"
+    ],
+    "detected_text": [
+      "39",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East",
+      "notes": "The camera is facing away from the Zailiyskiy Alatau mountains which are located to the South (behind the photographer)."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-East away from the ridge",
+      "city_sector": "\u0412\u0435\u0440\u0445\u043d\u044f\u044f \u0447\u0430\u0441\u0442\u044c / \u041c\u0435\u0434\u0435\u0443",
+      "sector_lat": 43.20412,
+      "sector_lon": 76.96545,
+      "notes": "The building is located in the Medeu district, a prestigious 'upper' part of Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "7261f1b3b1d7419c": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Ospanova Street, 39",
+    "confidence": 0.98,
+    "lat": 43.20412,
+    "lon": 76.96545,
+    "radius_m": 15,
+    "driving_side": "RHT",
+    "osm_search_query": "Ospanova Street 39, Almaty, Kazakhstan",
+    "search_queries": [
+      "Almaty Ospanova 39 residential building",
+      "\u041e\u0441\u043f\u0430\u043d\u043e\u0432\u0430 39 \u0410\u043b\u043c\u0430\u0442\u044b 2GIS",
+      "modern brick apartment building Almaty curved balconies"
+    ],
+    "detected_text": [
+      "39",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-East",
+      "notes": "The camera is facing away from the Zailiyskiy Alatau mountains which are located to the South (behind the photographer)."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-East away from the ridge",
+      "city_sector": "\u0412\u0435\u0440\u0445\u043d\u044f\u044f \u0447\u0430\u0441\u0442\u044c / \u041c\u0435\u0434\u0435\u0443",
+      "sector_lat": 43.20412,
+      "sector_lon": 76.96545,
+      "notes": "The building is located in the Medeu district, a prestigious 'upper' part of Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "63a28a8f.jpg": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Otradnaya Street, 47",
+    "confidence": 0.98,
+    "lat": 43.210545,
+    "lon": 76.894485,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "Otradnaya Street 47, Almaty, Kazakhstan",
+    "search_queries": [
+      "\u041e\u0442\u0440\u0430\u0434\u043d\u0430\u044f 47 \u0410\u043b\u043c\u0430\u0442\u044b",
+      "Otradnaya 47 Almaty 2GIS",
+      "Almaty street sign blue QR code"
+    ],
+    "detected_text": [
+      "\u041e\u0442\u0440\u0430\u0434\u043d\u0430\u044f 47",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-West",
+      "notes": "The building facade faces roughly North-West; mountains are behind the camera to the South."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-West away from Zailiyskiy Alatau",
+      "city_sector": "\u0426\u0435\u043d\u0442\u0440",
+      "sector_lat": 43.2105,
+      "sector_lon": 76.8945,
+      "notes": "Located in the Bostandyk district. The white-painted tree trunks and specific blue street sign with a QR code are definitive for Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "94d0d1d96d3d2b1d": {
+    "is_indoor": false,
+    "scene_type": "residential",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Otradnaya Street, 47",
+    "confidence": 0.98,
+    "lat": 43.210545,
+    "lon": 76.894485,
+    "radius_m": 20,
+    "driving_side": "RHT",
+    "osm_search_query": "Otradnaya Street 47, Almaty, Kazakhstan",
+    "search_queries": [
+      "\u041e\u0442\u0440\u0430\u0434\u043d\u0430\u044f 47 \u0410\u043b\u043c\u0430\u0442\u044b",
+      "Otradnaya 47 Almaty 2GIS",
+      "Almaty street sign blue QR code"
+    ],
+    "detected_text": [
+      "\u041e\u0442\u0440\u0430\u0434\u043d\u0430\u044f 47",
+      "2GIS"
+    ],
+    "terrain_bearing": {
+      "feature": "none",
+      "direction": "Looking North-West",
+      "notes": "The building facade faces roughly North-West; mountains are behind the camera to the South."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": false,
+      "kok_tobe_visible": false,
+      "shooting_angle": "Looking North-West away from Zailiyskiy Alatau",
+      "city_sector": "\u0426\u0435\u043d\u0442\u0440",
+      "sector_lat": 43.2105,
+      "sector_lon": 76.8945,
+      "notes": "Located in the Bostandyk district. The white-painted tree trunks and specific blue street sign with a QR code are definitive for Almaty."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": null
+    }
+  },
+  "3e280183.jpg": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Hotel Kazakhstan",
+    "confidence": 0.99,
+    "lat": 43.2455,
+    "lon": 76.9555,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Hotel Kazakhstan, Dostyk Avenue, Almaty",
+    "search_queries": [
+      "Hotel Kazakhstan Almaty",
+      "Palace of the Republic Almaty",
+      "Kok Tobe TV Tower Almaty",
+      "Abay Square Almaty"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking South-East towards Zailiyskiy Alatau",
+      "notes": "The Zailiyskiy Alatau mountain range is clearly visible in the background behind the city skyline."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": true,
+      "kok_tobe_visible": true,
+      "shooting_angle": "Looking South-East toward Zailiyskiy Alatau and Kok-Tobe",
+      "city_sector": "\u0426\u0435\u043d\u0442\u0440",
+      "sector_lat": 43.2455,
+      "sector_lon": 76.9555,
+      "notes": "The iconic Hotel Kazakhstan is in the foreground, with the Palace of the Republic to its right and the Kok-Tobe TV tower illuminated on the hill in the distance."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "This is an aerial or high-angle outdoor cityscape photograph."
+    }
+  },
+  "0f0ecd4a4bcd8992": {
+    "is_indoor": false,
+    "scene_type": "street",
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "city": "Almaty",
+    "place_name": "Hotel Kazakhstan",
+    "confidence": 0.99,
+    "lat": 43.2455,
+    "lon": 76.9555,
+    "radius_m": 50,
+    "driving_side": "RHT",
+    "osm_search_query": "Hotel Kazakhstan, Dostyk Avenue, Almaty",
+    "search_queries": [
+      "Hotel Kazakhstan Almaty",
+      "Palace of the Republic Almaty",
+      "Kok Tobe TV Tower Almaty",
+      "Abay Square Almaty"
+    ],
+    "detected_text": [],
+    "terrain_bearing": {
+      "feature": "mountains",
+      "direction": "Looking South-East towards Zailiyskiy Alatau",
+      "notes": "The Zailiyskiy Alatau mountain range is clearly visible in the background behind the city skyline."
+    },
+    "almaty_mountain_bearing": {
+      "mountain_visible": true,
+      "kok_tobe_visible": true,
+      "shooting_angle": "Looking South-East toward Zailiyskiy Alatau and Kok-Tobe",
+      "city_sector": "\u0426\u0435\u043d\u0442\u0440",
+      "sector_lat": 43.2455,
+      "sector_lon": 76.9555,
+      "notes": "The iconic Hotel Kazakhstan is in the foreground, with the Palace of the Republic to its right and the Kok-Tobe TV tower illuminated on the hill in the distance."
+    },
+    "window_view": {
+      "has_window_view": false,
+      "window_landmarks": [],
+      "azimuth_deg": null,
+      "notes": "This is an aerial or high-angle outdoor cityscape photograph."
+    }
   }
 }

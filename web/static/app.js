@@ -5,12 +5,9 @@
 let map;
 let baseLayers = {};
 let currentLayerIndex = 0;
-let layerKeys = ['yandexSat', 'esriSat', 'googleSat', 'cartoDark', 'osm'];
+let layerKeys = ['googleSat', 'osm'];
 let layerNames = {
-  yandexSat: 'Спутник Яндекс',
-  esriSat: 'Esri Imagery',
   googleSat: 'Спутник Google',
-  cartoDark: 'Тёмная карта',
   osm: 'OpenStreetMap'
 };
 
@@ -201,28 +198,15 @@ function initMap() {
 
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  baseLayers.yandexSat = L.tileLayer('https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', {
-    maxZoom: 19
-  });
-
-  baseLayers.esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19
-  });
-
   baseLayers.googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
     maxZoom: 20
-  });
-
-  baseLayers.cartoDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    subdomains: 'abcd'
   });
 
   baseLayers.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
   });
 
-  baseLayers.yandexSat.addTo(map);
+  baseLayers.googleSat.addTo(map);
   updateLayerButtonText();
 
   map.on('click', (e) => {
@@ -285,14 +269,127 @@ function renderCasesNav() {
   if (!nav) return;
   nav.innerHTML = '';
 
+  if (!currentCases || currentCases.length === 0) {
+    nav.innerHTML = '<span class="cases-nav-empty">Нет открытых вкладок</span>';
+    return;
+  }
+
   currentCases.forEach(c => {
     const btn = document.createElement('button');
-    btn.className = `case-nav-btn ${activeCase && activeCase.id === c.id ? 'active' : ''}`;
+    const isActive = activeCase && activeCase.id === c.id;
+    btn.className = `case-nav-btn ${isActive ? 'active' : ''}`;
     btn.dataset.id = c.id;
-    btn.innerHTML = `<span>📍</span> <span>${c.title}</span>`;
-    btn.addEventListener('click', () => selectCase(c.id, true));
+    const titleText = (c.title || 'Локация').trim();
+    btn.title = `${titleText}\n(Кликните средней кнопкой мыши или [×] для закрытия)`;
+
+    btn.innerHTML = `
+      <span class="case-nav-pin">📍</span>
+      <span class="case-nav-title">${escapeHtml(titleText)}</span>
+      <span class="case-nav-close" data-id="${c.id}" title="Закрыть вкладку">&times;</span>
+    `;
+
+    // Click to select tab (unless close button clicked)
+    btn.addEventListener('click', (e) => {
+      if (e.target.closest('.case-nav-close')) {
+        return;
+      }
+      selectCase(c.id, true);
+    });
+
+    // Middle-click (wheel click) closes tab like browser tabs
+    btn.addEventListener('auxclick', (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeCase(c.id);
+      }
+    });
+
+    // Close button click
+    const closeBtn = btn.querySelector('.case-nav-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeCase(c.id);
+      });
+    }
+
     nav.appendChild(btn);
   });
+
+  // If there are 2 or more tabs, show "Очистить все"
+  if (currentCases.length >= 2) {
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'case-nav-clear';
+    clearBtn.title = 'Закрыть все открытые вкладки';
+    clearBtn.innerHTML = `<span>✕</span><span>Очистить (${currentCases.length})</span>`;
+    clearBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeAllCases();
+    });
+    nav.appendChild(clearBtn);
+  }
+}
+
+async function closeCase(caseId) {
+  const caseIndex = currentCases.findIndex(c => c.id === caseId);
+  if (caseIndex === -1) return;
+
+  const closingActive = activeCase && activeCase.id === caseId;
+
+  // Optimistically remove from frontend list
+  currentCases.splice(caseIndex, 1);
+
+  // Send DELETE to backend
+  try {
+    fetch(`/api/cases/${caseId}`, { method: 'DELETE' }).catch(err => {
+      console.warn('Failed to delete case from server:', err);
+    });
+  } catch (err) {
+    console.warn(err);
+  }
+
+  // Update UI components
+  renderHomeShowcase();
+  renderHeroQuickPills();
+
+  if (currentCases.length === 0) {
+    activeCase = null;
+    renderCasesNav();
+    if (currentView === 'map') {
+      switchView('home');
+    }
+  } else {
+    if (closingActive) {
+      // Pick next adjacent tab
+      const nextIndex = Math.min(caseIndex, currentCases.length - 1);
+      const nextCase = currentCases[nextIndex];
+      selectCase(nextCase.id, currentView === 'map');
+    } else {
+      renderCasesNav();
+    }
+  }
+}
+
+async function closeAllCases() {
+  if (!currentCases || currentCases.length === 0) return;
+  const count = currentCases.length;
+  if (!confirm(`Закрыть все открытые вкладки (${count} шт.)?`)) return;
+
+  const idsToDelete = currentCases.map(c => c.id);
+  currentCases = [];
+  activeCase = null;
+
+  renderCasesNav();
+  renderHomeShowcase();
+  renderHeroQuickPills();
+  switchView('home');
+
+  for (const id of idsToDelete) {
+    fetch(`/api/cases/${id}`, { method: 'DELETE' }).catch(() => {});
+  }
 }
 
 function renderHeroQuickPills() {
@@ -369,6 +466,7 @@ function renderHomeShowcase(searchQuery = currentShowcaseSearch, filterTag = cur
     card.innerHTML = `
       <div class="showcase-image-wrap">
         <img src="${c.main_photo}" alt="${c.title}" class="showcase-image" loading="lazy">
+        <button class="showcase-card-close" data-id="${c.id}" title="Закрыть / удалить дело">&times;</button>
         <div class="showcase-badges">
           <span class="country-badge">${flagBadge} ${escapeHtml(c.country || 'Global')}</span>
           ${isIndoorBadge}
@@ -398,6 +496,15 @@ function renderHomeShowcase(searchQuery = currentShowcaseSearch, filterTag = cur
         </div>
       </div>
     `;
+
+    const btnCardClose = card.querySelector('.showcase-card-close');
+    if (btnCardClose) {
+      btnCardClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeCase(c.id);
+      });
+    }
 
     const btnCardRescan = card.querySelector('.btn-card-rescan');
     if (btnCardRescan) {
@@ -436,13 +543,22 @@ function selectCase(caseId, navigateToMap = true) {
 }
 
 function updateSidebar(c) {
+  if (!c) return;
   const flagText = getCountryFlag(c.country_code, c.country);
   document.getElementById('caseCountry').innerHTML = `${flagText} &bull; ${escapeHtml(c.country || 'ЛОКАЦИЯ')}`;
   const confEl = document.getElementById('caseConfidence');
   if (confEl) {
     confEl.innerHTML = `${escapeHtml(c.confidence || 'ВЕРИФИЦИРОВАНО')} ${c.is_indoor ? '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;margin-left:5px;">🏠 INDOOR</span>' : ''}`;
   }
-  document.getElementById('caseTitle').textContent = c.title;
+  const btnCloseActive = document.getElementById('btnCloseActiveCase');
+  if (btnCloseActive) {
+    btnCloseActive.onclick = () => {
+      if (activeCase) {
+        closeCase(activeCase.id);
+      }
+    };
+  }
+
   const locDetail = [c.city, c.region].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' &bull; ') || '';
   document.getElementById('caseRegion').innerHTML = escapeHtml(locDetail);
 
@@ -675,6 +791,7 @@ function renderMapMarkers(c) {
   if (mapMarkers.target) map.removeLayer(mapMarkers.target);
   if (mapMarkers.sightLine) map.removeLayer(mapMarkers.sightLine);
   if (mapMarkers.accuracyCircle) map.removeLayer(mapMarkers.accuracyCircle);
+  if (!c) return;
 
   const camLatLng = [c.camera_lat, c.camera_lon];
   const targetLatLng = [c.target_lat, c.target_lon];
@@ -1330,6 +1447,9 @@ function setupEventListeners() {
   setupWaybackModal();
   setupInspectorModal();
   setupEvidenceSheetModal();
+  setupGeoJsonModal();
+  setupApiDocsModal();
+  setup2GisVenueModal();
 }
 
 function openUploadModalWithFile(file) {
@@ -2412,13 +2532,371 @@ function exportKml(c = activeCase) {
 }
 
 function exportGeoJson(c = activeCase) {
-  if (!c) {
-    showToast('Сначала выберите кейс', 'warning');
+  openGeoJsonModal(c);
+}
+
+function openGeoJsonModal(c = activeCase) {
+  const modal = document.getElementById('geojsonModal');
+  if (!modal) {
+    if (c) window.location.href = `/api/cases/${c.id}/geojson?download=1`;
     return;
   }
+  modal.style.display = 'flex';
   playRadarSound('click');
-  showToast(`Экспорт ${c.title} в GeoJSON...`, 'success');
-  window.open(`/api/cases/${c.id}/geojson`, '_blank');
+  if (window._loadGeoJsonPreview) {
+    window._loadGeoJsonPreview('current');
+  }
+}
+
+function setupGeoJsonModal() {
+  const modal = document.getElementById('geojsonModal');
+  const btnClose = document.getElementById('btnCloseGeoJsonModal');
+  const previewBox = document.getElementById('geoJsonPreviewBox');
+  const endpointUrlSpan = document.getElementById('geoJsonEndpointUrl');
+  const btnDownload = document.getElementById('btnDownloadGeoJsonFile');
+  const btnCopy = document.getElementById('btnCopyGeoJsonClipboard');
+  const btnCopyUrl = document.getElementById('btnCopyApiUrl');
+  const btnOpenGeoJsonIo = document.getElementById('btnOpenGeoJsonIo');
+  const btnScopeCurrent = document.getElementById('btnGeoJsonScopeCurrent');
+  const btnScopeAll = document.getElementById('btnGeoJsonScopeAll');
+
+  let currentScope = 'current';
+  let currentGeoJsonData = null;
+
+  async function loadAndShowGeoJson(scope = 'current') {
+    currentScope = scope;
+    if (btnScopeCurrent && btnScopeAll) {
+      if (scope === 'current') {
+        btnScopeCurrent.classList.add('active', 'btn-primary');
+        btnScopeCurrent.classList.remove('btn-secondary');
+        btnScopeAll.classList.remove('active', 'btn-primary');
+        btnScopeAll.classList.add('btn-secondary');
+      } else {
+        btnScopeAll.classList.add('active', 'btn-primary');
+        btnScopeAll.classList.remove('btn-secondary');
+        btnScopeCurrent.classList.remove('active', 'btn-primary');
+        btnScopeCurrent.classList.add('btn-secondary');
+      }
+    }
+
+    let url = '';
+    if (scope === 'current') {
+      if (!activeCase) {
+        if (previewBox) previewBox.textContent = 'Сначала выберите кейс для просмотра GeoJSON';
+        return;
+      }
+      url = `/api/cases/${activeCase.id}/geojson`;
+    } else {
+      url = '/api/cases/geojson';
+    }
+
+    if (endpointUrlSpan) {
+      endpointUrlSpan.textContent = url;
+    }
+
+    if (previewBox) {
+      previewBox.textContent = 'Загрузка GeoJSON...';
+    }
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      currentGeoJsonData = await res.json();
+      const prettyJson = JSON.stringify(currentGeoJsonData, null, 2);
+      if (previewBox) {
+        previewBox.textContent = prettyJson;
+      }
+
+      if (btnOpenGeoJsonIo) {
+        const encoded = encodeURIComponent(JSON.stringify(currentGeoJsonData));
+        btnOpenGeoJsonIo.href = `https://geojson.io/#data=data:application/json,${encoded}`;
+      }
+    } catch (err) {
+      if (previewBox) previewBox.textContent = `Ошибка загрузки: ${err.message}`;
+    }
+  }
+
+  window._loadGeoJsonPreview = loadAndShowGeoJson;
+
+  const btnExportGeoJson = document.getElementById('btnExportGeoJson');
+  if (btnExportGeoJson) {
+    btnExportGeoJson.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGeoJsonModal(activeCase);
+    });
+  }
+
+  if (btnScopeCurrent) {
+    btnScopeCurrent.addEventListener('click', () => loadAndShowGeoJson('current'));
+  }
+
+  if (btnScopeAll) {
+    btnScopeAll.addEventListener('click', () => loadAndShowGeoJson('all'));
+  }
+
+  if (btnDownload) {
+    btnDownload.addEventListener('click', () => {
+      if (currentScope === 'current' && activeCase) {
+        window.location.href = `/api/cases/${activeCase.id}/geojson?download=1`;
+      } else {
+        window.location.href = '/api/cases/geojson?download=1';
+      }
+      playRadarSound('lock');
+      showToast('Скачивание файла .geojson запущено', 'success');
+    });
+  }
+
+  if (btnCopy) {
+    btnCopy.addEventListener('click', () => {
+      if (!currentGeoJsonData) return;
+      navigator.clipboard.writeText(JSON.stringify(currentGeoJsonData, null, 2)).then(() => {
+        showToast('GeoJSON скопирован в буфер обмена!', 'success');
+        playRadarSound('click');
+      }).catch(() => {
+        showToast('Не удалось скопировать в буфер', 'warning');
+      });
+    });
+  }
+
+  if (btnCopyUrl) {
+    btnCopyUrl.addEventListener('click', () => {
+      const fullUrl = window.location.origin + (endpointUrlSpan ? endpointUrlSpan.textContent : '/api/cases/geojson');
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast('API URL скопирован!', 'success');
+      });
+    });
+  }
+
+  if (btnClose) {
+    btnClose.addEventListener('click', () => {
+      if (modal) modal.style.display = 'none';
+    });
+  }
+}
+
+// REST API v1 Integration Modal
+function openApiDocsModal() {
+  const modal = document.getElementById('apiDocsModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    playRadarSound('click');
+  }
+}
+
+function setupApiDocsModal() {
+  const modal = document.getElementById('apiDocsModal');
+  const btnOpenTop = document.getElementById('btnOpenApiModal');
+  const btnOpenCase = document.getElementById('btnCaseApiDocs');
+  const btnClose = document.getElementById('btnCloseApiDocsModal');
+  const snippetBox = document.getElementById('apiSnippetContent');
+  const btnCopy = document.getElementById('btnCopyApiSnippet');
+  const tabContainer = document.getElementById('apiSnippetTabs');
+
+  if (btnOpenTop) {
+    btnOpenTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      openApiDocsModal();
+    });
+  }
+
+  if (btnOpenCase) {
+    btnOpenCase.addEventListener('click', (e) => {
+      e.preventDefault();
+      openApiDocsModal();
+    });
+  }
+
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+  }
+
+  const origin = window.location.origin || 'http://127.0.0.1:8765';
+
+  const snippets = {
+    python: `import requests
+
+# 1. Поиск геолокации по фотографии (отправка файла):
+url = "${origin}/api/v1/locate"
+with open("target_photo.jpg", "rb") as f:
+    response = requests.post(
+        url,
+        files={"file": f},
+        data={"region_mode": "global"}  # "global" (весь мир) или "kz" (Казахстан)
+    )
+
+data = response.json()
+print("Координаты:", data["coordinates"]["lat"], data["coordinates"]["lon"])
+print("Название:", data["location"]["title"])
+print("Страна / Город:", data["location"]["country"], "/", data["location"]["city"])
+print("Точность (CEP): ±", data["error_radius_m"], "метров")
+print("Google Maps:", data["maps"]["google"])
+print("GeoJSON объект:", data["geojson"])
+
+# 2. Поиск по ссылке на фото из интернета:
+resp = requests.post(url, data={
+    "image_url": "https://example.com/satellite_or_phone_image.jpg",
+    "region_mode": "global"
+})
+print("Результат по URL:", resp.json()["coordinates"])
+
+# 3. Получение списка всех расследований:
+cases = requests.get("${origin}/api/v1/cases?limit=50").json()
+print("Всего в базе:", cases["total"])`,
+
+    js: `// Поиск геолокации по фото (Браузер / Node.js 18+)
+async function locatePhoto(fileBlob) {
+  const formData = new FormData();
+  formData.append('file', fileBlob);
+  formData.append('region_mode', 'global'); // 'global' или 'kz'
+
+  const res = await fetch('${origin}/api/v1/locate', {
+    method: 'POST',
+    body: formData
+  });
+
+  const data = await res.json();
+  console.log('Координаты:', data.coordinates);
+  console.log('Локация:', data.location);
+  console.log('Погрешность CEP:', data.error_radius_m + 'м');
+  console.log('Ссылки на карты:', data.maps);
+  return data;
+}
+
+// Запрос всех верифицированных точек в формате GeoJSON:
+async function loadGeoJsonLayer() {
+  const res = await fetch('${origin}/api/v1/geojson');
+  const geojson = await res.json();
+  console.log('GeoJSON FeatureCollection:', geojson);
+  return geojson;
+}`,
+
+    curl: `# 1. Определение геопозиции по локальному фото через терминал:
+curl -X POST "${origin}/api/v1/locate" \\
+  -F "file=@/path/to/my_photo.jpg" \\
+  -F "region_mode=global"
+
+# 2. Анализ изображения по веб-ссылке:
+curl -X POST "${origin}/api/v1/locate" \\
+  -F "image_url=https://upload.wikimedia.org/wikipedia/commons/sample.jpg"
+
+# 3. Выгрузка всех верифицированных расследований в файл GeoJSON:
+curl -s "${origin}/api/v1/geojson" -o investigations.geojson
+
+# 4. Проверка статуса и готовности сервиса:
+curl -s "${origin}/api/v1/health"`,
+
+    qgis: `=== Подключение слоя GeoSleuth в QGIS / ArcGIS ===
+
+1. В QGIS откройте:
+   Меню "Слой" -> "Добавить слой" -> "Добавить векторный слой..."
+
+2. В типе источника выберите:
+   (•) Протокол: HTTP(S), cloud...
+
+3. В поле URL вставьте:
+   ${origin}/api/v1/geojson
+
+4. Нажмите "Добавить" (Add).
+   Слой мгновенно отобразит все маркеры объектов, круги погрешности (CEP)
+   и линии визирования с полной криминалистической атрибутивной таблицей!
+
+=== Подключение в Leaflet / Mapbox на веб-карте ===
+fetch('${origin}/api/v1/geojson')
+  .then(res => res.json())
+  .then(geojson => {
+    L.geoJSON(geojson, {
+      style: feature => ({
+        color: feature.properties.stroke || '#06b6d4',
+        fillColor: feature.properties.fill || '#06b6d4',
+        fillOpacity: feature.properties['fill-opacity'] || 0.2
+      })
+    }).bindPopup(layer => layer.feature.properties.title).addTo(map);
+  });`,
+
+    endpoints: `=== Справочник REST API v1 (GeoSleuth Intelligence Hub) ===
+
+Базовый URL: ${origin}
+
+[POST]  /api/v1/locate
+        Анализ фото (файл multipart или image_url), определение координат,
+        страны, города, радиуса CEP и генерация GeoJSON.
+
+[GET]   /api/v1/geojson
+        Живой поток GeoJSON (RFC 7946) всех расследований для ГИС.
+        Параметры: ?country=... &limit=... &download=1
+
+[GET]   /api/v1/cases
+        Список расследований с пагинацией и поиском.
+        Параметры: ?q=... &country=... &limit=50 &offset=0
+
+[GET]   /api/v1/cases/{case_id}
+        Полное досье расследования по ID со всеми уликами.
+
+[GET]   /api/v1/cases/{case_id}/geojson
+        GeoJSON конкретного дела (цель, камера, луч, буфер).
+
+[GET]   /api/v1/health
+        Хелсчек для микросервисов и мониторинга (Docker / K8s).
+
+[GET]   /docs
+        Интерактивный Swagger UI в браузере.
+
+[GET]   /redoc
+        Спецификация ReDoc для интеграторов.
+
+[GET]   /openapi.json
+        Машиночитаемая спецификация OpenAPI 3.0.`
+  };
+
+  let activeTab = 'python';
+
+  function renderSnippet(tabKey) {
+    activeTab = tabKey;
+    if (snippetBox) {
+      snippetBox.textContent = snippets[tabKey] || snippets.python;
+    }
+    if (tabContainer) {
+      tabContainer.querySelectorAll('button').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabKey) {
+          btn.classList.add('active', 'btn-primary');
+          btn.classList.remove('btn-secondary');
+        } else {
+          btn.classList.remove('active', 'btn-primary');
+          btn.classList.add('btn-secondary');
+        }
+      });
+    }
+  }
+
+  if (tabContainer) {
+    tabContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-tab]');
+      if (btn) {
+        const tab = btn.getAttribute('data-tab');
+        renderSnippet(tab);
+        playRadarSound('click');
+      }
+    });
+  }
+
+  if (btnCopy) {
+    btnCopy.addEventListener('click', () => {
+      const text = snippets[activeTab] || '';
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Пример кода скопирован в буфер обмена!', 'success');
+        playRadarSound('lock');
+      }).catch(() => {
+        showToast('Не удалось скопировать', 'warning');
+      });
+    });
+  }
+
+  renderSnippet('python');
 }
 
 // ELA Forensic Analysis Modal
@@ -3723,46 +4201,148 @@ function renderRadarBlips(cx, cy, maxRadius) {
 }
 
 function setupRadarTools() {
-  const btnIin = document.getElementById('btnValidateIin');
-  const inputIin = document.getElementById('radarIinInput');
-  const resIin = document.getElementById('radarIinResult');
+  // Tool 1: Gastronomic & Price Triangulation
+  const btnMenu = document.getElementById('btnRadarAnalyzeMenu');
+  const inputMenu = document.getElementById('radarMenuInput');
+  const resMenu = document.getElementById('radarMenuResult');
 
-  if (btnIin && inputIin && resIin) {
-    btnIin.onclick = async () => {
-      const code = inputIin.value.trim();
-      if (!code) return;
+  if (btnMenu && inputMenu && resMenu) {
+    btnMenu.onclick = async () => {
+      const text = inputMenu.value.trim();
+      if (!text) return;
+      btnMenu.disabled = true;
+      btnMenu.textContent = 'Анализ...';
       try {
-        const res = await fetch('/api/kz/validate-iin-bin', {
+        const res = await fetch('/api/venue/menu-triangulate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code })
+          body: JSON.stringify({ text })
         });
         const data = await res.json();
-        resIin.style.display = 'block';
+        resMenu.style.display = 'block';
 
-        if (data.valid) {
-          resIin.innerHTML = `
-            <div style="color: var(--accent-emerald); font-weight: 700; margin-bottom: 6px;">
-              ✅ ${data.entity_type}: Контрольная сумма валидна!
-            </div>
-            <div><b>Дата рождения/регистрации:</b> ${data.details.birth_or_reg_date}</div>
-            <div><b>Пол:</b> ${data.details.gender}</div>
-            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
-              <a href="${data.details.egov_url}" target="_blank" class="btn btn-xs btn-secondary">🔍 Stat.gov.kz</a>
-              <a href="${data.details.kompra_url}" target="_blank" class="btn btn-xs btn-secondary">📊 Kompra.kz</a>
-              <a href="${data.details.adata_url}" target="_blank" class="btn btn-xs btn-secondary">🏢 Adata.kz</a>
-            </div>
-          `;
-        } else {
-          resIin.innerHTML = `
-            <div style="color: var(--accent-rose); font-weight: 700;">
-              ❌ Ошибка: ${data.error || 'Неверная контрольная сумма ИИН/БИН по алгоритму РК'}
+        let dishesHtml = '';
+        if (data.found_dishes && data.found_dishes.length > 0) {
+          dishesHtml = `
+            <div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+              ${data.found_dishes.map(d => `<span class="badge" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399;">${d.icon} ${d.dish} (${d.cuisine})</span>`).join('')}
             </div>
           `;
         }
+
+        resMenu.innerHTML = `
+          <div style="color: #38bdf8; font-weight: 700; margin-bottom: 4px;">
+            ${data.detected_currency ? `${data.detected_currency.flag} Валюта: ${data.detected_currency.currency} (${data.detected_currency.country})` : 'Валюта не указана'}
+          </div>
+          <div style="font-size: 0.82rem; color: #f8fafc;">
+            <b>Ценовой сегмент:</b> ${data.price_tier}
+          </div>
+          ${data.median_price ? `<div style="font-size: 0.78rem; color: #94a3b8;">Медианная цена позиции: ~${data.median_price} ${data.detected_currency?.currency || ''}</div>` : ''}
+          ${dishesHtml}
+          <div style="margin-top: 6px; font-size: 0.78rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 4px;">
+            📌 <b>Сводка:</b> ${data.summary}
+          </div>
+        `;
       } catch (err) {
-        resIin.style.display = 'block';
-        resIin.innerHTML = `<div style="color: var(--accent-rose);">Ошибка запроса: ${err.message}</div>`;
+        resMenu.style.display = 'block';
+        resMenu.innerHTML = `<div style="color: var(--accent-rose);">Ошибка анализа: ${err.message}</div>`;
+      } finally {
+        btnMenu.disabled = false;
+        btnMenu.textContent = 'Триангуляция';
+      }
+    };
+  }
+
+  // Tool 1b: Mall Brand Co-occurrence Clusterer
+  const btnMall = document.getElementById('btnRadarClusterMall');
+  const inputMall = document.getElementById('radarMallInput');
+  const resMall = document.getElementById('radarMallResult');
+
+  if (btnMall && inputMall && resMall) {
+    btnMall.onclick = async () => {
+      const raw = inputMall.value.trim();
+      if (!raw) return;
+      const brands = raw.split(/[,;\n]+/).map(b => b.trim()).filter(Boolean);
+      btnMall.disabled = true;
+      btnMall.textContent = 'Поиск ТРЦ...';
+      try {
+        const res = await fetch('/api/venue/mall-cluster', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ brands })
+        });
+        const malls = await res.json();
+        resMall.style.display = 'block';
+
+        if (!malls || malls.length === 0) {
+          resMall.innerHTML = `<div style="color: #f87171;">ТРЦ с указанной комбинацией брендов не найдено. Попробуйте добавить якорные бренды (Zara, CoffeeBoom, Kinopark, H&M).</div>`;
+        } else {
+          resMall.innerHTML = malls.slice(0, 3).map(m => `
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <b style="color: #38bdf8;">${m.mall_name} (${m.city})</b>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #4ade80;">Совпадение: ${Math.round(m.confidence * 100)}%</span>
+              </div>
+              <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 2px;">📍 ${m.address}</div>
+              <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 4px;">
+                Совпавшие бренды: <b>${m.matched_brands.join(', ')}</b>
+              </div>
+              <div style="margin-top: 6px;">
+                <a href="${m.twogis_url}" target="_blank" class="btn btn-xs btn-2gis">Открыть ТРЦ в 2ГИС ↗</a>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        resMall.style.display = 'block';
+        resMall.innerHTML = `<div style="color: var(--accent-rose);">Ошибка поиска ТРЦ: ${err.message}</div>`;
+      } finally {
+        btnMall.disabled = false;
+        btnMall.textContent = 'Найти ТРЦ';
+      }
+    };
+  }
+
+  // Tool 1c: Through-the-Window Bus Route Triangulation
+  const btnBus = document.getElementById('btnRadarLookupBus');
+  const inputBus = document.getElementById('radarBusInput');
+  const resBus = document.getElementById('radarBusResult');
+
+  if (btnBus && inputBus && resBus) {
+    btnBus.onclick = async () => {
+      const query = inputBus.value.trim();
+      if (!query) return;
+      btnBus.disabled = true;
+      btnBus.textContent = 'Маршрут...';
+      try {
+        const res = await fetch('/api/venue/bus-routes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+        const routes = await res.json();
+        resBus.style.display = 'block';
+
+        if (!routes || routes.length === 0) {
+          resBus.innerHTML = `<div style="color: #f87171;">Маршрут не найден в базе ключевых артерий. Проверьте номер (например: 10, 12, 32, 47, 79, 92).</div>`;
+        } else {
+          resBus.innerHTML = routes.map(r => `
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px;">
+              <div style="color: #fbbf24; font-weight: 700;">🚌 ${r.title}</div>
+              <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 2px;">Оператор: ${r.operators} (${r.city})</div>
+              <div style="font-size: 0.78rem; color: #e2e8f0; margin-top: 4px;">
+                <b>Ключевые проспекты и остановки:</b><br>
+                ${r.key_corridors.map(c => `• ${c}`).join('<br>')}
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        resBus.style.display = 'block';
+        resBus.innerHTML = `<div style="color: var(--accent-rose);">Ошибка запроса: ${err.message}</div>`;
+      } finally {
+        btnBus.disabled = false;
+        btnBus.textContent = 'Маршрут';
       }
     };
   }
@@ -4171,6 +4751,420 @@ async function fetchAndRenderKazakhSignboards(c) {
   }
 }
 
+function setup2GisVenueModal() {
+  const btnOpen = document.getElementById('btnOpen2GisVenueModal');
+  const modal = document.getElementById('twogisVenueModal');
+  const btnClose = document.getElementById('btnClose2GisVenueModal');
+  const btnCancel = document.getElementById('btnCancel2GisVenueModal');
+  const btnSearch = document.getElementById('btnTwogisSearch');
+  const inputQuery = document.getElementById('twogisSearchQuery');
+  const selectCity = document.getElementById('twogisSearchCity');
+  const imgInvestigation = document.getElementById('twogisInvestigationImg');
+  const caseBadge = document.getElementById('twogisCaseTitleBadge');
+  const cluesEl = document.getElementById('twogisInvestigationClues');
+  const qrContainer = document.getElementById('twogisQrBadgeContainer');
+  const candidatesList = document.getElementById('twogisCandidatesList');
+  const countBadge = document.getElementById('twogisResultsCount');
 
+  // Specialized Sub-Tools
+  const btnTab2Gis = document.getElementById('btnTab2GisBranches');
+  const btnVlm = document.getElementById('btnRunVlmDetective');
+  const btnMirror = document.getElementById('btnRunMirrorFlip');
+  const btnInfra = document.getElementById('btnRunIndoorMarkers');
+  const reportBox = document.getElementById('venueSpecialReportBox');
 
+  let originalPhotoUrl = '';
 
+  function setActiveSubTool(activeBtn) {
+    [btnTab2Gis, btnVlm, btnMirror, btnInfra].forEach(b => {
+      if (b) {
+        b.classList.remove('btn-2gis');
+        b.classList.add('btn-secondary');
+      }
+    });
+    if (activeBtn) {
+      activeBtn.classList.remove('btn-secondary');
+      activeBtn.classList.add('btn-2gis');
+    }
+  }
+
+  if (btnTab2Gis) {
+    btnTab2Gis.addEventListener('click', () => {
+      setActiveSubTool(btnTab2Gis);
+      if (reportBox) reportBox.style.display = 'none';
+      if (imgInvestigation && originalPhotoUrl) imgInvestigation.src = originalPhotoUrl;
+    });
+  }
+
+  if (btnVlm) {
+    btnVlm.addEventListener('click', async () => {
+      if (!activeCase) return;
+      setActiveSubTool(btnVlm);
+      if (reportBox) {
+        reportBox.style.display = 'block';
+        reportBox.innerHTML = `
+          <div style="background: rgba(147, 51, 234, 0.15); border: 1px solid #a855f7; border-radius: 8px; padding: 12px; color: #e9d5ff;">
+            <div style="font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span class="ai-btn-pulse">🧠</span>
+              <span>VLM-Детектив: Архитектурное деконструирование интерьера (Gemini Vision)...</span>
+            </div>
+            <div style="font-size: 0.78rem; margin-top: 4px; color: #d8b4fe;">Анализ 5 слоев: потолочные коммуникации, люстры, напольные покрытия, зонирование мебели, оконные переплёты.</div>
+          </div>
+        `;
+      }
+      playRadarSound('radar');
+
+      try {
+        const res = await fetch(`/api/cases/${activeCase.id}/venue-vlm-detective`, { method: 'POST' });
+        const vlm = await res.json();
+        if (reportBox) {
+          const arch = vlm.architectural_fingerprint || {};
+          const chains = vlm.candidate_chains || [];
+          reportBox.innerHTML = `
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid #a855f7; border-radius: 8px; padding: 14px; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <b style="color: #c084fc; font-size: 0.95rem;">🧠 Экспертное заключение VLM «Детектив заведений» (${vlm.source || 'Gemini Vision'})</b>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.25); border: 1px solid #c084fc; color: #f3e8ff;">${vlm.venue_type || 'HoReCa'}</span>
+              </div>
+              <div style="font-size: 0.82rem; color: #f1f5f9; margin-bottom: 8px;">
+                <b>Стиль интерьера:</b> ${vlm.design_style || 'Современный урбан'}
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.76rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+                <div>💡 <b>Люстры/Свет:</b> ${arch.chandeliers || 'Теплый подвесной'}</div>
+                <div>🏗️ <b>Потолок:</b> ${arch.ceiling || 'Лофт коммуникации'}</div>
+                <div>🪨 <b>Пол/Плитка:</b> ${arch.floor || 'Керамогранит'}</div>
+                <div>🪑 <b>Мебель:</b> ${arch.furniture || 'Дерево / велюр'}</div>
+              </div>
+              <div style="margin-top: 8px; font-size: 0.78rem; color: #a5f3fc;">
+                <b>Гипотезы сетей:</b> ${chains.map(c => `<span class="badge" style="background: rgba(6, 182, 212, 0.2); border: 1px solid #06b6d4; color: #67e8f9; margin-left: 4px;">${c.chain_name} (${Math.round((c.confidence || 0.8) * 100)}%)</span>`).join('')}
+              </div>
+              <div style="margin-top: 6px; font-size: 0.78rem; color: #e2e8f0; font-style: italic;">
+                "${vlm.verdict_summary || ''}"
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        if (reportBox) reportBox.innerHTML = `<div style="color: #f87171;">Ошибка анализа VLM: ${err.message}</div>`;
+      }
+    });
+  }
+
+  if (btnMirror) {
+    btnMirror.addEventListener('click', async () => {
+      if (!activeCase) return;
+      setActiveSubTool(btnMirror);
+      playRadarSound('radar');
+
+      if (reportBox) {
+        reportBox.style.display = 'block';
+        reportBox.innerHTML = `
+          <div style="background: rgba(14, 165, 233, 0.15); border: 1px solid #0ea5e9; border-radius: 8px; padding: 10px; color: #7dd3fc; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <b>🪞 Through-the-Window OSINT: Зеркальный инвертор применён!</b>
+              <div style="font-size: 0.76rem; color: #bae6fd;">Изображение отзеркалено с фильтром CLAHE. Теперь вывески на витринах, отражения в бокалах и окнах читаются в прямом направлении.</div>
+            </div>
+            <button class="btn btn-xs btn-secondary" id="btnToggleOrigPhoto" style="font-size: 0.72rem;">Показать оригинал</button>
+          </div>
+        `;
+        document.getElementById('btnToggleOrigPhoto')?.addEventListener('click', () => {
+          if (imgInvestigation) imgInvestigation.src = originalPhotoUrl;
+        });
+      }
+
+      try {
+        const res = await fetch(`/api/cases/${activeCase.id}/mirror-reflection`, { method: 'POST' });
+        const mirrorData = await res.json();
+        if (mirrorData.mirror_image_url && imgInvestigation) {
+          imgInvestigation.src = mirrorData.mirror_image_url + '?t=' + Date.now();
+          showToast('Зеркальная инверсия улик сформирована!', 'info');
+        }
+      } catch (err) {
+        showToast('Ошибка инвертора: ' + err.message, 'error');
+      }
+    });
+  }
+
+  if (btnInfra) {
+    btnInfra.addEventListener('click', async () => {
+      if (!activeCase) return;
+      setActiveSubTool(btnInfra);
+      playRadarSound('radar');
+
+      try {
+        const res = await fetch(`/api/cases/${activeCase.id}/indoor-markers`, { method: 'POST' });
+        const infra = await res.json();
+        if (reportBox) {
+          reportBox.style.display = 'block';
+          const posList = infra.pos_acquiring || [];
+          const exitSign = infra.exit_sign;
+          const socket = infra.socket_type;
+
+          reportBox.innerHTML = `
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid #10b981; border-radius: 8px; padding: 12px;">
+              <b style="color: #34d399; font-size: 0.9rem;">🔌 Инфраструктурные маркеры помещения</b>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-top: 8px; font-size: 0.78rem;">
+                <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+                  <b>⚡ Розетки:</b><br>
+                  <span style="color: #38bdf8;">${socket?.standard || 'Type C / F (Евро 220V)'}</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+                  <b>🚪 Табличка «Выход»:</b><br>
+                  <span style="color: #4ade80;">${exitSign ? `${exitSign.flag} ${exitSign.type}` : 'Зеленый ISO / ГОСТ «Выход»'}</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+                  <b>💳 Эквайринг & Терминалы:</b><br>
+                  ${posList.length > 0 ? posList.map(p => `<span class="badge" style="background: #059669; color: white;">${p.name} (${p.country})</span>`).join(' ') : '<span style="color: #94a3b8;">Kaspi Pay / Halyk эквайринг РК</span>'}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        if (reportBox) reportBox.innerHTML = `<div style="color: #f87171;">Ошибка анализа инфраструктуры: ${err.message}</div>`;
+      }
+    });
+  }
+
+  if (!modal) return;
+
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  if (btnClose) btnClose.addEventListener('click', closeModal);
+  if (btnCancel) btnCancel.addEventListener('click', closeModal);
+
+  if (btnOpen) {
+    btnOpen.addEventListener('click', async () => {
+      if (!activeCase) {
+        showToast('Выберите кейс для сверки с 2ГИС', 'warning');
+        return;
+      }
+
+      modal.style.display = 'flex';
+      playRadarSound('radar');
+
+      // Save original photo for restore
+      originalPhotoUrl = activeCase.main_photo || '';
+      setActiveSubTool(btnTab2Gis);
+      if (reportBox) reportBox.style.display = 'none';
+
+      // Populate left column
+      if (imgInvestigation) {
+        imgInvestigation.src = originalPhotoUrl;
+      }
+      if (caseBadge) {
+        caseBadge.textContent = activeCase.title || activeCase.id;
+      }
+      if (cluesEl && activeCase.clues) {
+        const interiorClues = activeCase.clues.slice(0, 3).map(c => `• ${c}`).join('<br>');
+        cluesEl.innerHTML = `<strong>Улики расследования:</strong><br>${interiorClues || 'Визуальный анализ интерьера'}`;
+      }
+
+      // Pre-fill query
+      const defaultQuery = activeCase.target_name || activeCase.title || '';
+      if (inputQuery) {
+        inputQuery.value = defaultQuery;
+      }
+      if (selectCity && activeCase.city) {
+        for (let i = 0; i < selectCity.options.length; i++) {
+          if (selectCity.options[i].value.toLowerCase() === activeCase.city.toLowerCase()) {
+            selectCity.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Auto-trigger venue hunt
+      await executeVenueHunt(activeCase.id, inputQuery ? inputQuery.value : '', selectCity ? selectCity.value : 'Астана');
+    });
+  }
+
+  if (btnSearch) {
+    btnSearch.addEventListener('click', async () => {
+      if (!activeCase) return;
+      const q = inputQuery ? inputQuery.value.trim() : '';
+      const c = selectCity ? selectCity.value : 'Астана';
+      await executeVenueHunt(activeCase.id, q, c);
+    });
+  }
+
+  if (inputQuery) {
+    inputQuery.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (btnSearch) btnSearch.click();
+      }
+    });
+  }
+
+  async function executeVenueHunt(caseId, query, city) {
+    if (!candidatesList) return;
+    candidatesList.innerHTML = `
+      <div style="text-align: center; padding: 40px 10px; color: var(--text-dim, #94a3b8);">
+        <div class="ai-btn-pulse" style="font-size: 2.2rem; margin-bottom: 8px;">🔍</div>
+        <div style="font-weight: 600; color: #38bdf8;">Сканирование фото на QR-коды столиков и поиск в 2ГИС...</div>
+        <div style="font-size: 0.78rem; margin-top: 4px;">Сверка люстр, отделки, мебели и базы филиалов</div>
+      </div>
+    `;
+    if (qrContainer) qrContainer.innerHTML = '';
+    if (countBadge) countBadge.textContent = 'поиск...';
+
+    try {
+      const url = `/api/cases/${caseId}/venue-hunt?query=${encodeURIComponent(query)}&city=${encodeURIComponent(city)}`;
+      const res = await fetch(url, { method: 'POST' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // Render QR code alerts
+      if (qrContainer) {
+        if (data.qr_codes && data.qr_codes.length > 0) {
+          qrContainer.innerHTML = data.qr_codes.map(qr => `
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.6rem;">${qr.icon || '📱'}</span>
+                <div>
+                  <div style="font-weight: 700; color: #34d399;">${qr.category_title || 'QR-код обнаружен'}: ${qr.parsed_venue ? (qr.parsed_venue.ssid || qr.parsed_venue.provider || qr.raw) : qr.raw}</div>
+                  <div style="font-size: 0.78rem; color: #cbd5e1;">Алгоритм распознал маркер столика или чек заведения с фотографии.</div>
+                </div>
+              </div>
+              <span class="badge" style="background: #059669; color: white; font-weight: 700; padding: 4px 8px; border-radius: 4px;">Точность ±1м</span>
+            </div>
+          `).join('');
+        } else {
+          qrContainer.innerHTML = `
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px dashed rgba(59, 130, 246, 0.35); border-radius: 6px; padding: 7px 12px; font-size: 0.78rem; color: #93c5fd; display: flex; align-items: center; gap: 8px;">
+              <span>ℹ️</span>
+              <span>QR-кодов на столике не найдено. Сопоставление выполняется по вывеске, интерьеру и элементам декора.</span>
+            </div>
+          `;
+        }
+      }
+
+      // Render candidates
+      const candidates = data.candidates || [];
+      if (countBadge) countBadge.textContent = `${candidates.length} филиалов найдено`;
+
+      if (candidates.length === 0) {
+        candidatesList.innerHTML = `
+          <div style="text-align: center; padding: 40px 10px; color: var(--text-dim, #94a3b8);">
+            <div style="font-size: 2rem; margin-bottom: 8px;">🔎</div>
+            <div>Филиалы не найдены. Попробуйте уточнить название или сменить город.</div>
+          </div>
+        `;
+        return;
+      }
+
+      candidatesList.innerHTML = candidates.map((cand, idx) => {
+        const photos = cand.interior_photos || [];
+        const features = cand.features || [];
+        const distStr = cand.distance_m !== null && cand.distance_m !== undefined 
+          ? ` • 📍 ${cand.distance_m < 1000 ? cand.distance_m + 'м' : (cand.distance_m / 1000).toFixed(1) + 'км'}`
+          : '';
+
+        return `
+          <div class="twogis-candidate-card" style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.92rem; color: #f8fafc;">
+                  ${cand.name}
+                </div>
+                <div style="font-size: 0.8rem; color: #38bdf8; margin-top: 2px;">
+                  ${cand.branch || ''} • <span style="color: #cbd5e1;">${cand.city}, ${cand.address}</span>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="badge" style="background: rgba(234, 179, 8, 0.2); border: 1px solid rgba(234, 179, 8, 0.4); color: #facc15; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px;">
+                  ★ ${cand.rating || 4.5}
+                </span>
+                <span style="font-size: 0.72rem; color: #94a3b8;">${distStr}</span>
+              </div>
+            </div>
+
+            <!-- Features / Clues match -->
+            ${features.length > 0 ? `
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                ${features.map(f => `<span style="font-size: 0.72rem; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: #7dd3fc; border-radius: 4px; padding: 1px 6px;">${f}</span>`).join('')}
+              </div>
+            ` : ''}
+
+            <!-- Interior Photos Gallery -->
+            ${photos.length > 0 ? `
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 4px 0;">
+                ${photos.map(p => `
+                  <div style="position: relative; height: 95px; border-radius: 6px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;" onclick="window.open('${p}', '_blank')">
+                    <img src="${p}" alt="Интерьер 2ГИС" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+                    <span style="position: absolute; bottom: 2px; right: 4px; font-size: 0.65rem; background: rgba(0,0,0,0.65); color: #fff; padding: 1px 4px; border-radius: 3px;">2ГИС</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <!-- Actions row -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+              <button class="btn btn-2gis btn-sm btn-confirm-venue" data-cand-idx="${idx}" style="padding: 5px 12px; font-size: 0.8rem; cursor: pointer;">
+                <span>✅ Подтвердить этот филиал (±5м)</span>
+              </button>
+              <a href="${cand.twogis_url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;">
+                <span>Открыть в 2ГИС ↗</span>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Attach event listeners to confirm buttons
+      const confirmBtns = candidatesList.querySelectorAll('.btn-confirm-venue');
+      confirmBtns.forEach(b => {
+        b.addEventListener('click', async (e) => {
+          const idx = parseInt(b.getAttribute('data-cand-idx'), 10);
+          const selectedCand = candidates[idx];
+          if (!selectedCand) return;
+
+          b.disabled = true;
+          b.textContent = 'Сохранение...';
+
+          try {
+            const confirmRes = await fetch(`/api/cases/${caseId}/confirm-venue`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                venue_id: selectedCand.id,
+                name: selectedCand.name,
+                branch: selectedCand.branch,
+                city: selectedCand.city,
+                address: selectedCand.address,
+                lat: selectedCand.lat,
+                lon: selectedCand.lon,
+                twogis_url: selectedCand.twogis_url,
+                rating: selectedCand.rating
+              })
+            });
+
+            if (!confirmRes.ok) throw new Error(`HTTP ${confirmRes.status}`);
+            const confirmData = await confirmRes.json();
+
+            showToast(`Филиал ${selectedCand.name} успешно зафиксирован (±5м)!`, 'success');
+            playRadarSound('lock');
+            modal.style.display = 'none';
+
+            // Reload cases and select this case
+            await loadCases(caseId);
+          } catch (err) {
+            showToast('Ошибка подтверждения: ' + err.message, 'error');
+            b.disabled = false;
+            b.textContent = '✅ Подтвердить этот филиал (±5м)';
+          }
+        });
+      });
+
+    } catch (err) {
+      candidatesList.innerHTML = `
+        <div style="text-align: center; padding: 30px; color: #f87171;">
+          <div>❌ Ошибка поиска: ${err.message}</div>
+        </div>
+      `;
+      if (countBadge) countBadge.textContent = 'ошибка';
+    }
+  }
+}
